@@ -1,0 +1,12 @@
+{
+  "registry_type": "evidence_budgets",
+  "registry_version": "0.2.0",
+  "items": [
+    {"budget_id":"EB.SIMPLE_MEASUREMENT.V1","complexity_class":"SIMPLE_MEASUREMENT","minimum_routed_lanes":1,"minimum_mechanisms_per_core_lane":1,"minimum_factors_per_core_lane":1,"minimum_model_specifications_per_core_lane":0,"minimum_method_families":0,"minimum_benchmarks":0,"requires_oos":false,"requires_falsifier":false,"requires_identification":false,"status":"active"},
+    {"budget_id":"EB.STANDARD_FORECAST.V1","complexity_class":"STANDARD_FORECAST","minimum_routed_lanes":1,"minimum_mechanisms_per_core_lane":3,"minimum_factors_per_core_lane":8,"minimum_model_specifications_per_core_lane":6,"minimum_method_families":2,"minimum_benchmarks":1,"requires_oos":true,"requires_falsifier":true,"requires_identification":false,"status":"active"},
+    {"budget_id":"EB.SYSTEM_FORECAST.V1","complexity_class":"SYSTEM_FORECAST","minimum_routed_lanes":4,"minimum_mechanisms_per_core_lane":4,"minimum_factors_per_core_lane":12,"minimum_model_specifications_per_core_lane":10,"minimum_method_families":3,"minimum_benchmarks":2,"requires_oos":true,"requires_falsifier":true,"requires_identification":false,"status":"active"},
+    {"budget_id":"EB.CAUSAL_ATTRIBUTION.V1","complexity_class":"CAUSAL_ATTRIBUTION","minimum_routed_lanes":4,"minimum_mechanisms_per_core_lane":5,"minimum_factors_per_core_lane":12,"minimum_model_specifications_per_core_lane":10,"minimum_method_families":3,"minimum_benchmarks":2,"requires_oos":false,"requires_falsifier":true,"requires_identification":true,"status":"active"},
+    {"budget_id":"EB.STRUCTURAL_SCENARIO.V1","complexity_class":"STRUCTURAL_SCENARIO","minimum_routed_lanes":3,"minimum_mechanisms_per_core_lane":4,"minimum_factors_per_core_lane":10,"minimum_model_specifications_per_core_lane":8,"minimum_method_families":2,"minimum_benchmarks":1,"requires_oos":true,"requires_falsifier":true,"requires_identification":true,"status":"reviewed"},
+    {"budget_id":"EB.RATES_DIRECTIONAL_ATTRIBUTION.V1","complexity_class":"CAUSAL_ATTRIBUTION","minimum_routed_lanes":4,"minimum_mechanisms_per_core_lane":4,"minimum_factors_per_core_lane":8,"minimum_model_specifications_per_core_lane":10,"minimum_method_families":3,"minimum_benchmarks":4,"requires_oos":true,"requires_falsifier":true,"requires_identification":false,"status":"active"}
+  ]
+}

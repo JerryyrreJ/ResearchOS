@@ -1,0 +1,358 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CF03.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Abstract and potential-outcome framing",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 5,
+      "page_start": 2,
+      "paraphrase": "The paper defines an impulse response as a horizon-specific contrast between outcomes under an intervention and a baseline, conditional on an admissible information set.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF03",
+        "MR.CF03.LP_IRF"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF03.02",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Basic local-projection equations",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 9,
+      "page_start": 5,
+      "paraphrase": "Separate regressions are estimated for each horizon, with the intervention and predetermined controls; cumulative responses and multipliers require their own numerator and denominator definitions.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF03",
+        "MR.CF03.LP_IRF"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF03.03",
+      "extraction_confidence": 0.9,
+      "kind": "DIAGNOSTIC",
+      "locator_label": "Bias, inference, and fiscal example",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 16,
+      "page_start": 9,
+      "paraphrase": "Persistent processes, small samples, overlapping horizons, and cumulative transformations change bias and covariance requirements; joint response tests are distinct from pointwise significance.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF03",
+        "MR.CF03.LP_IRF"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF03.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "LP versus VAR and causal caveats",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 8,
+      "page_start": 3,
+      "paraphrase": "Flexibility does not identify the shock: LP credibility still depends on experimental, instrumental, narrative, timing, or conditional-independence assumptions, and state dependence changes the estimand.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF03",
+        "MR.CF03.LP_IRF"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "Jordà and Taylor present local projections as horizon-by-horizon regressions for dynamic treatment or shock responses, emphasizing the link between macro impulse responses and potential-outcome policy evaluation. The survey makes the tradeoffs explicit: LPs are flexible and robust to system misspecification but can be inefficient, biased in small persistent samples, and invalid without a defensible intervention, controls, and inference design.",
+  "jurisdiction_fit": "US_ADAPTABLE",
+  "method_routes": [
+    {
+      "aggregation_role": "dynamic effect evidence; horizons remain a response path rather than thirty independent votes",
+      "control_variable_ids": [
+        "V.CF03.W"
+      ],
+      "dependent_variable_ids": [
+        "V.CF03.YH"
+      ],
+      "diagnostic_requirements": [
+        "joint confidence band or joint zero-response test",
+        "HAC or cluster covariance suitable for overlapping horizons",
+        "shock relevance and balance diagnostics",
+        "small-sample/persistence bias assessment"
+      ],
+      "downstream_refs": [],
+      "estimand": "dynamic average response E[Y_{t+h}(s=1)-Y_{t+h}(s=0)] for each registered h",
+      "evidence_ids": [
+        "EV.CF03.01",
+        "EV.CF03.02",
+        "EV.CF03.03",
+        "EV.CF03.04"
+      ],
+      "formula": "Y_{t+h}-Y_{t-1}=alpha_h+beta_h S_t+Gamma_h W_{t-1}+epsilon_{t+h}, h=0,...,H",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "design-specific shock or treatment identification followed by separate horizon regressions",
+      "identifying_assumptions": [
+        "the intervention is exogenous conditional on registered controls or identified by a valid instrument",
+        "controls are predetermined",
+        "horizon and cumulative transformations are fixed before estimation"
+      ],
+      "independent_variable_ids": [
+        "V.CF03.S"
+      ],
+      "lane_ref": "US.MONETARY",
+      "mechanism_ref": "MECH.CANDIDATE.DYNAMIC_TRANSMISSION",
+      "method_family": "horizon-by-horizon local projection",
+      "method_route_id": "MR.CF03.LP_IRF",
+      "node_ref": "N.CANDIDATE.LOCAL_PROJECTION",
+      "research_question_id": "Q.CF03",
+      "robustness_requirements": [
+        "levels versus long differences",
+        "alternative registered lag lengths",
+        "VAR comparison",
+        "state-interaction specification declared ex ante"
+      ],
+      "sample_definition": "time-series or panel observations with pre-treatment controls and outcomes observed through horizon H",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CF03",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CF03.01"
+      ],
+      "horizon_text": "registered response horizons h=0,...,H",
+      "question_id": "Q.CF03",
+      "question_text": "How can MacroTrace estimate and interpret the dynamic response of an outcome to an intervention or shock without imposing a complete multivariate dynamic system?",
+      "target_variables": [
+        "V.CF03.YH"
+      ],
+      "task_types": [
+        "CAUSAL",
+        "SCENARIO"
+      ]
+    }
+  ],
+  "record_id": "REV.010450414E8DA3F0.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.LOCAL_PROJECTION.GENERIC_V2",
+          "DIAGNOSTIC.LP.JOINT_BANDS",
+          "POLICY.LP.IDENTIFICATION_REQUIRED",
+          "CHART.LP.IMPULSE_RESPONSE"
+        ],
+        "category": "FOUNDATION_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of San Francisco / authors",
+        "jurisdiction_fit": "US_ADAPTABLE",
+        "page_count": 59,
+        "publication_date": "2024-06-01",
+        "report_id": "RC.010450414E8D",
+        "review_status": "reviewed",
+        "source_catalog_id": "CF03",
+        "source_sha256": "010450414e8da3f0b8ce42a3611f970d8e813e08a89d92d15817dc57af5f5c16",
+        "source_url": "https://www.frbsf.org/wp-content/uploads/wp2024-24.pdf",
+        "status": "reviewed",
+        "title": "Local Projections"
+      },
+      "change_id": "CH.CF03.REPORT",
+      "evidence_ids": [
+        "EV.CF03.01",
+        "EV.CF03.02",
+        "EV.CF03.03",
+        "EV.CF03.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CF03.LP_IRF"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.010450414E8D",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.010450414E8D",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:13.397865Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CF03.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CF03",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CF03.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 970212,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of San Francisco / authors",
+    "jurisdiction_tags": [
+      "US",
+      "local_projections",
+      "impulse_responses",
+      "state_dependence",
+      "panel_lp",
+      "inference"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 59,
+    "publication_date": "2024-06-01",
+    "source_file": "LOCAL_SNAPSHOT:CF03",
+    "source_id": "SRC.010450414E8DA3F0",
+    "source_sha256": "010450414e8da3f0b8ce42a3611f970d8e813e08a89d92d15817dc57af5f5c16",
+    "title": "Local Projections"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.087982Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:58:46.376676Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CF03",
+      "at": "2026-07-15T11:22:13.414552Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF03",
+      "at": "2026-07-15T11:22:13.435003Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF03",
+      "at": "2026-07-15T11:22:13.462425Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Outcome measured h periods after the intervention or shock.",
+      "evidence_ids": [
+        "EV.CF03.01",
+        "EV.CF03.02"
+      ],
+      "frequency": "panel or time-series",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "future outcome at horizon h",
+      "provider": "Federal Reserve Bank of San Francisco / authors",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "outcome specific",
+      "variable_id": "V.CF03.YH",
+      "vintage_rule": null
+    },
+    {
+      "definition": "A registered intervention, treatment, or externally identified innovation whose dynamic effect is sought.",
+      "evidence_ids": [
+        "EV.CF03.01",
+        "EV.CF03.02"
+      ],
+      "frequency": "event or period",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "intervention or identified shock",
+      "provider": "Federal Reserve Bank of San Francisco / authors",
+      "release_lag": null,
+      "role": "TREATMENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "shock specific",
+      "variable_id": "V.CF03.S",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Lags and predetermined covariates sufficient for the chosen identification design.",
+      "evidence_ids": [
+        "EV.CF03.02",
+        "EV.CF03.04"
+      ],
+      "frequency": "aligned to treatment",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "predetermined controls",
+      "provider": "Federal Reserve Bank of San Francisco / authors",
+      "release_lag": null,
+      "role": "CONTROL",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "mixed",
+      "variable_id": "V.CF03.W",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Registered state variable used only when a state-dependent estimand is declared in advance.",
+      "evidence_ids": [
+        "EV.CF03.04"
+      ],
+      "frequency": "pre-treatment",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "pre-treatment state",
+      "provider": "Federal Reserve Bank of San Francisco / authors",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "state specific",
+      "variable_id": "V.CF03.STATE",
+      "vintage_rule": null
+    }
+  ]
+}

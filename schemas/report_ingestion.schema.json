@@ -1,0 +1,1199 @@
+{
+  "$defs": {
+    "BlockingIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "issue_id": {
+          "minLength": 3,
+          "title": "Issue Id",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution"
+        },
+        "severity": {
+          "enum": [
+            "WARNING",
+            "BLOCKING"
+          ],
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issue_id",
+        "severity",
+        "message"
+      ],
+      "title": "BlockingIssue",
+      "type": "object"
+    },
+    "EvidenceKind": {
+      "enum": [
+        "RESEARCH_QUESTION",
+        "CLAIM",
+        "MECHANISM",
+        "VARIABLE_DEFINITION",
+        "DATA_SOURCE",
+        "MODEL_SPECIFICATION",
+        "IDENTIFICATION",
+        "DIAGNOSTIC",
+        "ROBUSTNESS",
+        "RESULT",
+        "LIMITATION",
+        "AGGREGATION"
+      ],
+      "title": "EvidenceKind",
+      "type": "string"
+    },
+    "MethodRoute": {
+      "additionalProperties": false,
+      "properties": {
+        "aggregation_role": {
+          "default": "",
+          "title": "Aggregation Role",
+          "type": "string"
+        },
+        "control_variable_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Control Variable Ids",
+          "type": "array"
+        },
+        "dependent_variable_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dependent Variable Ids",
+          "type": "array"
+        },
+        "diagnostic_requirements": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Diagnostic Requirements",
+          "type": "array"
+        },
+        "downstream_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Downstream Refs",
+          "type": "array"
+        },
+        "estimand": {
+          "default": "",
+          "title": "Estimand",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "formula": {
+          "default": "",
+          "title": "Formula",
+          "type": "string"
+        },
+        "free_data_feasibility": {
+          "default": "UNKNOWN",
+          "enum": [
+            "AVAILABLE",
+            "PARTIAL",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ],
+          "title": "Free Data Feasibility",
+          "type": "string"
+        },
+        "identification_strategy": {
+          "default": "",
+          "title": "Identification Strategy",
+          "type": "string"
+        },
+        "identifying_assumptions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Identifying Assumptions",
+          "type": "array"
+        },
+        "independent_variable_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Independent Variable Ids",
+          "type": "array"
+        },
+        "lane_ref": {
+          "default": "",
+          "title": "Lane Ref",
+          "type": "string"
+        },
+        "mechanism_ref": {
+          "default": "",
+          "title": "Mechanism Ref",
+          "type": "string"
+        },
+        "method_family": {
+          "default": "",
+          "title": "Method Family",
+          "type": "string"
+        },
+        "method_route_id": {
+          "minLength": 5,
+          "title": "Method Route Id",
+          "type": "string"
+        },
+        "node_ref": {
+          "default": "",
+          "title": "Node Ref",
+          "type": "string"
+        },
+        "research_question_id": {
+          "minLength": 5,
+          "title": "Research Question Id",
+          "type": "string"
+        },
+        "robustness_requirements": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Robustness Requirements",
+          "type": "array"
+        },
+        "sample_definition": {
+          "default": "",
+          "title": "Sample Definition",
+          "type": "string"
+        },
+        "upstream_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Upstream Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "method_route_id",
+        "research_question_id"
+      ],
+      "title": "MethodRoute",
+      "type": "object"
+    },
+    "NoveltyReview": {
+      "additionalProperties": false,
+      "properties": {
+        "boundary_statement": {
+          "default": "",
+          "title": "Boundary Statement",
+          "type": "string"
+        },
+        "compared_registry_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Compared Registry Ids",
+          "type": "array"
+        },
+        "decision": {
+          "default": "UNRESOLVED",
+          "enum": [
+            "DISTINCT",
+            "MERGE_EXISTING",
+            "UNRESOLVED"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "independent_workflow_paths": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Independent Workflow Paths",
+          "type": "array"
+        },
+        "overlap_analysis": {
+          "default": "",
+          "title": "Overlap Analysis",
+          "type": "string"
+        },
+        "reviewer": {
+          "default": "",
+          "title": "Reviewer",
+          "type": "string"
+        }
+      },
+      "title": "NoveltyReview",
+      "type": "object"
+    },
+    "PageBasis": {
+      "enum": [
+        "PDF_FILE_PAGE",
+        "PRINTED_PAGE",
+        "FORM_FEED_PAGE"
+      ],
+      "title": "PageBasis",
+      "type": "string"
+    },
+    "PageEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "minLength": 5,
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "extraction_confidence": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Extraction Confidence",
+          "type": "number"
+        },
+        "kind": {
+          "$ref": "#/$defs/EvidenceKind"
+        },
+        "locator_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locator Label"
+        },
+        "page_basis": {
+          "$ref": "#/$defs/PageBasis",
+          "default": "PDF_FILE_PAGE"
+        },
+        "page_end": {
+          "minimum": 1,
+          "title": "Page End",
+          "type": "integer"
+        },
+        "page_start": {
+          "minimum": 1,
+          "title": "Page Start",
+          "type": "integer"
+        },
+        "paraphrase": {
+          "default": "",
+          "title": "Paraphrase",
+          "type": "string"
+        },
+        "reviewer_verified": {
+          "default": false,
+          "title": "Reviewer Verified",
+          "type": "boolean"
+        },
+        "statement_status": {
+          "default": "EXPLICIT",
+          "enum": [
+            "EXPLICIT",
+            "INFERRED",
+            "NOT_STATED"
+          ],
+          "title": "Statement Status",
+          "type": "string"
+        },
+        "supports": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Supports",
+          "type": "array"
+        },
+        "verbatim_quote": {
+          "anyOf": [
+            {
+              "maxLength": 240,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verbatim Quote"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "kind",
+        "page_start",
+        "page_end"
+      ],
+      "title": "PageEvidence",
+      "type": "object"
+    },
+    "PipelineState": {
+      "enum": [
+        "INGESTED",
+        "EXTRACTED",
+        "CANDIDATE",
+        "REVIEWED",
+        "REPRODUCTION_PENDING",
+        "REPRODUCED",
+        "APPROVED",
+        "CHANGESET_READY",
+        "APPLIED",
+        "BLOCKED",
+        "EVIDENCE_ONLY",
+        "DUPLICATE",
+        "REJECTED"
+      ],
+      "title": "PipelineState",
+      "type": "string"
+    },
+    "ProducerIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "model_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Name"
+        },
+        "producer_name": {
+          "minLength": 1,
+          "title": "Producer Name",
+          "type": "string"
+        },
+        "producer_run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Producer Run Id"
+        },
+        "producer_type": {
+          "enum": [
+            "CODEX",
+            "HUMAN",
+            "LLM",
+            "HYBRID",
+            "AUTOMATED"
+          ],
+          "title": "Producer Type",
+          "type": "string"
+        },
+        "prompt_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Version"
+        }
+      },
+      "required": [
+        "producer_type",
+        "producer_name"
+      ],
+      "title": "ProducerIdentity",
+      "type": "object"
+    },
+    "RegistryChange": {
+      "additionalProperties": false,
+      "properties": {
+        "after_object": {
+          "additionalProperties": true,
+          "title": "After Object",
+          "type": "object"
+        },
+        "change_id": {
+          "minLength": 5,
+          "title": "Change Id",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "expected_before_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Before Sha256"
+        },
+        "method_route_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Method Route Ids",
+          "type": "array"
+        },
+        "novelty_review": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NoveltyReview"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "object_id": {
+          "minLength": 2,
+          "title": "Object Id",
+          "type": "string"
+        },
+        "operation": {
+          "enum": [
+            "ADD",
+            "UPDATE"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "rationale": {
+          "default": "",
+          "title": "Rationale",
+          "type": "string"
+        },
+        "registry": {
+          "enum": [
+            "lanes",
+            "datasets",
+            "factors",
+            "nodes",
+            "workflows",
+            "models",
+            "parameter_policies",
+            "aggregations",
+            "claims",
+            "routes",
+            "reports",
+            "mechanisms",
+            "model_specifications",
+            "evidence_budgets",
+            "synthesis_policies",
+            "evidence_mappings",
+            "scenario_mappings"
+          ],
+          "title": "Registry",
+          "type": "string"
+        },
+        "target_status": {
+          "enum": [
+            "candidate",
+            "reviewed",
+            "active",
+            "blocked",
+            "evidence_only",
+            "fixture"
+          ],
+          "title": "Target Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "change_id",
+        "operation",
+        "registry",
+        "object_id",
+        "target_status",
+        "after_object"
+      ],
+      "title": "RegistryChange",
+      "type": "object"
+    },
+    "ReproductionRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "code_artifact": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code Artifact"
+        },
+        "data_snapshot": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Snapshot"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        },
+        "real_data_smoke_test_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Real Data Smoke Test Ids",
+          "type": "array"
+        },
+        "result_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Result Hash"
+        },
+        "status": {
+          "default": "NOT_STARTED",
+          "enum": [
+            "NOT_STARTED",
+            "PLANNED",
+            "PASSED",
+            "FAILED",
+            "NOT_APPLICABLE"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "synthetic_test_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Synthetic Test Ids",
+          "type": "array"
+        }
+      },
+      "title": "ReproductionRecord",
+      "type": "object"
+    },
+    "ResearchQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "as_of_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "As Of Text"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "horizon_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Horizon Text"
+        },
+        "question_id": {
+          "minLength": 5,
+          "title": "Question Id",
+          "type": "string"
+        },
+        "question_text": {
+          "default": "",
+          "title": "Question Text",
+          "type": "string"
+        },
+        "target_variables": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Variables",
+          "type": "array"
+        },
+        "task_types": {
+          "items": {
+            "enum": [
+              "FORECAST",
+              "NOWCAST",
+              "DRIVER",
+              "CAUSAL",
+              "SCENARIO",
+              "ASSET_TRANSMISSION"
+            ],
+            "type": "string"
+          },
+          "title": "Task Types",
+          "type": "array"
+        }
+      },
+      "required": [
+        "question_id"
+      ],
+      "title": "ResearchQuestion",
+      "type": "object"
+    },
+    "ReviewDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "decided_at": {
+          "format": "date-time",
+          "title": "Decided At",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "APPROVE_CANDIDATE",
+            "APPROVE_REVIEWED",
+            "APPROVE_ACTIVE",
+            "APPROVE_APPLY",
+            "REQUEST_CHANGES",
+            "BLOCK",
+            "REJECT",
+            "MARK_DUPLICATE"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "review_id": {
+          "minLength": 5,
+          "title": "Review Id",
+          "type": "string"
+        },
+        "review_run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Run Id"
+        },
+        "reviewer": {
+          "minLength": 1,
+          "title": "Reviewer",
+          "type": "string"
+        },
+        "reviewer_type": {
+          "enum": [
+            "CODEX",
+            "HUMAN",
+            "LLM",
+            "AUTOMATED"
+          ],
+          "title": "Reviewer Type",
+          "type": "string"
+        },
+        "scope_change_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Scope Change Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "review_id",
+        "reviewer",
+        "reviewer_type",
+        "decision",
+        "rationale"
+      ],
+      "title": "ReviewDecision",
+      "type": "object"
+    },
+    "SourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_size": {
+          "minimum": 1,
+          "title": "Byte Size",
+          "type": "integer"
+        },
+        "copied_into_repository": {
+          "const": false,
+          "default": false,
+          "title": "Copied Into Repository",
+          "type": "boolean"
+        },
+        "institution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Institution"
+        },
+        "jurisdiction_tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Jurisdiction Tags",
+          "type": "array"
+        },
+        "license_status": {
+          "default": "PRIVATE_RESEARCH_INPUT",
+          "enum": [
+            "PRIVATE_RESEARCH_INPUT",
+            "PUBLIC",
+            "RESTRICTED",
+            "UNKNOWN"
+          ],
+          "title": "License Status",
+          "type": "string"
+        },
+        "media_type": {
+          "default": "application/pdf",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "page_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Count"
+        },
+        "publication_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publication Date"
+        },
+        "source_file": {
+          "minLength": 1,
+          "title": "Source File",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 3,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_file",
+        "source_sha256",
+        "byte_size",
+        "title"
+      ],
+      "title": "SourceIdentity",
+      "type": "object"
+    },
+    "StateTransition": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "minLength": 1,
+          "title": "Actor",
+          "type": "string"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "from_state": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PipelineState"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "to_state": {
+          "$ref": "#/$defs/PipelineState"
+        }
+      },
+      "required": [
+        "from_state",
+        "to_state",
+        "actor",
+        "reason"
+      ],
+      "title": "StateTransition",
+      "type": "object"
+    },
+    "VariableDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "definition": {
+          "default": "",
+          "title": "Definition",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "frequency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Frequency"
+        },
+        "lag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lag"
+        },
+        "mapped_factor_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mapped Factor Id"
+        },
+        "name": {
+          "default": "",
+          "title": "Name",
+          "type": "string"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "release_lag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Release Lag"
+        },
+        "role": {
+          "enum": [
+            "DEPENDENT",
+            "OUTCOME",
+            "EXPOSURE",
+            "TREATMENT",
+            "INSTRUMENT",
+            "CONTROL",
+            "STATE",
+            "WEIGHT",
+            "OTHER"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "table_or_series": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Table Or Series"
+        },
+        "transformation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transformation"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "variable_id": {
+          "minLength": 3,
+          "title": "Variable Id",
+          "type": "string"
+        },
+        "vintage_rule": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vintage Rule"
+        }
+      },
+      "required": [
+        "variable_id",
+        "role"
+      ],
+      "title": "VariableDefinition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "batch_id": {
+      "minLength": 3,
+      "title": "Batch Id",
+      "type": "string"
+    },
+    "blockers": {
+      "items": {
+        "$ref": "#/$defs/BlockingIssue"
+      },
+      "title": "Blockers",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/PageEvidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "executive_summary": {
+      "default": "",
+      "title": "Executive Summary",
+      "type": "string"
+    },
+    "jurisdiction_fit": {
+      "default": "UNKNOWN",
+      "enum": [
+        "US_DIRECT",
+        "US_ADAPTABLE",
+        "CONTEXT_ONLY",
+        "OUT_OF_SCOPE",
+        "UNKNOWN"
+      ],
+      "title": "Jurisdiction Fit",
+      "type": "string"
+    },
+    "method_routes": {
+      "items": {
+        "$ref": "#/$defs/MethodRoute"
+      },
+      "title": "Method Routes",
+      "type": "array"
+    },
+    "produced_by": {
+      "$ref": "#/$defs/ProducerIdentity"
+    },
+    "questions": {
+      "items": {
+        "$ref": "#/$defs/ResearchQuestion"
+      },
+      "title": "Questions",
+      "type": "array"
+    },
+    "record_id": {
+      "minLength": 5,
+      "title": "Record Id",
+      "type": "string"
+    },
+    "registry_changes": {
+      "items": {
+        "$ref": "#/$defs/RegistryChange"
+      },
+      "title": "Registry Changes",
+      "type": "array"
+    },
+    "report_id": {
+      "minLength": 3,
+      "title": "Report Id",
+      "type": "string"
+    },
+    "reproduction": {
+      "$ref": "#/$defs/ReproductionRecord"
+    },
+    "reviews": {
+      "items": {
+        "$ref": "#/$defs/ReviewDecision"
+      },
+      "title": "Reviews",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceIdentity"
+    },
+    "state": {
+      "$ref": "#/$defs/PipelineState"
+    },
+    "state_history": {
+      "items": {
+        "$ref": "#/$defs/StateTransition"
+      },
+      "title": "State History",
+      "type": "array"
+    },
+    "variables": {
+      "items": {
+        "$ref": "#/$defs/VariableDefinition"
+      },
+      "title": "Variables",
+      "type": "array"
+    }
+  },
+  "required": [
+    "record_id",
+    "batch_id",
+    "report_id",
+    "state",
+    "source",
+    "produced_by"
+  ],
+  "title": "ReportReverseRecord",
+  "type": "object"
+}

@@ -1,0 +1,381 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CW09.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Purpose of the NFCI",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The page describes a broad weekly measure intended to capture U.S. financial conditions across money, debt, equity, and traditional and shadow-banking systems.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW09",
+        "MR.CW09.FINANCIAL_CONDITION_FACTOR"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW09.02",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Large-panel index construction",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "One hundred five financial variables are standardized and combined into an index whose historical mean is zero and standard deviation is one.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW09",
+        "MR.CW09.FINANCIAL_CONDITION_FACTOR"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW09.03",
+      "extraction_confidence": 0.9,
+      "kind": "VARIABLE_DEFINITION",
+      "locator_label": "Subindexes and adjusted index",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Risk, credit, and leverage subindexes expose the source of movements, while the adjusted NFCI removes variation associated with current activity and inflation.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW09",
+        "MR.CW09.FINANCIAL_CONDITION_FACTOR"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW09.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Level interpretation",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Positive values mean tighter conditions relative to the historical average, not a structural neutral rate or an automatically causal estimate of future growth effects.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW09",
+        "MR.CW09.FINANCIAL_CONDITION_FACTOR"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The Chicago Fed NFCI summarizes 105 weekly financial indicators as a standardized broad conditions index and exposes risk, credit, and leverage subindexes. Its adjusted version removes variation associated with contemporaneous activity and inflation, while positive readings mean tighter-than-average conditions. MacroTrace should keep the raw and adjusted objects separate and expose loading, coverage, normalization, and macro-adjustment diagnostics.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "financial-condition state node with raw, adjusted, and subindex signals visible separately",
+      "control_variable_ids": [
+        "V.CW09.MACRO"
+      ],
+      "dependent_variable_ids": [
+        "V.CW09.NFCI",
+        "V.CW09.ANFCI",
+        "V.CW09.SUB"
+      ],
+      "diagnostic_requirements": [
+        "loading and subindex contribution stability",
+        "input freshness and missingness",
+        "mean-zero unit-variance normalization audit",
+        "macro-adjustment residual diagnostics"
+      ],
+      "downstream_refs": [],
+      "estimand": "common weekly financial-condition state and the component not explained by current activity and inflation",
+      "evidence_ids": [
+        "EV.CW09.01",
+        "EV.CW09.02",
+        "EV.CW09.03",
+        "EV.CW09.04"
+      ],
+      "formula": "NFCI_t=lambda' standardized(XFIN_t); ANFCI_t=NFCI_t-E[NFCI_t|activity_t,inflation_t]",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "factor compression and statistical adjustment; no structural causal interpretation",
+      "identifying_assumptions": [
+        "input transformations and signs remain stable",
+        "historical normalization is computed without future leakage for backtests",
+        "macro adjustment is estimated using the registered contemporaneous specification"
+      ],
+      "independent_variable_ids": [
+        "V.CW09.XFIN"
+      ],
+      "lane_ref": "US.FINANCIAL_CONDITIONS",
+      "mechanism_ref": "MECH.FINANCIAL.CONDITIONS_COMMON_STATE",
+      "method_family": "large-panel standardized financial factor with macro residualization",
+      "method_route_id": "MR.CW09.FINANCIAL_CONDITION_FACTOR",
+      "node_ref": "N.CANDIDATE.FINANCIAL.NFCI_FACTOR",
+      "research_question_id": "Q.CW09",
+      "robustness_requirements": [
+        "raw versus adjusted NFCI",
+        "risk, credit, and leverage subindexes",
+        "leave-one-indicator-family-out factor",
+        "rolling versus fixed normalization windows"
+      ],
+      "sample_definition": "weekly U.S. financial indicators from the published historical coverage through each real-time vintage",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CW09",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CW09.01"
+      ],
+      "horizon_text": "current weekly financial conditions and near-term transmission context",
+      "question_id": "Q.CW09",
+      "question_text": "What common U.S. financial-condition state is contained in a large weekly panel, and how much remains after accounting for prevailing activity and inflation?",
+      "target_variables": [
+        "V.CW09.NFCI",
+        "V.CW09.ANFCI"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "DRIVER",
+        "ASSET_TRANSMISSION"
+      ]
+    }
+  ],
+  "record_id": "REV.46AB7729E7A78AF9.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.FACTOR.NFCI_STYLE.V1",
+          "FACTOR.FINANCIAL.NFCI_RAW",
+          "FACTOR.FINANCIAL.NFCI_ADJUSTED",
+          "NODE.FINANCIAL.RISK_CREDIT_LEVERAGE_SUBINDEX"
+        ],
+        "category": "METHOD_WEB",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of Chicago",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 1,
+        "publication_date": null,
+        "report_id": "RC.46AB7729E7A7",
+        "review_status": "reviewed",
+        "source_catalog_id": "CW09",
+        "source_sha256": "46ab7729e7a78af9f420900353fe13fb2a7879f02458195f6f89d1bbee8497cb",
+        "source_url": "https://www.chicagofed.org/research/data/nfci/about",
+        "status": "reviewed",
+        "title": "National Financial Conditions Index: About the NFCI"
+      },
+      "change_id": "CH.CW09.REPORT",
+      "evidence_ids": [
+        "EV.CW09.01",
+        "EV.CW09.02",
+        "EV.CW09.03",
+        "EV.CW09.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CW09.FINANCIAL_CONDITION_FACTOR"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.46AB7729E7A7",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.46AB7729E7A7",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:16.056904Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CW09.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CW09",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CW09.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 9232,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of Chicago",
+    "jurisdiction_tags": [
+      "US",
+      "financial_conditions",
+      "risk",
+      "credit",
+      "leverage",
+      "activity_adjustment"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "text/plain",
+    "page_count": 1,
+    "publication_date": null,
+    "source_file": "LOCAL_SNAPSHOT:CW09",
+    "source_id": "SRC.46AB7729E7A78AF9",
+    "source_sha256": "46ab7729e7a78af9f420900353fe13fb2a7879f02458195f6f89d1bbee8497cb",
+    "title": "National Financial Conditions Index: About the NFCI"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.352892Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:32.781120Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CW09",
+      "at": "2026-07-15T11:22:16.073900Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW09",
+      "at": "2026-07-15T11:22:16.100897Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW09",
+      "at": "2026-07-15T11:22:16.130892Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Weighted standardized common state of 105 weekly U.S. financial variables.",
+      "evidence_ids": [
+        "EV.CW09.01",
+        "EV.CW09.02",
+        "EV.CW09.04"
+      ],
+      "frequency": "weekly",
+      "lag": null,
+      "mapped_factor_id": "F.MONETARY.NFCI",
+      "name": "National Financial Conditions Index",
+      "provider": "Federal Reserve Bank of Chicago",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "historical standard deviations",
+      "variable_id": "V.CW09.NFCI",
+      "vintage_rule": null
+    },
+    {
+      "definition": "NFCI component orthogonalized with respect to registered measures of current economic activity and inflation.",
+      "evidence_ids": [
+        "EV.CW09.03",
+        "EV.CW09.04"
+      ],
+      "frequency": "weekly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "Adjusted National Financial Conditions Index",
+      "provider": "Federal Reserve Bank of Chicago",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized index",
+      "variable_id": "V.CW09.ANFCI",
+      "vintage_rule": null
+    },
+    {
+      "definition": "The 105 money-market, debt, equity, banking, shadow-banking, credit, risk, and leverage variables entering the index.",
+      "evidence_ids": [
+        "EV.CW09.01",
+        "EV.CW09.02"
+      ],
+      "frequency": "weekly or aligned to weekly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "financial indicator panel",
+      "provider": "official, regulatory, and market sources",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized",
+      "variable_id": "V.CW09.XFIN",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Decomposed index contributions identifying whether financial-condition movement arises from risk, credit, or leverage measures.",
+      "evidence_ids": [
+        "EV.CW09.03"
+      ],
+      "frequency": "weekly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "risk, credit, and leverage subindexes",
+      "provider": "Federal Reserve Bank of Chicago",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized contribution",
+      "variable_id": "V.CW09.SUB",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Registered measures used to remove the component of financial conditions associated with current macroeconomic conditions.",
+      "evidence_ids": [
+        "EV.CW09.03"
+      ],
+      "frequency": "weekly/monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "activity and inflation adjustment variables",
+      "provider": "official U.S. macroeconomic releases",
+      "release_lag": null,
+      "role": "CONTROL",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized",
+      "variable_id": "V.CW09.MACRO",
+      "vintage_rule": null
+    }
+  ]
+}

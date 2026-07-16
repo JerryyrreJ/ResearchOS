@@ -1,0 +1,16 @@
+{
+  "registry_type": "lanes",
+  "registry_version": "0.2.0",
+  "items": [
+    {"lane_id":"US.ACTIVITY","name":"Real activity and business cycle","mechanism":"Demand, production and employment jointly reveal current growth and recession risk.","status":"active"},
+    {"lane_id":"US.LABOR","name":"Labor market and wages","mechanism":"Employment, unemployment and wages transmit household demand and inflation pressure.","status":"active"},
+    {"lane_id":"US.INFLATION","name":"Inflation and prices","mechanism":"Price momentum, persistence and pass-through determine the inflation path.","status":"active"},
+    {"lane_id":"US.MONETARY","name":"Monetary policy and financial conditions","mechanism":"Rates and financial conditions transmit policy into activity and assets.","status":"active"},
+    {"lane_id":"US.FISCAL_TREASURY","name":"Fiscal and Treasury supply","mechanism":"Debt and issuance affect term premia, demand and fiscal-risk pricing.","status":"active"},
+    {"lane_id":"US.COMMODITY_ENERGY","name":"Commodity and energy shocks","mechanism":"Energy supply and prices pass through to inflation and real incomes.","status":"active"},
+    {"lane_id":"US.HOUSING_CONSUMPTION","name":"Housing and household demand","mechanism":"Housing, wealth, saving and debt service affect consumption.","status":"reviewed"},
+    {"lane_id":"US.TRADE","name":"Trade and external demand","mechanism":"Import costs, exports and global demand transmit to prices and output.","status":"blocked"},
+    {"lane_id":"US.FIN_STABILITY","name":"Financial stability","mechanism":"Leverage and liquidity can amplify otherwise ordinary macro shocks.","status":"reviewed"},
+    {"lane_id":"US.AI_PRODUCTIVITY","name":"AI adoption, exposure and productivity","mechanism":"Adoption can substitute for or complement tasks and transmit through vacancies, employment, wages and productivity.","status":"reviewed"}
+  ]
+}

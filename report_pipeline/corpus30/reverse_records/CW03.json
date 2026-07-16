@@ -1,0 +1,360 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CW03.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Why outlook-at-risk",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The explainer argues that a point forecast omits economically important asymmetry and tail risk contained in the full conditional distribution of future activity.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW03",
+        "MR.CW03.OUTLOOK_AT_RISK"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW03.02",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Conditional quantiles and density",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Predictors such as financial conditions are linked to several future-growth quantiles, which are then represented as a conditional probability distribution.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW03",
+        "MR.CW03.OUTLOOK_AT_RISK"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW03.03",
+      "extraction_confidence": 0.9,
+      "kind": "RESULT",
+      "locator_label": "Stress and normal-state examples",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Examples contrast crisis and tranquil dates to show that similar central forecasts can coexist with very different downside tails and distribution shapes.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW03",
+        "MR.CW03.OUTLOOK_AT_RISK"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW03.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Interpretation and extension",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "A low conditional quantile is a tail outcome rather than a recession probability; extensions to unemployment or inflation require target-specific estimation and calibration.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW03",
+        "MR.CW03.OUTLOOK_AT_RISK"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The New York Fed Outlook-at-Risk explainer changes the object of analysis from one central GDP forecast to the entire conditional distribution. Financial conditions and other predictors shift downside and upside quantiles differently, so MacroTrace must expose the tenth-percentile outcome, median, dispersion, and density calibration instead of presenting an uncalibrated recession probability.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "tail-risk evidence node; only calibrated distribution probabilities may feed numerical recession-risk claims",
+      "control_variable_ids": [
+        "V.CW03.MACRO"
+      ],
+      "dependent_variable_ids": [
+        "V.CW03.GQ",
+        "V.CW03.DENS"
+      ],
+      "diagnostic_requirements": [
+        "quantile crossing check",
+        "PIT and probability calibration",
+        "coverage of tail intervals",
+        "rolling out-of-sample quantile and CRPS loss"
+      ],
+      "downstream_refs": [],
+      "estimand": "conditional quantiles and calibrated density of cumulative future GDP growth at horizon h",
+      "evidence_ids": [
+        "EV.CW03.01",
+        "EV.CW03.02",
+        "EV.CW03.03",
+        "EV.CW03.04"
+      ],
+      "formula": "Q_tau(g_{t+h}|I_t)=alpha_tau+beta_tau FCI_t+gamma_tau' Macro_t; fit registered density across tau",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "predictive conditional distribution; coefficients are not structural causal effects of financial conditions",
+      "identifying_assumptions": [
+        "forecast origins are strictly time ordered",
+        "quantile specifications are estimated without future revisions",
+        "density fitting preserves ordered quantiles and nonnegative probability"
+      ],
+      "independent_variable_ids": [
+        "V.CW03.FCI"
+      ],
+      "lane_ref": "US.ACTIVITY",
+      "mechanism_ref": "MECH.ACTIVITY.FINANCIAL_DOWNSIDE_AMPLIFICATION",
+      "method_family": "quantile regression plus constrained conditional-density fitting",
+      "method_route_id": "MR.CW03.OUTLOOK_AT_RISK",
+      "node_ref": "N.CANDIDATE.ACTIVITY.OUTLOOK_AT_RISK",
+      "research_question_id": "Q.CW03",
+      "robustness_requirements": [
+        "alternative financial-condition indexes",
+        "expanding versus rolling windows",
+        "equal-information median forecast benchmark",
+        "crisis-exclusion and regime-split estimates"
+      ],
+      "sample_definition": "real-time U.S. GDP, financial, and macro predictors available at each forecast origin",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CW03",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CW03.01"
+      ],
+      "horizon_text": "registered quarterly forecast horizons",
+      "question_id": "Q.CW03",
+      "question_text": "How should current predictors be translated into the conditional distribution and downside tail of future U.S. growth rather than only its mean forecast?",
+      "target_variables": [
+        "V.CW03.GQ"
+      ],
+      "task_types": [
+        "FORECAST",
+        "SCENARIO"
+      ]
+    }
+  ],
+  "record_id": "REV.28B188EA56C1B900.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "WORKFLOW.ACTIVITY.OUTLOOK_AT_RISK",
+          "MODEL.QUANTILE.GROWTH_AT_RISK.V1",
+          "UI.CONDITIONAL_DISTRIBUTION.DENSITY",
+          "POLICY.TAIL_QUANTILE_NOT_RECESSION_PROBABILITY"
+        ],
+        "category": "METHOD_WEB",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of New York",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 1,
+        "publication_date": "2023-02-15",
+        "report_id": "RC.28B188EA56C1",
+        "review_status": "reviewed",
+        "source_catalog_id": "CW03",
+        "source_sha256": "28b188ea56c1b900d6772310b90c20524ceb2cb66348b2a764f9ff3062c08d53",
+        "source_url": "https://libertystreeteconomics.newyorkfed.org/2023/02/what-is-outlook-at-risk/",
+        "status": "reviewed",
+        "title": "What Is Outlook-at-Risk?"
+      },
+      "change_id": "CH.CW03.REPORT",
+      "evidence_ids": [
+        "EV.CW03.01",
+        "EV.CW03.02",
+        "EV.CW03.03",
+        "EV.CW03.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CW03.OUTLOOK_AT_RISK"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.28B188EA56C1",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.28B188EA56C1",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:15.437760Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CW03.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CW03",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CW03.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 28574,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of New York",
+    "jurisdiction_tags": [
+      "US",
+      "growth_at_risk",
+      "inflation_at_risk",
+      "tail_risk",
+      "financial_conditions"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "text/plain",
+    "page_count": 1,
+    "publication_date": "2023-02-15",
+    "source_file": "LOCAL_SNAPSHOT:CW03",
+    "source_id": "SRC.28B188EA56C1B900",
+    "source_sha256": "28b188ea56c1b900d6772310b90c20524ceb2cb66348b2a764f9ff3062c08d53",
+    "title": "What Is Outlook-at-Risk?"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.257754Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:32.670674Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CW03",
+      "at": "2026-07-15T11:22:15.454757Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW03",
+      "at": "2026-07-15T11:22:15.482756Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW03",
+      "at": "2026-07-15T11:22:15.507751Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Conditional quantiles of future real GDP growth, including the downside tenth percentile and the median.",
+      "evidence_ids": [
+        "EV.CW03.01",
+        "EV.CW03.02",
+        "EV.CW03.03"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "future GDP growth quantiles",
+      "provider": "U.S. Bureau of Economic Analysis and model estimates",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "annualized percent",
+      "variable_id": "V.CW03.GQ",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Observed financial-condition state used to explain asymmetric changes in the future growth distribution.",
+      "evidence_ids": [
+        "EV.CW03.02",
+        "EV.CW03.03"
+      ],
+      "frequency": "weekly/monthly",
+      "lag": null,
+      "mapped_factor_id": "F.MONETARY.NFCI",
+      "name": "financial conditions",
+      "provider": "registered U.S. financial-conditions dataset",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized index",
+      "variable_id": "V.CW03.FCI",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Registered activity and inflation controls conditioning the future-growth distribution.",
+      "evidence_ids": [
+        "EV.CW03.02"
+      ],
+      "frequency": "monthly/quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "current macro state",
+      "provider": "official U.S. macroeconomic releases",
+      "release_lag": null,
+      "role": "CONTROL",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "mixed standardized signals",
+      "variable_id": "V.CW03.MACRO",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Coherent probability density fitted across the separately estimated conditional growth quantiles.",
+      "evidence_ids": [
+        "EV.CW03.02",
+        "EV.CW03.03",
+        "EV.CW03.04"
+      ],
+      "frequency": "forecast origin",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "conditional growth density",
+      "provider": "model output",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "probability density",
+      "variable_id": "V.CW03.DENS",
+      "vintage_rule": null
+    }
+  ]
+}

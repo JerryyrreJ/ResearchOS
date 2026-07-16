@@ -1,0 +1,378 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CW07.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Purpose of the GSCPI",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The page presents a single measure intended to summarize the common state of global supply-chain pressure across multiple transportation and survey indicators.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW07",
+        "MR.CW07.SUPPLY_FACTOR"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW07.02",
+      "extraction_confidence": 0.9,
+      "kind": "DATA_SOURCE",
+      "locator_label": "Transportation and PMI inputs",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Ocean and air freight costs are combined with country-level purchasing-manager measures related to delivery times, backlogs, and purchased stocks.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW07",
+        "MR.CW07.SUPPLY_FACTOR"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW07.03",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Common-factor construction",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Standardized indicators are combined through a factor framework, with demand-related influences accounted for so the resulting index is interpreted as supply pressure.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW07",
+        "MR.CW07.SUPPLY_FACTOR"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW07.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Index interpretation",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The index is expressed in historical standard deviations, depends on coverage and loading stability, and does not by itself quantify causal pass-through into U.S. consumer prices.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW07",
+        "MR.CW07.SUPPLY_FACTOR"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The New York Fed Global Supply Chain Pressure Index compresses transportation-cost and manufacturing-survey indicators into a standardized latent measure of global supply pressure. The construction is valuable as a cost-push factor only if shipping and PMI inputs, demand adjustment, missing observations, normalization, loadings, and pandemic-regime sensitivity remain visible; the index is not itself an identified estimate of U.S. inflation pass-through.",
+  "jurisdiction_fit": "US_ADAPTABLE",
+  "method_routes": [
+    {
+      "aggregation_role": "external-supply state factor; any U.S. inflation pass-through requires a separate identified or predictive node",
+      "control_variable_ids": [
+        "V.CW07.DEMAND"
+      ],
+      "dependent_variable_ids": [
+        "V.CW07.GSCPI"
+      ],
+      "diagnostic_requirements": [
+        "factor loading and eigenvalue stability",
+        "input coverage and missingness map",
+        "normalization-base sensitivity",
+        "state-space or factor residual checks"
+      ],
+      "downstream_refs": [],
+      "estimand": "common standardized supply-chain pressure in the observed shipping and PMI panel",
+      "evidence_ids": [
+        "EV.CW07.01",
+        "EV.CW07.02",
+        "EV.CW07.03",
+        "EV.CW07.04"
+      ],
+      "formula": "standardize X_t; remove registered demand component; estimate common factor GSCPI_t=lambda'X_t+e_t",
+      "free_data_feasibility": "PARTIAL",
+      "identification_strategy": "latent-factor extraction after registered demand adjustment; not causal inflation identification",
+      "identifying_assumptions": [
+        "standardized inputs share a stable common supply component",
+        "input direction and normalization are fixed by recipe",
+        "missing indicators and changing country coverage are handled without future information"
+      ],
+      "independent_variable_ids": [
+        "V.CW07.SHIP",
+        "V.CW07.PMI"
+      ],
+      "lane_ref": "US.SUPPLY_EXTERNAL",
+      "mechanism_ref": "MECH.PRICES.GLOBAL_SUPPLY_COST_PRESSURE",
+      "method_family": "demand-adjusted dynamic factor index",
+      "method_route_id": "MR.CW07.SUPPLY_FACTOR",
+      "node_ref": "N.CANDIDATE.SUPPLY.GSCPI_FACTOR",
+      "research_question_id": "Q.CW07",
+      "robustness_requirements": [
+        "shipping-only and PMI-only factors",
+        "leave-one-country and leave-one-input-family-out",
+        "pre-pandemic and post-pandemic loadings",
+        "real-time versus revised input vintages"
+      ],
+      "sample_definition": "monthly global shipping and PMI indicators available at each index vintage",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CW07",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CW07.01"
+      ],
+      "horizon_text": "current global supply state and near-term cost pressure",
+      "question_id": "Q.CW07",
+      "question_text": "What common global supply-chain pressure is contained in transportation-cost and manufacturing-survey indicators, separate from broad demand conditions?",
+      "target_variables": [
+        "V.CW07.GSCPI"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "DRIVER"
+      ]
+    }
+  ],
+  "record_id": "REV.425AA667AFF8E51F.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.FACTOR.GSCPI_STYLE.V1",
+          "FACTOR.SUPPLY.GLOBAL_CHAIN_PRESSURE",
+          "MECH.PRICES.GLOBAL_COST_PUSH",
+          "POLICY.FACTOR.NOT_CAUSAL_PASS_THROUGH"
+        ],
+        "category": "METHOD_WEB",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of New York",
+        "jurisdiction_fit": "US_ADAPTABLE",
+        "page_count": 1,
+        "publication_date": null,
+        "report_id": "RC.425AA667AFF8",
+        "review_status": "reviewed",
+        "source_catalog_id": "CW07",
+        "source_sha256": "425aa667aff8e51f5b9c8df3a67042d4398d1bdf1575fcd394e6854f96993db1",
+        "source_url": "https://www.newyorkfed.org/research/policy/gscpi",
+        "status": "reviewed",
+        "title": "Global Supply Chain Pressure Index"
+      },
+      "change_id": "CH.CW07.REPORT",
+      "evidence_ids": [
+        "EV.CW07.01",
+        "EV.CW07.02",
+        "EV.CW07.03",
+        "EV.CW07.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CW07.SUPPLY_FACTOR"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.425AA667AFF8",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.425AA667AFF8",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:15.860246Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CW07.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CW07",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CW07.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 6880,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of New York",
+    "jurisdiction_tags": [
+      "US",
+      "supply_chains",
+      "transportation_costs",
+      "pmi",
+      "factor_model",
+      "inflation"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "text/plain",
+    "page_count": 1,
+    "publication_date": null,
+    "source_file": "LOCAL_SNAPSHOT:CW07",
+    "source_id": "SRC.425AA667AFF8E51F",
+    "source_sha256": "425aa667aff8e51f5b9c8df3a67042d4398d1bdf1575fcd394e6854f96993db1",
+    "title": "Global Supply Chain Pressure Index"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.322257Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:32.745129Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CW07",
+      "at": "2026-07-15T11:22:15.876331Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW07",
+      "at": "2026-07-15T11:22:15.902535Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW07",
+      "at": "2026-07-15T11:22:15.930159Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Standardized common factor summarizing global transportation and manufacturing supply-chain pressure.",
+      "evidence_ids": [
+        "EV.CW07.01",
+        "EV.CW07.03",
+        "EV.CW07.04"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "Global Supply Chain Pressure Index",
+      "provider": "Federal Reserve Bank of New York",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "historical standard deviations",
+      "variable_id": "V.CW07.GSCPI",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Ocean-container, bulk-shipping, and air-freight cost measures representing international logistics pressure.",
+      "evidence_ids": [
+        "EV.CW07.02",
+        "EV.CW07.03"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "transportation cost indicators",
+      "provider": "commercial and market transportation sources",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized component indexes",
+      "variable_id": "V.CW07.SHIP",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Country-level PMI delivery-time, backlog, and purchased-stock measures carrying supply-chain information.",
+      "evidence_ids": [
+        "EV.CW07.02",
+        "EV.CW07.03"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "manufacturing supply indicators",
+      "provider": "purchasing-manager surveys",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized diffusion indexes",
+      "variable_id": "V.CW07.PMI",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Registered demand-related survey information removed or controlled so the factor is not merely a global demand index.",
+      "evidence_ids": [
+        "EV.CW07.03"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "global demand controls",
+      "provider": "purchasing-manager surveys",
+      "release_lag": null,
+      "role": "CONTROL",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized indexes",
+      "variable_id": "V.CW07.DEMAND",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Subsequent U.S. goods or aggregate inflation used only in a separate pass-through model.",
+      "evidence_ids": [
+        "EV.CW07.04"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "U.S. inflation outcome",
+      "provider": "U.S. Bureau of Labor Statistics or U.S. Bureau of Economic Analysis",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CW07.USINF",
+      "vintage_rule": null
+    }
+  ]
+}

@@ -1,0 +1,379 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CF09.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Introduction and mechanism overview",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 8,
+      "page_start": 2,
+      "paraphrase": "The framework asks how agency frictions make credit conditions endogenous to borrower net worth and amplify aggregate fluctuations.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF09",
+        "MR.CF09.FIN_ACCEL"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF09.02",
+      "extraction_confidence": 0.9,
+      "kind": "MECHANISM",
+      "locator_label": "Optimal financial contract and capital demand",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 20,
+      "page_start": 9,
+      "paraphrase": "Costly verification creates an external-finance premium that declines with borrower net worth; capital demand therefore responds to balance-sheet strength.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF09",
+        "MR.CF09.FIN_ACCEL"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF09.03",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "General equilibrium and log-linear model",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 38,
+      "page_start": 21,
+      "paraphrase": "Entrepreneurial net worth, capital returns, investment adjustment, contracts, households, firms, and monetary policy are combined in a log-linear general-equilibrium system.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF09",
+        "MR.CF09.FIN_ACCEL"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF09.04",
+      "extraction_confidence": 0.9,
+      "kind": "ROBUSTNESS",
+      "locator_label": "Calibration and shock simulations",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 55,
+      "page_start": 39,
+      "paraphrase": "Responses with and without the accelerator are compared under monetary, technology, demand, and wealth shocks and under alternative investment delays and heterogeneity.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF09",
+        "MR.CF09.FIN_ACCEL"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "Bernanke, Gertler, and Gilchrist build the financial accelerator from costly state verification and borrower net worth. Lower net worth raises the external-finance premium, depresses investment, and feeds back into asset prices and aggregate demand, amplifying monetary, technology, demand, and wealth shocks. The chapter supplies a structural mechanism and simulation discipline, but quantitative deployment requires calibrated contracts and observable proxy mappings that are not identified by the theory alone.",
+  "jurisdiction_fit": "US_ADAPTABLE",
+  "method_routes": [
+    {
+      "aggregation_role": "mechanism prior for credit amplification; cannot independently quantify current risk",
+      "control_variable_ids": [],
+      "dependent_variable_ids": [
+        "V.CF09.INV",
+        "V.CF09.OUT"
+      ],
+      "diagnostic_requirements": [
+        "steady-state and determinacy checks",
+        "impulse-response add-up",
+        "model moment comparison",
+        "premium/net-worth proxy validation"
+      ],
+      "downstream_refs": [],
+      "estimand": "model-implied incremental amplification of an identified shock with credit frictions relative to the frictionless counterfactual",
+      "evidence_ids": [
+        "EV.CF09.01",
+        "EV.CF09.02",
+        "EV.CF09.03",
+        "EV.CF09.04"
+      ],
+      "formula": "EFP_t=S(Q_t K_{t+1}/N_t), S'>0; investment and net worth evolve jointly with the DSGE equilibrium",
+      "free_data_feasibility": "PARTIAL",
+      "identification_strategy": "calibrated structural counterfactual; empirical use requires separately validated proxy and shock mappings",
+      "identifying_assumptions": [
+        "costly state verification contract",
+        "external-finance premium decreases with borrower net worth",
+        "general-equilibrium closure and calibrated shock processes"
+      ],
+      "independent_variable_ids": [
+        "V.CF09.NW",
+        "V.CF09.EFP",
+        "V.CF09.SHOCK"
+      ],
+      "lane_ref": "US.FIN_STABILITY",
+      "mechanism_ref": "MECH.CANDIDATE.FINANCIAL_ACCELERATOR",
+      "method_family": "financial-accelerator DSGE mechanism and counterfactual simulation",
+      "method_route_id": "MR.CF09.FIN_ACCEL",
+      "node_ref": "N.CANDIDATE.FIN_ACCEL.STRUCTURAL",
+      "research_question_id": "Q.CF09",
+      "robustness_requirements": [
+        "with-versus-without friction comparison",
+        "alternative contract elasticity",
+        "investment-delay and heterogeneity variants",
+        "reduced-form credit-spread evidence comparison"
+      ],
+      "sample_definition": "theoretical/calibrated model; U.S. deployment requires a declared calibration or estimation sample",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CF09",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CF09.01"
+      ],
+      "horizon_text": "business-cycle simulation horizons",
+      "question_id": "Q.CF09",
+      "question_text": "How do borrower balance sheets and external-finance premia amplify conventional macroeconomic shocks into larger movements in investment, output, and asset prices?",
+      "target_variables": [
+        "V.CF09.INV",
+        "V.CF09.OUT"
+      ],
+      "task_types": [
+        "CAUSAL",
+        "SCENARIO",
+        "ASSET_TRANSMISSION"
+      ]
+    }
+  ],
+  "record_id": "REV.E48913777B4C0A18.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MECH.FINANCIAL.ACCELERATOR",
+          "MODEL.DSGE.FIN_ACCEL.BLOCKED",
+          "FACTOR.FIN.EXTERNAL_FINANCE_PREMIUM",
+          "DIAGNOSTIC.DSGE.FRICTION_COUNTERFACTUAL"
+        ],
+        "category": "FOUNDATION_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "National Bureau of Economic Research / authors",
+        "jurisdiction_fit": "US_ADAPTABLE",
+        "page_count": 75,
+        "publication_date": "1998-03-01",
+        "report_id": "RC.E48913777B4C",
+        "review_status": "reviewed",
+        "source_catalog_id": "CF09",
+        "source_sha256": "e48913777b4c0a18b15d6a1d2f5f98a96317ba5c87c785dd8ddc5dedbfdbefdf",
+        "source_url": "https://www.nber.org/system/files/working_papers/w6455/w6455.pdf",
+        "status": "reviewed",
+        "title": "The Financial Accelerator in a Quantitative Business Cycle Framework"
+      },
+      "change_id": "CH.CF09.REPORT",
+      "evidence_ids": [
+        "EV.CF09.01",
+        "EV.CF09.02",
+        "EV.CF09.03",
+        "EV.CF09.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CF09.FIN_ACCEL"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.E48913777B4C",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.E48913777B4C",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:13.981986Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CF09.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CF09",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CF09.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 3125195,
+    "copied_into_repository": false,
+    "institution": "National Bureau of Economic Research / authors",
+    "jurisdiction_tags": [
+      "US",
+      "financial_accelerator",
+      "external_finance_premium",
+      "net_worth",
+      "investment",
+      "dsge"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 75,
+    "publication_date": "1998-03-01",
+    "source_file": "LOCAL_SNAPSHOT:CF09",
+    "source_id": "SRC.E48913777B4C0A18",
+    "source_sha256": "e48913777b4c0a18b15d6a1d2f5f98a96317ba5c87c785dd8ddc5dedbfdbefdf",
+    "title": "The Financial Accelerator in a Quantitative Business Cycle Framework"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.125327Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:58:56.327887Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CF09",
+      "at": "2026-07-15T11:22:13.997085Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF09",
+      "at": "2026-07-15T11:22:14.020581Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF09",
+      "at": "2026-07-15T11:22:14.046258Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Aggregate capital expenditure responding to the expected return and external-finance premium.",
+      "evidence_ids": [
+        "EV.CF09.02",
+        "EV.CF09.03"
+      ],
+      "frequency": "model period",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "investment",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "log deviation",
+      "variable_id": "V.CF09.INV",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Aggregate real output in the general-equilibrium model.",
+      "evidence_ids": [
+        "EV.CF09.03",
+        "EV.CF09.04"
+      ],
+      "frequency": "model period",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "output",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "log deviation",
+      "variable_id": "V.CF09.OUT",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Internal borrower resources that reduce incentive and monitoring frictions.",
+      "evidence_ids": [
+        "EV.CF09.01",
+        "EV.CF09.02"
+      ],
+      "frequency": "model period",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "entrepreneur net worth",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "real value or log deviation",
+      "variable_id": "V.CF09.NW",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Wedge between the cost of external funds and the risk-free rate, decreasing in net worth relative to capital needs.",
+      "evidence_ids": [
+        "EV.CF09.02"
+      ],
+      "frequency": "model period",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "external finance premium",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percentage points",
+      "variable_id": "V.CF09.EFP",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Declared monetary, technology, demand, or wealth innovation used in the simulation.",
+      "evidence_ids": [
+        "EV.CF09.04"
+      ],
+      "frequency": "model period",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "structural macro shock",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "TREATMENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standard deviations",
+      "variable_id": "V.CF09.SHOCK",
+      "vintage_rule": null
+    }
+  ]
+}

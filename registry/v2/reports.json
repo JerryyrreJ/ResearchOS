@@ -1,0 +1,94 @@
+{
+  "registry_type": "reports",
+  "registry_version": "0.2.0",
+  "items": [
+    {
+      "report_id": "R01",
+      "title": "Mainstreaming Nature into World Bank Macroeconomic Models",
+      "institution": "World Bank",
+      "source_file": "P180275-13b364e3-f045-47f2-97de-f9218682df98.pdf",
+      "review_status": "reviewed",
+      "status": "blocked"
+    },
+    {
+      "report_id": "R02",
+      "title": "Macroeconomic Implications of Climate Change Impacts and Adaptation Options",
+      "institution": "World Bank",
+      "source_file": "content.txt",
+      "review_status": "reviewed",
+      "status": "blocked"
+    },
+    {
+      "report_id": "R03",
+      "title": "Commodity Markets Outlook, October 2025",
+      "institution": "World Bank",
+      "source_file": "CMO-October-2025.pdf",
+      "review_status": "reviewed",
+      "status": "reviewed"
+    },
+    {
+      "report_id": "R04",
+      "title": "Global Economic Prospects, June 2025",
+      "institution": "World Bank",
+      "source_file": "GEP-June-2025.pdf",
+      "review_status": "reviewed",
+      "status": "reviewed"
+    },
+    {
+      "report_id": "R05",
+      "title": "Global Economic Prospects, January 2026",
+      "institution": "World Bank",
+      "source_file": "Global Economic Prospects, January 2026.pdf",
+      "review_status": "reviewed",
+      "status": "reviewed"
+    },
+    {
+      "report_id": "R06",
+      "title": "Indonesia Economic Prospects, June 2026",
+      "institution": "World Bank",
+      "source_file": "content2.txt",
+      "review_status": "reviewed",
+      "status": "reviewed"
+    },
+    {
+      "report_id": "R07",
+      "title": "BIS Annual Economic Report 2026",
+      "institution": "BIS",
+      "source_file": "ar2026e.pdf",
+      "review_status": "reviewed",
+      "status": "reviewed"
+    },
+    {
+      "report_id": "R08",
+      "title": "Global Financial Stability Report, April 2026",
+      "institution": "IMF",
+      "source_file": "text.pdf",
+      "review_status": "reviewed",
+      "status": "active"
+    },
+    {
+      "report_id": "R09",
+      "title": "Monetary Policy Report, November 2025",
+      "institution": "Bank of England",
+      "source_file": "monetary-policy-report-november-2025.pdf",
+      "review_status": "reviewed",
+      "status": "reviewed"
+    },
+    {
+      "report_id": "R10",
+      "title": "ScenarioEco Nowcasts, 2026-07-06",
+      "institution": "BNP Paribas Economic Research",
+      "source_file": "ScénarioÉcoNowcasts_06.07.2026_ENG.pdf",
+      "review_status": "reviewed",
+      "status": "evidence_only"
+    },
+    {
+      "report_id": "R11",
+      "title": "Tracking the Effects of AI on the US Labor Market",
+      "institution": "Deutsche Bank Research",
+      "source_file": "Tracking_the_effects_of_AI_on_the_US_labor_market.pdf",
+      "review_status": "reviewed",
+      "status": "reviewed"
+    }
+  ]
+}

@@ -1,0 +1,429 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CF02.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Abstract through problem definition",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 9,
+      "page_start": 5,
+      "paraphrase": "The paper defines nowcasting as estimating current output and inflation from incomplete, staggered, and revisable information sets.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF02",
+        "MR.CF02.DFM_NOWCAST",
+        "MR.CF02.NEWS_DECOMP"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF02.02",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Econometric methodology",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 15,
+      "page_start": 12,
+      "paraphrase": "A parametric dynamic factor state-space model and Kalman filter map a large monthly panel into factors, target projections, and forecast uncertainty under ragged-edge missingness.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF02",
+        "MR.CF02.DFM_NOWCAST",
+        "MR.CF02.NEWS_DECOMP"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF02.03",
+      "extraction_confidence": 0.9,
+      "kind": "AGGREGATION",
+      "locator_label": "Data-release news",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 12,
+      "page_start": 9,
+      "paraphrase": "Each release changes the information set; the resulting forecast revision is attributed to standardized news and its model-implied weight, separating signal content from release timing.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF02",
+        "MR.CF02.DFM_NOWCAST",
+        "MR.CF02.NEWS_DECOMP"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF02.04",
+      "extraction_confidence": 0.9,
+      "kind": "ROBUSTNESS",
+      "locator_label": "Empirical evaluation",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 30,
+      "page_start": 15,
+      "paraphrase": "Release blocks are compared by effects on nowcast level and precision, with recursive real-time timing and hard-versus-soft data distinctions rather than a full-sample fit comparison.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF02",
+        "MR.CF02.DFM_NOWCAST",
+        "MR.CF02.NEWS_DECOMP"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "Giannone, Reichlin, and Small reconstruct the real-time U.S. nowcasting problem as an expanding information set with staggered releases and revisions. A dynamic factor/state-space model handles the ragged edge; Kalman filtering produces nowcasts and uncertainty, while forecast revisions are decomposed into release-specific news. The paper therefore supplies both an executable nowcast recipe and a lineage contract for what was knowable at every release time.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "primary real-time nowcast node",
+      "control_variable_ids": [],
+      "dependent_variable_ids": [
+        "V.CF02.GDP",
+        "V.CF02.INF"
+      ],
+      "diagnostic_requirements": [
+        "Kalman innovation checks",
+        "factor/loading stability",
+        "ragged-edge coverage",
+        "real-time RMSE and interval coverage"
+      ],
+      "downstream_refs": [],
+      "estimand": "conditional mean and variance of current-quarter GDP or inflation given the vintage information set",
+      "evidence_ids": [
+        "EV.CF02.01",
+        "EV.CF02.02",
+        "EV.CF02.04"
+      ],
+      "formula": "X_t=Lambda F_t+xi_t; F_t=A F_{t-1}+u_t; y_q=mu+B F_t+epsilon_q",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "predictive state-space measurement and transition system; no structural shock claim",
+      "identifying_assumptions": [
+        "release calendar and vintages are respected",
+        "missing observations are conditionally handled by the state-space system",
+        "model parameters are estimated only from information available by the forecast origin"
+      ],
+      "independent_variable_ids": [
+        "V.CF02.X",
+        "V.CF02.F"
+      ],
+      "lane_ref": "US.ACTIVITY",
+      "mechanism_ref": "MECH.ACTIVITY.BROAD_STATE",
+      "method_family": "dynamic factor state-space nowcast with Kalman filtering",
+      "method_route_id": "MR.CF02.DFM_NOWCAST",
+      "node_ref": "N.CANDIDATE.NOWCAST.RAGGED_DFM",
+      "research_question_id": "Q.CF02",
+      "robustness_requirements": [
+        "alternative release blocks",
+        "leave-one-block-out nowcasts",
+        "pseudo-real-time versus true-vintage comparison",
+        "alternative factor dimensions"
+      ],
+      "sample_definition": "vintage-aligned U.S. monthly indicators and quarterly targets at sequential within-quarter forecast origins",
+      "upstream_refs": []
+    },
+    {
+      "aggregation_role": "explanation layer for the DFM nowcast; never an independent macro conclusion",
+      "control_variable_ids": [
+        "V.CF02.F"
+      ],
+      "dependent_variable_ids": [
+        "V.CF02.GDP",
+        "V.CF02.INF"
+      ],
+      "diagnostic_requirements": [
+        "contribution add-up",
+        "pre-release expectation error",
+        "revision and precision attribution",
+        "release-timing audit"
+      ],
+      "downstream_refs": [],
+      "estimand": "contribution of each release block to a nowcast revision and uncertainty reduction",
+      "evidence_ids": [
+        "EV.CF02.01",
+        "EV.CF02.03",
+        "EV.CF02.04"
+      ],
+      "formula": "Delta forecast = sum_j weight_j * (release_j - E_{t-}[release_j])",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "accounting decomposition conditional on the fitted state-space model and prior information set",
+      "identifying_assumptions": [
+        "release order is exact",
+        "pre-release expectations are model-generated without hindsight",
+        "news contributions sum to the model revision"
+      ],
+      "independent_variable_ids": [
+        "V.CF02.NEWS"
+      ],
+      "lane_ref": "US.ACTIVITY",
+      "mechanism_ref": "MECH.ACTIVITY.BROAD_STATE",
+      "method_family": "model-consistent news decomposition",
+      "method_route_id": "MR.CF02.NEWS_DECOMP",
+      "node_ref": "N.CANDIDATE.NOWCAST.NEWS_DECOMP",
+      "research_question_id": "Q.CF02",
+      "robustness_requirements": [
+        "block-order sensitivity",
+        "exclude survey or hard-data blocks",
+        "vintage-revision sensitivity"
+      ],
+      "sample_definition": "each scheduled data release event within the nowcast calendar",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CF02",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CF02.01"
+      ],
+      "horizon_text": "current quarter and near term",
+      "question_id": "Q.CF02",
+      "question_text": "How should current-quarter U.S. GDP and inflation nowcasts be updated and attributed as heterogeneous macro data releases arrive in real time?",
+      "target_variables": [
+        "V.CF02.GDP",
+        "V.CF02.INF"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "FORECAST",
+        "DRIVER"
+      ]
+    }
+  ],
+  "record_id": "REV.079EF5054D824C04.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.DFM.RAGGED_EDGE.V1",
+          "NODE.NOWCAST.NEWS_DECOMPOSITION",
+          "DATASET.RELEASE_CALENDAR.VINTAGES",
+          "DIAGNOSTIC.NOWCAST.INTERVAL_COVERAGE"
+        ],
+        "category": "FOUNDATION_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "European Central Bank / Federal Reserve authors",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 50,
+        "publication_date": "2006-05-01",
+        "report_id": "RC.079EF5054D82",
+        "review_status": "reviewed",
+        "source_catalog_id": "CF02",
+        "source_sha256": "079ef5054d824c047d049b9d154c36e45fa27d22be2883c0515933a86d9e1ef2",
+        "source_url": "https://www.ecb.europa.eu/pub/pdf/scpwps/ecbwp633.pdf",
+        "status": "reviewed",
+        "title": "Nowcasting GDP and Inflation: The Real-Time Informational Content of Macroeconomic Data Releases"
+      },
+      "change_id": "CH.CF02.REPORT",
+      "evidence_ids": [
+        "EV.CF02.01",
+        "EV.CF02.02",
+        "EV.CF02.03",
+        "EV.CF02.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CF02.DFM_NOWCAST",
+        "MR.CF02.NEWS_DECOMP"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.079EF5054D82",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.079EF5054D82",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:13.304066Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CF02.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CF02",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CF02.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 744959,
+    "copied_into_repository": false,
+    "institution": "European Central Bank / Federal Reserve authors",
+    "jurisdiction_tags": [
+      "US",
+      "nowcasting",
+      "ragged_edge",
+      "news_decomposition",
+      "release_calendar",
+      "dynamic_factor"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 50,
+    "publication_date": "2006-05-01",
+    "source_file": "LOCAL_SNAPSHOT:CF02",
+    "source_id": "SRC.079EF5054D824C04",
+    "source_sha256": "079ef5054d824c047d049b9d154c36e45fa27d22be2883c0515933a86d9e1ef2",
+    "title": "Nowcasting GDP and Inflation: The Real-Time Informational Content of Macroeconomic Data Releases"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.082982Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:58:44.025169Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CF02",
+      "at": "2026-07-15T11:22:13.317601Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF02",
+      "at": "2026-07-15T11:22:13.343332Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF02",
+      "at": "2026-07-15T11:22:13.371537Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Current-quarter real GDP growth being nowcast before the official release.",
+      "evidence_ids": [
+        "EV.CF02.01",
+        "EV.CF02.02"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": "F.ACTIVITY.REAL_GDP",
+      "name": "real GDP growth",
+      "provider": "U.S. Bureau of Economic Analysis",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "annualized percent",
+      "variable_id": "V.CF02.GDP",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Current-quarter inflation measure nowcast from the available price and activity panel.",
+      "evidence_ids": [
+        "EV.CF02.01",
+        "EV.CF02.02"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "inflation target",
+      "provider": "European Central Bank / Federal Reserve authors",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "annualized percent",
+      "variable_id": "V.CF02.INF",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Monthly indicators observed on their actual release calendar with a ragged edge and vintage-specific values.",
+      "evidence_ids": [
+        "EV.CF02.01",
+        "EV.CF02.02"
+      ],
+      "frequency": "monthly mixed release dates",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "real-time monthly panel",
+      "provider": "European Central Bank / Federal Reserve authors",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized",
+      "variable_id": "V.CF02.X",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Latent state summarizing common dynamics in the real-time panel.",
+      "evidence_ids": [
+        "EV.CF02.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "dynamic common factors",
+      "provider": "European Central Bank / Federal Reserve authors",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "index",
+      "variable_id": "V.CF02.F",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Released value minus the model expectation immediately before that release.",
+      "evidence_ids": [
+        "EV.CF02.03"
+      ],
+      "frequency": "release event",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "release news",
+      "provider": "European Central Bank / Federal Reserve authors",
+      "release_lag": null,
+      "role": "OTHER",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized surprise",
+      "variable_id": "V.CF02.NEWS",
+      "vintage_rule": null
+    }
+  ]
+}

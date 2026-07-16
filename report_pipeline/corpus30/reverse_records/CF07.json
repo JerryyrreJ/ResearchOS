@@ -1,0 +1,379 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CF07.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Overview and baseline model",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 12,
+      "page_start": 2,
+      "paraphrase": "The paper asks how a central bank should respond to shocks when private decisions are forward-looking and nominal rigidities create an inflation-output tradeoff.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF07",
+        "MR.CF07.NK_POLICY"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF07.02",
+      "extraction_confidence": 0.9,
+      "kind": "MECHANISM",
+      "locator_label": "IS curve, Phillips curve, and policy rule",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 30,
+      "page_start": 12,
+      "paraphrase": "Expected real interest rates influence the output gap, expected inflation and marginal cost determine current inflation, and the policy rule closes the system.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF07",
+        "MR.CF07.NK_POLICY"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF07.03",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Optimal policy under discretion and commitment",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 55,
+      "page_start": 30,
+      "paraphrase": "Alternative policy regimes solve different constrained stabilization problems; commitment changes expectations and therefore the dynamic response to shocks.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF07",
+        "MR.CF07.NK_POLICY"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF07.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Extensions and interpretation",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 95,
+      "page_start": 80,
+      "paraphrase": "Policy conclusions depend on structural parameters, shock definitions, information, and model closure; the equations require empirical estimation or calibration before quantitative use.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF07",
+        "MR.CF07.NK_POLICY"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "Clarida, Galí, and Gertler organize New Keynesian monetary analysis around a forward-looking IS relation, a Phillips curve, and an interest-rate rule. The framework explains the transmission from expected real rates and marginal cost to output and inflation, distinguishes discretion from commitment, and shows why policy evaluation is conditional on structural parameters and expectations. It is a mechanism and counterfactual scaffold, not direct empirical evidence by itself.",
+  "jurisdiction_fit": "US_ADAPTABLE",
+  "method_routes": [
+    {
+      "aggregation_role": "mechanism prior and counterfactual scaffold; cannot independently support a current-state claim",
+      "control_variable_ids": [
+        "V.CF07.EXPECT"
+      ],
+      "dependent_variable_ids": [
+        "V.CF07.PI",
+        "V.CF07.XGAP"
+      ],
+      "diagnostic_requirements": [
+        "determinacy and eigenvalue conditions",
+        "parameter plausibility",
+        "shock-decomposition add-up",
+        "model-to-data moment comparison"
+      ],
+      "downstream_refs": [],
+      "estimand": "model-implied paths of inflation and the output gap under a declared policy rule and shock sequence",
+      "evidence_ids": [
+        "EV.CF07.01",
+        "EV.CF07.02",
+        "EV.CF07.03",
+        "EV.CF07.04"
+      ],
+      "formula": "x_t=E_t x_{t+1}-sigma^{-1}(i_t-E_t pi_{t+1}-r_t^n); pi_t=beta E_t pi_{t+1}+kappa x_t+u_t",
+      "free_data_feasibility": "PARTIAL",
+      "identification_strategy": "structural counterfactual conditional on externally estimated or calibrated parameters; no reduced-form causal estimate",
+      "identifying_assumptions": [
+        "model closure and rational/model-consistent expectations",
+        "declared nominal rigidity and welfare objective",
+        "policy rule and shock process fixed before simulation"
+      ],
+      "independent_variable_ids": [
+        "V.CF07.RATE",
+        "V.CF07.COST"
+      ],
+      "lane_ref": "US.MONETARY",
+      "mechanism_ref": "MECH.CANDIDATE.NEW_KEYNESIAN.POLICY",
+      "method_family": "linearized New Keynesian structural system",
+      "method_route_id": "MR.CF07.NK_POLICY",
+      "node_ref": "N.CANDIDATE.NK.POLICY_COUNTERFACTUAL",
+      "research_question_id": "Q.CF07",
+      "robustness_requirements": [
+        "discretion versus commitment",
+        "alternative policy-rule coefficients",
+        "parameter and shock-persistence sensitivity",
+        "comparison with reduced-form evidence"
+      ],
+      "sample_definition": "not applicable to the theoretical mechanism; empirical deployment requires a separately registered estimation sample",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CF07",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CF07.01"
+      ],
+      "horizon_text": "multi-period structural dynamics",
+      "question_id": "Q.CF07",
+      "question_text": "What structural mechanism links monetary policy, expectations, the output gap, and inflation, and what policy rules stabilize the economy under demand and cost-push shocks?",
+      "target_variables": [
+        "V.CF07.PI",
+        "V.CF07.XGAP"
+      ],
+      "task_types": [
+        "CAUSAL",
+        "SCENARIO",
+        "ASSET_TRANSMISSION"
+      ]
+    }
+  ],
+  "record_id": "REV.E233CDC8504249A2.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MECH.NEW_KEYNESIAN.IS_PC_RULE",
+          "MODEL.NK.LINEAR_COUNTERFACTUAL.BLOCKED",
+          "DIAGNOSTIC.NK.DETERMINACY",
+          "POLICY.STRUCTURAL_MODEL.NOT_EMPIRICAL_EVIDENCE"
+        ],
+        "category": "FOUNDATION_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "National Bureau of Economic Research / authors",
+        "jurisdiction_fit": "US_ADAPTABLE",
+        "page_count": 105,
+        "publication_date": "1999-05-01",
+        "report_id": "RC.E233CDC85042",
+        "review_status": "reviewed",
+        "source_catalog_id": "CF07",
+        "source_sha256": "e233cdc8504249a201a6333976f0ed81284a9f22b449973a989ee119123d929e",
+        "source_url": "https://www.nber.org/system/files/working_papers/w7147/w7147.pdf",
+        "status": "reviewed",
+        "title": "The Science of Monetary Policy: A New Keynesian Perspective"
+      },
+      "change_id": "CH.CF07.REPORT",
+      "evidence_ids": [
+        "EV.CF07.01",
+        "EV.CF07.02",
+        "EV.CF07.03",
+        "EV.CF07.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CF07.NK_POLICY"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.E233CDC85042",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.E233CDC85042",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:13.787684Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CF07.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CF07",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CF07.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 688094,
+    "copied_into_repository": false,
+    "institution": "National Bureau of Economic Research / authors",
+    "jurisdiction_tags": [
+      "US",
+      "new_keynesian",
+      "policy_rule",
+      "is_curve",
+      "phillips_curve",
+      "expectations"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 105,
+    "publication_date": "1999-05-01",
+    "source_file": "LOCAL_SNAPSHOT:CF07",
+    "source_id": "SRC.E233CDC8504249A2",
+    "source_sha256": "e233cdc8504249a201a6333976f0ed81284a9f22b449973a989ee119123d929e",
+    "title": "The Science of Monetary Policy: A New Keynesian Perspective"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.108463Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:58:55.083087Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CF07",
+      "at": "2026-07-15T11:22:13.807751Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF07",
+      "at": "2026-07-15T11:22:13.829818Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF07",
+      "at": "2026-07-15T11:22:13.855920Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Deviation of inflation from the policy objective in the New Keynesian Phillips curve.",
+      "evidence_ids": [
+        "EV.CF07.02"
+      ],
+      "frequency": "model period",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "inflation",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percentage points",
+      "variable_id": "V.CF07.PI",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Deviation of output from its flexible-price or natural level.",
+      "evidence_ids": [
+        "EV.CF07.02"
+      ],
+      "frequency": "model period",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "output gap",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CF07.XGAP",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Central-bank instrument that changes the expected real interest rate.",
+      "evidence_ids": [
+        "EV.CF07.02"
+      ],
+      "frequency": "model period",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "nominal policy rate",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "TREATMENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CF07.RATE",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Exogenous wedge shifting inflation conditional on activity and expectations.",
+      "evidence_ids": [
+        "EV.CF07.02",
+        "EV.CF07.03"
+      ],
+      "frequency": "model period",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "cost-push shock",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percentage points",
+      "variable_id": "V.CF07.COST",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Model-consistent expectations of future inflation and activity.",
+      "evidence_ids": [
+        "EV.CF07.02",
+        "EV.CF07.03"
+      ],
+      "frequency": "model period",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "private expectations",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "mixed",
+      "variable_id": "V.CF07.EXPECT",
+      "vintage_rule": null
+    }
+  ]
+}
