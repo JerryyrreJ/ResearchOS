@@ -1,0 +1,64 @@
+{
+  "contract_version": "0.1.0-frozen",
+  "bundle_id": "EVIDENCE_FIXTURE_PARTIAL",
+  "request_id": "TOOL_REQ_FIXTURE_PARTIAL",
+  "research_job_id": "JOB_FIXTURE_PARTIAL",
+  "status": "PARTIAL",
+  "coverage": "PARTIAL",
+  "evidence_type": "PREDICTIVE",
+  "engine_claim": "Fixture only: one registered predictive route completed while a second route failed, so coverage remains partial.",
+  "model_runs": [
+    {
+      "model_run_id": "RUN_FIXTURE_DFM",
+      "model_recipe_id": "M.DFM_NOWCAST.V1",
+      "status": "SUCCESS",
+      "evidence_type": "PREDICTIVE",
+      "summary": "Contract fixture only; no real nowcast is asserted.",
+      "result_hash": "6666666666666666666666666666666666666666666666666666666666666666"
+    },
+    {
+      "model_run_id": "RUN_FIXTURE_GAR",
+      "model_recipe_id": "M.GROWTH_AT_RISK.V1",
+      "status": "FAILED",
+      "evidence_type": "PREDICTIVE",
+      "summary": "Fixture failure retained: the minimum effective sample was not met.",
+      "result_hash": null
+    }
+  ],
+  "diagnostics": [
+    {
+      "diagnostic_id": "DIAG_FIXTURE_SAMPLE",
+      "status": "FAIL",
+      "blocking": true,
+      "interpretation": "The registered minimum-sample rule blocks the failed recipe only."
+    }
+  ],
+  "robustness": [],
+  "evidence_items": [
+    {
+      "evidence_id": "ITEM_FIXTURE_PARTIAL",
+      "direction": "MIXED",
+      "source_model_run_ids": ["RUN_FIXTURE_DFM"]
+    }
+  ],
+  "falsifiers": [],
+  "limitations": [
+    "This is a deterministic contract fixture, not a live empirical result.",
+    "One registered model failed and has not been removed from the bundle."
+  ],
+  "input_object_refs": [],
+  "registry_version": "macrotrace-fixture-0.1.0",
+  "result_hash": "7777777777777777777777777777777777777777777777777777777777777777",
+  "artifacts": [
+    {
+      "artifact_id": "GRAPH_FIXTURE_PARTIAL",
+      "artifact_type": "RESEARCH_GRAPH",
+      "uri": "fixtures/evidence/artifacts/graph_partial.json",
+      "sha256": "f56a86ebcf668c3478454fbe8256d4a3fc94dc23d0b419c41da99f10f3f93aae"
+    }
+  ],
+  "trace_ref": "TRACE_FIXTURE_PARTIAL",
+  "metadata": {
+    "fixture_only": true
+  }
+}

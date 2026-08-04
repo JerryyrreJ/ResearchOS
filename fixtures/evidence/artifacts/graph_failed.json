@@ -1,0 +1,9 @@
+{
+  "fixture_only": true,
+  "status": "FAILED",
+  "nodes": [
+    {"node_id": "QUESTION_FIXTURE", "node_type": "QUESTION", "status": "SUCCESS"},
+    {"node_id": "RUN_FIXTURE_FAILED_PANEL", "node_type": "MODEL_RUN", "status": "FAILED"},
+    {"node_id": "EVIDENCE_FIXTURE_FAILED", "node_type": "EVIDENCE", "status": "FAILED"}
+  ]
+}

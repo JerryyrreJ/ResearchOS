@@ -5,9 +5,9 @@ Updated: 2026-08-05 (Asia/Shanghai)
 ```text
 Role: B — MacroTrace Empirical Tool
 Branch: role/b-macrotrace
-Commit: pending first documentation commit
-Completed: isolated workspace; immutable handoff source archive and SHA-256 manifest; latest D-base scope audit; frozen-contract verification; upstream MacroTrace baseline (65 tests); repository inventory
-In progress: first review unit — B handoff documents and inventory
+Commit: docs 008bfb672e75; subtree 1ac66da8c637; fixture adapter is the enclosing review-unit commit
+Completed: isolated workspace; immutable handoff source archive and SHA-256 manifest; latest D-base scope audit; frozen-contract verification; repository inventory; MacroTrace subtree import; fixture-only Tool Adapter; COMPLETE/PARTIAL/FAILED fixtures; CANCELLED/UNSUPPORTED/OUT_OF_SCOPE mappings; stable graph/artifact routes; 65 upstream tests and 33 adapter tests
+In progress: first-PR boundary audit, explicit staging, push, and consumer handoff
 Blocked: remote integration branch does not yet exist; D baseline build/test scripts fail on Windows because they use Unix inline environment-variable syntax
 Contract impact: NONE
 Need from other roles: D to own or document the Windows frontend-script issue; team owner to establish integration before PR creation
@@ -20,4 +20,7 @@ Next integration test: C deserializes COMPLETE, PARTIAL, and FAILED EvidenceBund
 - Contract version: `0.1.0-frozen`; hashes unchanged
 - MacroTrace upstream target: `d96c8d91131b0eec2b34569976b894ff14381ddd`
 - D baseline: lint passed; build/test baseline blocked before compilation by Windows-incompatible environment-variable syntax
+- Contract validator: 13 frozen hashes and 8 shared fixtures passed
+- Fixture adapter: 33 tests passed; failed models and limitations remain visible; evidence type is capped; result hash excludes runtime identity
+- Upstream after adapter: 65 tests passed
 - Secrets: no credentials or API keys copied from chat into the workspace or repository

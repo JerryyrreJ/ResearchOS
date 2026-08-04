@@ -26,6 +26,8 @@ from .schemas import ResearchJobCreate, ResearchRequest
 from .storage import MacroStore
 from .sync import SyncService
 from .provider_catalog import public_provider_catalog
+from .researchos_adapter import router as researchos_adapter_router
+from .researchos_adapter import service as researchos_adapter_service
 
 
 settings = get_settings()
@@ -53,6 +55,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Last-Event-ID", "X-MacroTrace-Admin-Key"],
 )
+app.include_router(researchos_adapter_router)
 
 frontend_dir = settings.project_root / "frontend"
 if settings.serve_frontend and frontend_dir.exists():
@@ -155,6 +158,7 @@ def health() -> dict:
         "deepseek_configured": llm_status["configured"] and llm_status["provider"] == "deepseek",
         "deepseek_model": llm_status["model"] if llm_status["provider"] == "deepseek" else None,
         "registry": engine.registry.summary(),
+        "researchos_adapter": researchos_adapter_service.health(),
     }
 
 
