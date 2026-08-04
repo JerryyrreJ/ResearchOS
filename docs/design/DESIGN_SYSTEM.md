@@ -76,6 +76,29 @@ The spacing system uses a 4 px base: `4, 8, 12, 16, 24, 32`. Page-level reading 
 
 Color is never the sole status signal. Every status includes a text label or icon shape.
 
+### Appearance modes
+
+- `Light` is the neutral editorial default.
+- `Dark` uses separate semantic surface and foreground tokens; it is not a mechanical inversion.
+- `System` follows `prefers-color-scheme` and reacts when the operating-system setting changes.
+- `High contrast` uses black, white, and a single yellow focus/accent token with explicit three-pixel focus rings.
+
+Reduced motion is a first-class device preference. It suppresses non-essential transitions and status pulses without removing state feedback.
+
+## Product identity
+
+The ResearchOS sigil combines an editorial `R` with two connected evidence nodes. It appears in the favicon, authentication threshold, settings identity, and compact product marks. Object identity remains separate: Thesis, Evidence, Source, Validation, Model Run, and Version use their own typed markers and never borrow third-party logos.
+
+## Extension center
+
+The Extension Center follows the mature IDE convention of separating active, available, and restricted capabilities. A catalog entry is not proof of integration.
+
+- `ENABLED` means the capability is registered in the current frozen contract.
+- `AVAILABLE` is descriptive only and requires a reviewed integration contract before activation.
+- `RESTRICTED` requires workspace or institutional policy approval.
+
+The fixture may name recognized research services such as Zotero and OpenAlex, but must never imply authentication, data access, installation, or successful execution when none exists. Extension capability cannot bypass provenance, version pinning, evidence policy, or contract boundaries.
+
 ## References
 
 - Apple Human Interface Guidelines: typography, color, layout, accessibility, and localization

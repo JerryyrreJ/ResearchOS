@@ -57,3 +57,18 @@ test("defines phone, tablet, and desktop adaptive behavior", async () => {
   assert.match(css, /safe-area-inset-bottom/);
   assert.match(css, /drawer-content/);
 });
+
+test("provides token-driven themes, accessibility preferences, and an honest extension catalog", async () => {
+  const [page, css, favicon] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/favicon.svg", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /Extension Center/);
+  assert.match(page, /Only MacroTrace is active/);
+  assert.match(page, /prefers-color-scheme: dark/);
+  assert.match(page, /High contrast/);
+  assert.match(css, /data-theme="dark"/);
+  assert.match(css, /data-reduced-motion="true"/);
+  assert.match(favicon, /#183F37/i);
+});

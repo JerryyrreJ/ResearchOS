@@ -5,6 +5,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { localeNames, tx, type Locale } from "./i18n";
 
 type View = "thesis" | "workspace" | "validation" | "macrotrace" | "recompile" | "versions";
+type Theme = "light" | "dark" | "system" | "contrast";
 
 const nav: { id: View; icon: string; label: string; meta?: string }[] = [
   { id: "workspace", icon: "⌘", label: "Workspace", meta: "12" },
@@ -30,7 +31,7 @@ function LocaleSwitcher({ locale, onChange, compact = false }: { locale: Locale;
   return <label className={`locale-switcher ${compact ? "compact" : ""}`}><span className="sr-only">Language</span><select value={locale} onChange={e=>onChange(e.target.value as Locale)} aria-label="Language">{(Object.keys(localeNames) as Locale[]).map(key=><option value={key} key={key}>{localeNames[key]}</option>)}</select><i>⌄</i></label>;
 }
 
-function Topbar({ title, subtitle, onCommand, onInspector, locale, onLocale }: { title: string; subtitle: string; onCommand: () => void; onInspector: () => void; locale: Locale; onLocale: (locale: Locale) => void }) {
+function Topbar({ title, subtitle, onCommand, onInspector, onSettings, locale, onLocale }: { title: string; subtitle: string; onCommand: () => void; onInspector: () => void; onSettings: () => void; locale: Locale; onLocale: (locale: Locale) => void }) {
   return (
     <header className="topbar">
       <div className="breadcrumbs"><span>{tx(locale,"Fiscal transmission study")}</span><i>/</i><strong>{tx(locale,title)}</strong></div>
@@ -39,7 +40,7 @@ function Topbar({ title, subtitle, onCommand, onInspector, locale, onLocale }: {
         <LocaleSwitcher locale={locale} onChange={onLocale} compact/>
         <button className="command-trigger" onClick={onCommand}><span>{tx(locale,"Search or command")}</span><kbd>⌘ K</kbd></button>
         <button className="inspector-trigger" onClick={onInspector} aria-label={tx(locale,"Inspector")}>⌘</button>
-        <button className="avatar" aria-label="User menu">TW</button>
+        <button className="avatar" onClick={onSettings} aria-label="Settings and extensions">TW</button>
       </div>
       <div className="page-heading"><div><h1>{tx(locale,title)}</h1><p>{tx(locale,subtitle)}</p></div><div className="heading-actions"><button className="button secondary">{tx(locale,"Share")}</button><button className="button primary">{tx(locale,"Compile thesis")} <span>⌘↵</span></button></div></div>
     </header>
@@ -68,6 +69,22 @@ function Inspector({ selectedSource, locale }: { selectedSource?: typeof sources
 
 function InspectorDrawer({ open, onOpenChange, selectedSource, locale }: { open: boolean; onOpenChange: (open: boolean) => void; selectedSource?: typeof sources[number]; locale: Locale }) {
   return <Dialog.Root open={open} onOpenChange={onOpenChange}><Dialog.Portal><Dialog.Overlay className="drawer-overlay"/><Dialog.Content className="drawer-content"><Dialog.Title className="sr-only">{tx(locale,"Inspector")}</Dialog.Title><Dialog.Close className="drawer-close" aria-label="Close">×</Dialog.Close><Inspector selectedSource={selectedSource} locale={locale}/></Dialog.Content></Dialog.Portal></Dialog.Root>;
+}
+
+function SettingsCenter({ open, onOpenChange, theme, onTheme, locale, onLocale, reducedMotion, onReducedMotion }: { open: boolean; onOpenChange: (open: boolean) => void; theme: Theme; onTheme: (theme: Theme) => void; locale: Locale; onLocale: (locale: Locale) => void; reducedMotion: boolean; onReducedMotion: (value: boolean) => void }) {
+  const [tab, setTab] = useState<"appearance" | "extensions" | "about">("appearance");
+  const themes: { id: Theme; label: string }[] = [{id:"light",label:"Light"},{id:"dark",label:"Dark"},{id:"system",label:"System"},{id:"contrast",label:"High contrast"}];
+  const extensions = [
+    { mark:"MT", name:"MacroTrace", detail:"Registered empirical execution", state:"ENABLED", tone:"green" as const },
+    { mark:"ZT", name:"Zotero", detail:"Reference library connector", state:"AVAILABLE", tone:"blue" as const },
+    { mark:"OA", name:"OpenAlex", detail:"Scholarly works and citations", state:"AVAILABLE", tone:"blue" as const },
+    { mark:"IF", name:"iFind", detail:"Institution-controlled data source", state:"RESTRICTED", tone:"amber" as const },
+  ];
+  return <Dialog.Root open={open} onOpenChange={onOpenChange}><Dialog.Portal><Dialog.Overlay className="settings-overlay"/><Dialog.Content className="settings-center"><Dialog.Title className="settings-title">Settings</Dialog.Title><Dialog.Description className="settings-description">Workspace preferences and registered extensions</Dialog.Description><Dialog.Close className="settings-close" aria-label="Close">×</Dialog.Close><div className="settings-layout"><nav className="settings-nav"><div className="settings-brand"><div className="brand-mark"><i/><i/><i/></div><span><b>ResearchOS</b><small>Workspace settings</small></span></div>{([['appearance','Appearance','◐'],['extensions','Extensions','⌘'],['about','About','◇']] as const).map(([id,label,icon])=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><i>{icon}</i>{label}{id==='extensions'&&<em>4</em>}</button>)}</nav><section className="settings-content">
+    {tab==="appearance"&&<><div className="settings-head"><span>INTERFACE</span><h2>Appearance</h2><p>Choose how ResearchOS looks and behaves on this device.</p></div><div className="setting-block"><div><h3>Color theme</h3><p>System follows your operating-system preference.</p></div><div className="theme-grid">{themes.map(item=><button key={item.id} className={`theme-choice theme-${item.id} ${theme===item.id?'selected':''}`} onClick={()=>onTheme(item.id)} aria-pressed={theme===item.id}><span><i/><i/><i/></span><b>{item.label}</b><em>{theme===item.id?'✓':''}</em></button>)}</div></div><div className="setting-row"><div><h3>Language</h3><p>简体中文、繁體中文 and English.</p></div><LocaleSwitcher locale={locale} onChange={onLocale}/></div><div className="setting-row"><div><h3>Reduce motion</h3><p>Limits non-essential transitions and pulses.</p></div><button className={`switch ${reducedMotion?'on':''}`} onClick={()=>onReducedMotion(!reducedMotion)} role="switch" aria-checked={reducedMotion}><i/></button></div></>}
+    {tab==="extensions"&&<><div className="settings-head"><span>REGISTERED CAPABILITIES</span><h2>Extension Center</h2><p>Extensions declare capabilities; installation never changes frozen research contracts.</p></div><div className="extension-notice"><i>◇</i><span><b>Catalog preview</b><small>Only MacroTrace is active. Other connectors require a reviewed integration contract.</small></span></div><div className="extension-list">{extensions.map(ext=><div className="extension-row" key={ext.name}><span className="extension-mark">{ext.mark}</span><span><b>{ext.name}</b><small>{ext.detail}</small></span><Badge tone={ext.tone}>{ext.state}</Badge><button disabled={ext.state!=="ENABLED"}>{ext.state==="ENABLED"?'Manage':'Request'}</button></div>)}</div></>}
+    {tab==="about"&&<><div className="settings-head"><span>PRODUCT IDENTITY</span><h2>Evidence becomes structure.</h2><p>ResearchOS is an evidence-driven research IDE, not a conversational dashboard.</p></div><div className="identity-card"><div className="identity-sigil"><span>R</span><i/><i/></div><div><b>研构 · ResearchOS</b><small>Contract fixture · 0.1.0-frozen</small></div></div><dl className="about-list"><dt>Workspace</dt><dd>Fiscal transmission study</dd><dt>Object model</dt><dd>Thesis · Evidence · Source · Validation · Model Run · Version</dd><dt>Build</dt><dd className="mono">D-FRONTEND / 2026.08</dd></dl></>}
+  </section></div></Dialog.Content></Dialog.Portal></Dialog.Root>;
 }
 
 function ThesisView({ locale }: { locale: Locale }) {
@@ -169,14 +186,20 @@ export default function Home() {
   const [entered, setEntered] = useState(false);
   const [locale, setLocale] = useState<Locale>("zh-CN");
   const [inspectorOpen, setInspectorOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [theme, setTheme] = useState<Theme>("system");
+  const [reducedMotion, setReducedMotion] = useState(false);
   useEffect(()=>{ const key=(e:KeyboardEvent)=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();setCommandOpen(v=>!v)} if(e.key==="Escape")setCommandOpen(false)}; addEventListener("keydown",key);return()=>removeEventListener("keydown",key)},[]);
+  useEffect(()=>{const media=window.matchMedia("(prefers-color-scheme: dark)");const apply=()=>{const resolved=theme==="system"?(media.matches?"dark":"light"):theme;document.documentElement.dataset.theme=resolved;document.documentElement.style.colorScheme=resolved==="dark"?"dark":"light"};apply();media.addEventListener("change",apply);return()=>media.removeEventListener("change",apply)},[theme]);
+  useEffect(()=>{document.documentElement.dataset.reducedMotion=reducedMotion?"true":"false"},[reducedMotion]);
   const current = useMemo(()=>nav.find(n=>n.id===view)!,[view]);
   const subtitles: Record<View,string> = { thesis:"Compile a research claim against frozen definitions and evidence policy.",workspace:"Shared research state, versioned objects, and traceable relations.",validation:"A continuous protocol from question to evidence-bounded conclusion.",macrotrace:"Registered empirical execution, diagnostics, and evidence output.",recompile:"Review how evidence constrains the language of the thesis.",versions:"Understand incremental changes, recomputation, and reuse."};
   if (!entered) return <LoginScreen onEnter={()=>{setEntered(true);requestAnimationFrame(()=>window.scrollTo({top:0,behavior:"auto"}))}} locale={locale} onLocale={setLocale}/>;
   return <main className="app-shell" lang={locale} data-locale={locale}>
     <aside className="sidebar"><div className="brand"><div className="brand-mark"><i/><i/><i/></div><div><b>ResearchOS</b><span>{tx(locale,"Evidence workspace")}</span></div><button>⌄</button></div><button className="new-thesis">＋ <span>{tx(locale,"New thesis")}</span><kbd>N</kbd></button><nav><span className="nav-label">{tx(locale,"Research")}</span>{nav.map(item=><button key={item.id} className={view===item.id?"active":""} onClick={()=>setView(item.id)}><i>{item.icon}</i><span>{tx(locale,item.label)}</span>{item.meta&&<em>{item.meta}</em>}</button>)}</nav><div className="sidebar-project"><span className="nav-label">{tx(locale,"Active project")}</span><div className="project-card"><div className="project-icon">FT</div><div><b>{tx(locale,"Fiscal transmission")}</b><span>{tx(locale,"4 sources · 1 thesis")}</span></div><button>···</button></div></div><div className="sidebar-bottom"><button><i>⌁</i><span>{tx(locale,"Activity")}</span><em>3</em></button><button><i>?</i><span>{tx(locale,"Help & shortcuts")}</span></button><div className="sync-state"><span className="status-dot green"/><div><b>{tx(locale,"Workspace synced")}</b><small>{tx(locale,"Just now")}</small></div></div></div></aside>
-    <section className="main-frame"><Topbar title={current.label} subtitle={subtitles[view]} onCommand={()=>setCommandOpen(true)} onInspector={()=>setInspectorOpen(true)} locale={locale} onLocale={setLocale}/><div className="content-frame">{view==="thesis"&&<ThesisView locale={locale}/>}{view==="workspace"&&<WorkspaceView onSelect={(item)=>{setSelectedSource(item);setInspectorOpen(true)}}/>} {view==="validation"&&<ValidationView/>}{view==="macrotrace"&&<MacroTraceView/>}{view==="recompile"&&<RecompileView/>}{view==="versions"&&<VersionView/>}<Inspector selectedSource={selectedSource} locale={locale}/></div></section>
+    <section className="main-frame"><Topbar title={current.label} subtitle={subtitles[view]} onCommand={()=>setCommandOpen(true)} onInspector={()=>setInspectorOpen(true)} onSettings={()=>setSettingsOpen(true)} locale={locale} onLocale={setLocale}/><div className="content-frame">{view==="thesis"&&<ThesisView locale={locale}/>}{view==="workspace"&&<WorkspaceView onSelect={(item)=>{setSelectedSource(item);setInspectorOpen(true)}}/>} {view==="validation"&&<ValidationView/>}{view==="macrotrace"&&<MacroTraceView/>}{view==="recompile"&&<RecompileView/>}{view==="versions"&&<VersionView/>}<Inspector selectedSource={selectedSource} locale={locale}/></div></section>
     <InspectorDrawer open={inspectorOpen} onOpenChange={setInspectorOpen} selectedSource={selectedSource} locale={locale}/>
+    <SettingsCenter open={settingsOpen} onOpenChange={setSettingsOpen} theme={theme} onTheme={setTheme} locale={locale} onLocale={setLocale} reducedMotion={reducedMotion} onReducedMotion={setReducedMotion}/>
     {commandOpen&&<div className="command-overlay" onMouseDown={()=>setCommandOpen(false)}><div className="command" onMouseDown={e=>e.stopPropagation()}><div className="command-input"><span>⌕</span><input autoFocus placeholder={`${tx(locale,"Search or command")}…`}/><kbd>ESC</kbd></div><span className="command-label">Navigate</span>{nav.map(n=><button key={n.id} onClick={()=>{setView(n.id);setCommandOpen(false)}}><i>{n.icon}</i><span>{tx(locale,n.label)}</span><kbd>↵</kbd></button>)}</div></div>}
   </main>;
 }
