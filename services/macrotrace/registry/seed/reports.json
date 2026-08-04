@@ -1,0 +1,630 @@
+[
+  {
+    "report_id": "R01",
+    "title": "Mainstreaming Nature into World Bank Macroeconomic Models",
+    "institution": "World Bank",
+    "publication_date": null,
+    "source_file": "P180275-13b364e3-f045-47f2-97de-f9218682df98.pdf",
+    "page_count": 92,
+    "page_basis": "PDF_FILE_PAGE",
+    "jurisdiction_fit": "US_ADAPTABLE",
+    "lane_ids": [
+      "US.CLIMATE_NATURE",
+      "US.ACTIVITY",
+      "US.FISCAL_TREASURY"
+    ],
+    "workflow_ids": [
+      "US_CLIMATE_PHYSICAL_SCENARIO_V1"
+    ],
+    "method_routes": [
+      {
+        "name": "Macro-LULC-ecosystem services iterative loop",
+        "recipe_id": "CLIMATE_IMPACT_ADAPTATION_SCENARIO_V1",
+        "status": "ADAPTABLE_RECIPE",
+        "source_pages": [
+          12,
+          16,
+          20
+        ],
+        "reason": "Three-model architecture is described, but a U.S. calibration and granular ecosystem inputs must be created separately."
+      },
+      {
+        "name": "Fine-grained ecosystem service production functions",
+        "recipe_id": null,
+        "status": "DATA_BLOCKED",
+        "source_pages": [
+          20,
+          21
+        ],
+        "reason": "The full land-use and ecosystem-service data stack is outside the free-data MVP."
+      }
+    ],
+    "paid_dependencies": [],
+    "review_status": "DRAFT"
+  },
+  {
+    "report_id": "R02",
+    "title": "The Macroeconomic Implications of Climate Change Impacts and Adaptation Options: A Modeling Approach",
+    "institution": "World Bank",
+    "publication_date": "2025-05-01",
+    "source_file": "content.txt",
+    "page_count": 45,
+    "page_basis": "FORM_FEED_PAGE",
+    "jurisdiction_fit": "US_ADAPTABLE",
+    "lane_ids": [
+      "US.CLIMATE_NATURE",
+      "US.ACTIVITY",
+      "US.FISCAL_TREASURY"
+    ],
+    "workflow_ids": [
+      "US_CLIMATE_PHYSICAL_SCENARIO_V1"
+    ],
+    "method_routes": [
+      {
+        "name": "Climate impact and adaptation scenario mapping",
+        "recipe_id": "CLIMATE_IMPACT_ADAPTATION_SCENARIO_V1",
+        "status": "ADAPTABLE_RECIPE",
+        "source_pages": [
+          14,
+          15,
+          16,
+          18,
+          21,
+          23,
+          42
+        ],
+        "reason": "Impact-channel, MFMod, adaptation-cost and uncertainty workflow can be ported, but country coefficients cannot."
+      }
+    ],
+    "paid_dependencies": [],
+    "review_status": "DRAFT"
+  },
+  {
+    "report_id": "R03",
+    "title": "Commodity Markets Outlook, October 2025",
+    "institution": "World Bank",
+    "publication_date": "2025-10-01",
+    "source_file": "CMO-October-2025.pdf",
+    "page_count": 66,
+    "page_basis": "PDF_FILE_PAGE",
+    "jurisdiction_fit": "US_ADAPTABLE",
+    "lane_ids": [
+      "US.COMMODITY_ENERGY",
+      "US.INFLATION",
+      "US.TRADE"
+    ],
+    "workflow_ids": [
+      "US_COMMODITY_SUPPLY_DEMAND_V1",
+      "US_COMMODITY_INFLATION_PASS_V1",
+      "US_TRADE_FLOW_V1"
+    ],
+    "method_routes": [
+      {
+        "name": "Commodity supply-demand-risk factor trees",
+        "recipe_id": "REGISTERED_RULE_SCORE_V1",
+        "status": "ADAPTABLE_RECIPE",
+        "source_pages": [
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "reason": "The factor structure and scenarios are reusable after U.S. factor mapping."
+      },
+      {
+        "name": "World Bank commodity price forecast",
+        "recipe_id": null,
+        "status": "EVIDENCE_ONLY",
+        "source_pages": [
+          9,
+          10,
+          11,
+          12,
+          13,
+          16
+        ],
+        "reason": "The report does not disclose a complete executable forecast algorithm."
+      }
+    ],
+    "paid_dependencies": [],
+    "review_status": "DRAFT"
+  },
+  {
+    "report_id": "R04",
+    "title": "Global Economic Prospects, June 2025",
+    "institution": "World Bank",
+    "publication_date": "2025-06-01",
+    "source_file": "GEP-June-2025.pdf",
+    "page_count": 254,
+    "page_basis": "PDF_FILE_PAGE",
+    "jurisdiction_fit": "US_ADAPTABLE",
+    "lane_ids": [
+      "US.TRADE",
+      "US.CAPITAL_FLOWS_FX",
+      "US.ACTIVITY"
+    ],
+    "workflow_ids": [
+      "US_TRADE_FLOW_V1",
+      "US_CAPITAL_FLOW_RISK_V1",
+      "US_ACTIVITY_NOWCAST_MONITOR_V1"
+    ],
+    "method_routes": [
+      {
+        "name": "Heterogeneous PVAR of FDI and growth",
+        "recipe_id": "VAR_BVAR_V1",
+        "status": "ADAPTABLE_RECIPE",
+        "source_pages": [
+          143,
+          144,
+          145,
+          161
+        ],
+        "reason": "Dynamic panel and impulse-response design is disclosed, but the original 74-EMDE result is not a U.S. estimate."
+      },
+      {
+        "name": "Global growth forecast process",
+        "recipe_id": null,
+        "status": "EVIDENCE_ONLY",
+        "source_pages": [
+          245
+        ],
+        "reason": "Forecasts combine internal macroeconometric models, accounting consistency, country teams and judgment."
+      }
+    ],
+    "paid_dependencies": [
+      "Haver Analytics",
+      "Bloomberg",
+      "J.P. Morgan data"
+    ],
+    "review_status": "DRAFT"
+  },
+  {
+    "report_id": "R05",
+    "title": "Global Economic Prospects, January 2026",
+    "institution": "World Bank",
+    "publication_date": "2026-01-01",
+    "source_file": "Global Economic Prospects, January 2026.pdf",
+    "page_count": 244,
+    "page_basis": "PDF_FILE_PAGE",
+    "jurisdiction_fit": "US_ADAPTABLE",
+    "lane_ids": [
+      "US.FISCAL_TREASURY",
+      "US.CAPITAL_FLOWS_FX"
+    ],
+    "workflow_ids": [
+      "US_TREASURY_SUPPLY_V1",
+      "US_CAPITAL_FLOW_RISK_V1"
+    ],
+    "method_routes": [
+      {
+        "name": "Fiscal-rule local projections",
+        "recipe_id": "LOCAL_PROJECTION_FE_V1",
+        "status": "ADAPTABLE_RECIPE",
+        "source_pages": [
+          134,
+          135,
+          137,
+          139,
+          153,
+          154,
+          155
+        ],
+        "reason": "Outcome dynamics, fixed effects, leads/lags and controls are documented."
+      },
+      {
+        "name": "LP-AIPW fiscal-rule treatment estimation",
+        "recipe_id": "LP_AIPW_TREATMENT_V1",
+        "status": "ADAPTABLE_RECIPE",
+        "source_pages": [
+          135,
+          137,
+          139,
+          154
+        ],
+        "reason": "The doubly robust treatment design is reusable only with a separately pre-registered U.S. treatment."
+      }
+    ],
+    "paid_dependencies": [
+      "Haver Analytics"
+    ],
+    "review_status": "DRAFT"
+  },
+  {
+    "report_id": "R06",
+    "title": "Indonesia Economic Prospects, June 2026",
+    "institution": "World Bank",
+    "publication_date": "2026-06-01",
+    "source_file": "content2.txt",
+    "page_count": 44,
+    "page_basis": "FORM_FEED_PAGE",
+    "jurisdiction_fit": "US_ADAPTABLE",
+    "lane_ids": [
+      "US.ACTIVITY",
+      "US.FISCAL_TREASURY",
+      "US.TRADE"
+    ],
+    "workflow_ids": [
+      "US_ACTIVITY_NOWCAST_MONITOR_V1",
+      "US_TREASURY_SUPPLY_V1",
+      "US_TRADE_FLOW_V1"
+    ],
+    "method_routes": [
+      {
+        "name": "Country macro monitoring and policy-priority workflow",
+        "recipe_id": "MOMENTUM_BREADTH_V1",
+        "status": "ADAPTABLE_RECIPE",
+        "source_pages": [
+          4,
+          5,
+          6,
+          7,
+          10,
+          11,
+          12,
+          13,
+          18,
+          20,
+          26,
+          30,
+          31,
+          41
+        ],
+        "reason": "The monitoring structure transfers, but Indonesia-specific facts and policy conclusions do not."
+      },
+      {
+        "name": "Public investment multiplier claims",
+        "recipe_id": null,
+        "status": "EVIDENCE_ONLY",
+        "source_pages": [
+          11,
+          31,
+          41
+        ],
+        "reason": "The supplied report text is insufficient to register a faithful U.S. multiplier estimator."
+      }
+    ],
+    "paid_dependencies": [],
+    "review_status": "DRAFT"
+  },
+  {
+    "report_id": "R07",
+    "title": "BIS Annual Economic Report 2026",
+    "institution": "Bank for International Settlements",
+    "publication_date": "2026-06-01",
+    "source_file": "ar2026e.pdf",
+    "page_count": 133,
+    "page_basis": "PDF_FILE_PAGE",
+    "jurisdiction_fit": "MIXED",
+    "lane_ids": [
+      "US.FISCAL_TREASURY",
+      "US.FIN_STABILITY",
+      "US.AI_PRODUCTIVITY",
+      "US.CAPITAL_FLOWS_FX",
+      "US.MONETARY"
+    ],
+    "workflow_ids": [
+      "US_FISCAL_RISK_REPRICING_V1",
+      "US_NBFI_AMPLIFICATION_V1",
+      "US_AI_CAPEX_PRODUCTIVITY_V1",
+      "US_CAPITAL_FLOW_RISK_V1",
+      "US_TREASURY_YIELD_DECOMP_V1"
+    ],
+    "method_routes": [
+      {
+        "name": "Fiscal-risk repricing shock",
+        "recipe_id": "FISCAL_RISK_REPRICING_V1",
+        "status": "EXECUTABLE_CANDIDATE",
+        "source_pages": [
+          67,
+          68
+        ],
+        "reason": "Identification, panel scope and macro response variables are stated, subject to U.S. curve matching validation."
+      },
+      {
+        "name": "AI productivity and r-star scenarios",
+        "recipe_id": "AI_CAPEX_PRODUCTIVITY_SCENARIO_V1",
+        "status": "EVIDENCE_ONLY",
+        "source_pages": [
+          21,
+          30,
+          31,
+          32
+        ],
+        "reason": "The report provides mechanisms and scenarios rather than a complete estimable U.S. model."
+      },
+      {
+        "name": "Repo and FX-swap amplification",
+        "recipe_id": null,
+        "status": "DATA_BLOCKED",
+        "source_pages": [
+          64,
+          65
+        ],
+        "reason": "Faithful implementation needs granular dealer, margin, repo and leveraged-fund data."
+      },
+      {
+        "name": "Stablecoin macro-financial scenarios",
+        "recipe_id": null,
+        "status": "EVIDENCE_ONLY",
+        "source_pages": [
+          101,
+          102,
+          103,
+          104,
+          105,
+          106,
+          116
+        ],
+        "reason": "These are policy and mechanism scenarios, not a disclosed forecasting model."
+      }
+    ],
+    "paid_dependencies": [],
+    "review_status": "DRAFT"
+  },
+  {
+    "report_id": "R08",
+    "title": "Global Financial Stability Report, April 2026",
+    "institution": "International Monetary Fund",
+    "publication_date": "2026-04-01",
+    "source_file": "text.pdf",
+    "page_count": 86,
+    "page_basis": "PDF_FILE_PAGE",
+    "jurisdiction_fit": "MIXED",
+    "lane_ids": [
+      "US.FIN_STABILITY",
+      "US.MONETARY",
+      "US.CAPITAL_FLOWS_FX",
+      "US.AI_PRODUCTIVITY",
+      "US.FISCAL_TREASURY"
+    ],
+    "workflow_ids": [
+      "US_FCI_GROWTH_AT_RISK_V1",
+      "US_NBFI_AMPLIFICATION_V1",
+      "US_CAPITAL_FLOW_RISK_V1",
+      "US_AI_CAPEX_PRODUCTIVITY_V1",
+      "US_TREASURY_SUPPLY_V1"
+    ],
+    "method_routes": [
+      {
+        "name": "Financial-conditions Growth-at-Risk",
+        "recipe_id": "GROWTH_AT_RISK_V1",
+        "status": "EXECUTABLE_CANDIDATE",
+        "source_pages": [
+          54,
+          55,
+          75
+        ],
+        "reason": "A transparent free-data U.S. version can estimate conditional growth quantiles, though it will not reproduce every IMF input."
+      },
+      {
+        "name": "Flighty-investor panel regressions",
+        "recipe_id": "PANEL_FE_V1",
+        "status": "DATA_BLOCKED",
+        "source_pages": [
+          72,
+          73,
+          74,
+          75,
+          76
+        ],
+        "reason": "The design is portable but original security-level holdings and market data rely heavily on paid sources."
+      },
+      {
+        "name": "AI data-center financing stress",
+        "recipe_id": "AI_CAPEX_PRODUCTIVITY_SCENARIO_V1",
+        "status": "EVIDENCE_ONLY",
+        "source_pages": [
+          42,
+          43,
+          56,
+          57,
+          58,
+          59
+        ],
+        "reason": "The report supplies a stress narrative and exposures, not a fully disclosed executable model."
+      }
+    ],
+    "paid_dependencies": [
+      "Bloomberg",
+      "LSEG",
+      "FactSet",
+      "Haver Analytics"
+    ],
+    "review_status": "DRAFT"
+  },
+  {
+    "report_id": "R09",
+    "title": "Monetary Policy Report, November 2025",
+    "institution": "Bank of England",
+    "publication_date": "2025-11-01",
+    "source_file": "monetary-policy-report-november-2025.pdf",
+    "page_count": 79,
+    "page_basis": "PDF_FILE_PAGE",
+    "jurisdiction_fit": "US_ADAPTABLE",
+    "lane_ids": [
+      "US.INFLATION",
+      "US.MONETARY",
+      "US.HOUSING_CONSUMPTION",
+      "US.LABOR"
+    ],
+    "workflow_ids": [
+      "US_INFLATION_MOMENTUM_V1",
+      "US_INFLATION_REGIME_V1",
+      "US_FED_REACTION_PATH_V1",
+      "US_HOUSEHOLD_SAVING_CONSUMPTION_V1",
+      "US_LABOR_TIGHTNESS_V1",
+      "US_COMMODITY_INFLATION_PASS_V1"
+    ],
+    "method_routes": [
+      {
+        "name": "SET-BVAR inflation regimes",
+        "recipe_id": "SET_BVAR_REGIME_V1",
+        "status": "ADAPTABLE_RECIPE",
+        "source_pages": [
+          42,
+          44,
+          45
+        ],
+        "reason": "State-dependent inflation analysis is portable after U.S. variable, prior and transition-variable review."
+      },
+      {
+        "name": "COMPASS inflation-persistence scenario",
+        "recipe_id": null,
+        "status": "EVIDENCE_ONLY",
+        "source_pages": [
+          71
+        ],
+        "reason": "The proprietary/internal model is not specified in the report."
+      },
+      {
+        "name": "HANK saving and consumption scenario",
+        "recipe_id": "HANK_SAVING_SCENARIO_V1",
+        "status": "ADAPTABLE_RECIPE",
+        "source_pages": [
+          72,
+          73
+        ],
+        "reason": "The scenario mechanism is useful, but the UK calibration cannot be reused as a U.S. model."
+      },
+      {
+        "name": "Taylor-type policy paths",
+        "recipe_id": "POLICY_RULE_PATH_V1",
+        "status": "ADAPTABLE_RECIPE",
+        "source_pages": [
+          73,
+          75
+        ],
+        "reason": "Rules can be implemented as labeled counterfactuals with locked U.S. gap definitions and coefficients."
+      }
+    ],
+    "paid_dependencies": [],
+    "review_status": "DRAFT"
+  },
+  {
+    "report_id": "R10",
+    "title": "ScénarioÉco Nowcasts, 2026-07-06",
+    "institution": "BNP Paribas Economic Research",
+    "publication_date": "2026-07-06",
+    "source_file": "ScénarioÉcoNowcasts_06.07.2026_ENG.pdf",
+    "page_count": 2,
+    "page_basis": "PDF_FILE_PAGE",
+    "jurisdiction_fit": "MIXED",
+    "lane_ids": [
+      "US.ACTIVITY",
+      "US.INFLATION",
+      "US.MONETARY"
+    ],
+    "workflow_ids": [
+      "US_ACTIVITY_NOWCAST_MONITOR_V1",
+      "US_FED_REACTION_PATH_V1",
+      "US_TREASURY_YIELD_DECOMP_V1"
+    ],
+    "method_routes": [
+      {
+        "name": "Published nowcasts and U.S. scenario table",
+        "recipe_id": null,
+        "status": "EVIDENCE_ONLY",
+        "source_pages": [
+          1,
+          2
+        ],
+        "reason": "The two-page report does not disclose features, estimator, weights, training window or backtest."
+      },
+      {
+        "name": "Euro area, France and Belgium nowcasts",
+        "recipe_id": null,
+        "status": "OUT_OF_SCOPE_COMPONENT",
+        "source_pages": [
+          1
+        ],
+        "reason": "First product version is U.S.-only."
+      }
+    ],
+    "paid_dependencies": [
+      "Refinitiv"
+    ],
+    "review_status": "DRAFT"
+  },
+  {
+    "report_id": "R11",
+    "title": "Tracking the Effects of AI on the US Labor Market",
+    "institution": "Deutsche Bank Research",
+    "publication_date": "2026-03-01",
+    "source_file": "Tracking_the_effects_of_AI_on_the_US_labor_market.pdf",
+    "page_count": 37,
+    "page_basis": "PDF_FILE_PAGE",
+    "jurisdiction_fit": "US_DIRECT",
+    "lane_ids": [
+      "US.LABOR",
+      "US.AI_PRODUCTIVITY"
+    ],
+    "workflow_ids": [
+      "US_AI_ADOPTION_MONITOR_V1",
+      "US_LABOR_TIGHTNESS_V1",
+      "US_AI_CAPEX_PRODUCTIVITY_V1"
+    ],
+    "method_routes": [
+      {
+        "name": "AI adoption by sector, state and firm size",
+        "recipe_id": "MOMENTUM_BREADTH_V1",
+        "status": "EXECUTABLE_CANDIDATE",
+        "source_pages": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "reason": "Census-based descriptive monitoring is directly relevant and can be implemented once table IDs are locked."
+      },
+      {
+        "name": "AI job-posting exposure and skill terms",
+        "recipe_id": null,
+        "status": "DATA_BLOCKED",
+        "source_pages": [
+          7,
+          10,
+          11,
+          12,
+          14
+        ],
+        "reason": "The report relies on Indeed job-posting data whose access and reuse require separate permission."
+      },
+      {
+        "name": "WARN and claims monitoring",
+        "recipe_id": "PANEL_FE_V1",
+        "status": "ADAPTABLE_RECIPE",
+        "source_pages": [
+          17,
+          18,
+          20
+        ],
+        "reason": "Claims are public; WARN requires state-level adapters and the existing charts remain descriptive."
+      },
+      {
+        "name": "Wages, youth unemployment and AI adoption",
+        "recipe_id": "PANEL_FE_V1",
+        "status": "ADAPTABLE_RECIPE",
+        "source_pages": [
+          25,
+          26,
+          27,
+          28,
+          30,
+          33,
+          36
+        ],
+        "reason": "The descriptive cross-sections can be rebuilt, but must not be labeled causal without a new pre-registered design."
+      }
+    ],
+    "paid_dependencies": [
+      "Indeed",
+      "Haver Analytics",
+      "Macrobond"
+    ],
+    "review_status": "DRAFT"
+  }
+]

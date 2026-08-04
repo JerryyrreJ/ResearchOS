@@ -1,0 +1,384 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CR09.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Debt balances and overview",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 10,
+      "page_start": 2,
+      "paraphrase": "The report tracks the level and composition of household liabilities, originations, and borrower-risk distributions as a current balance-sheet state.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR09",
+        "MR.CR09.HOUSEHOLD_STRESS"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR09.02",
+      "extraction_confidence": 0.9,
+      "kind": "VARIABLE_DEFINITION",
+      "locator_label": "Product and delinquency charts",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 30,
+      "page_start": 11,
+      "paraphrase": "Mortgage, HELOC, auto, credit-card, student-loan, and other balances and flows into serious delinquency are defined separately, with age and credit-score cuts.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR09",
+        "MR.CR09.HOUSEHOLD_STRESS"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR09.03",
+      "extraction_confidence": 0.9,
+      "kind": "RESULT",
+      "locator_label": "Delinquency and borrower transitions",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 35,
+      "page_start": 11,
+      "paraphrase": "Product-specific delinquency flows and originations reveal heterogeneity that aggregate household debt cannot show, especially for student, auto, and revolving credit.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR09",
+        "MR.CR09.HOUSEHOLD_STRESS"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR09.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Technical notes",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 46,
+      "page_start": 36,
+      "paraphrase": "Credit-bureau coverage, reporting conventions, pandemic policy effects, and the 2026 credit-score methodology change limit naive comparisons across products and vintages.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR09",
+        "MR.CR09.HOUSEHOLD_STRESS"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The 2026 Q1 Household Debt and Credit Report organizes the U.S. consumer balance sheet by mortgage, HELOC, auto, credit-card, student-loan, and other debt, then tracks originations, delinquency transitions, bankruptcy, and credit-score distributions. The 2026 switch from Equifax Risk Score 3.0 to VantageScore 4.0 is a material measurement break. MacroTrace should model debt service and delinquency stress by product and borrower stratum rather than interpret total debt growth alone.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "household-stress node feeding consumption and financial-stability lanes",
+      "control_variable_ids": [
+        "V.CR09.PRODUCT"
+      ],
+      "dependent_variable_ids": [
+        "V.CR09.DELINQ"
+      ],
+      "diagnostic_requirements": [
+        "score-method break detection",
+        "product coverage",
+        "transition matrix row sums",
+        "cohort stability",
+        "confidence intervals by stratum"
+      ],
+      "downstream_refs": [],
+      "estimand": "current and near-term rate of transition into serious delinquency conditional on product, borrower risk, and origination vintage",
+      "evidence_ids": [
+        "EV.CR09.01",
+        "EV.CR09.02",
+        "EV.CR09.03",
+        "EV.CR09.04"
+      ],
+      "formula": "Pr(D_{i,t+1}=90+|state_{i,t})=g(product,score_band,origination_vintage,macro_state)",
+      "free_data_feasibility": "PARTIAL",
+      "identification_strategy": "descriptive transition-risk estimation; no causal consumption effect without an external design",
+      "identifying_assumptions": [
+        "score methodology is vintage-specific",
+        "product definitions and bureau coverage are stable or flagged",
+        "policy forbearance periods are modeled as regime breaks"
+      ],
+      "independent_variable_ids": [
+        "V.CR09.DEBT",
+        "V.CR09.ORIG",
+        "V.CR09.SCORE"
+      ],
+      "lane_ref": "US.HOUSING_CONSUMPTION",
+      "mechanism_ref": "MECH.CANDIDATE.HOUSEHOLD.BALANCE_SHEET_STRESS",
+      "method_family": "product-by-risk-stratum delinquency transition panel",
+      "method_route_id": "MR.CR09.HOUSEHOLD_STRESS",
+      "node_ref": "N.CANDIDATE.HOUSEHOLD.CREDIT_TRANSITIONS",
+      "research_question_id": "Q.CR09",
+      "robustness_requirements": [
+        "balance-weighted versus borrower-weighted rates",
+        "exclude score-transition quarter",
+        "age and geography strata",
+        "delinquency definition alternatives"
+      ],
+      "sample_definition": "national Consumer Credit Panel quarterly observations by product and risk stratum",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CR09",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": "2026 Q1 report vintage",
+      "evidence_ids": [
+        "EV.CR09.01"
+      ],
+      "horizon_text": "current quarter and near-term delinquency transitions",
+      "question_id": "Q.CR09",
+      "question_text": "Where is U.S. household credit expanding or deteriorating across products and borrower-risk groups, and what does that imply for consumer resilience and spending risk?",
+      "target_variables": [
+        "V.CR09.DELINQ",
+        "V.CR09.DEBT"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "DRIVER",
+        "SCENARIO"
+      ]
+    }
+  ],
+  "record_id": "REV.EA91217E929F6D9C.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MECH.HOUSEHOLD.BALANCE_SHEET_STRESS",
+          "NODE.HOUSEHOLD.DELINQUENCY_TRANSITIONS",
+          "FACTOR.HOUSEHOLD.CARD_DELINQUENCY",
+          "FACTOR.HOUSEHOLD.STUDENT_LOAN_DELINQUENCY",
+          "POLICY.CREDIT_SCORE_METHOD_BREAK"
+        ],
+        "category": "INSTITUTIONAL_REPORT_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of New York",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 46,
+        "publication_date": "2026-05-12",
+        "report_id": "RC.EA91217E929F",
+        "review_status": "reviewed",
+        "source_catalog_id": "CR09",
+        "source_sha256": "ea91217e929f6d9ca92380f6dce7c96b159187cceb4084de60bff7c21a183b29",
+        "source_url": "https://www.newyorkfed.org/medialibrary/interactives/householdcredit/data/pdf/hhdc_2026q1.pdf",
+        "status": "reviewed",
+        "title": "Quarterly Report on Household Debt and Credit, 2026 Q1"
+      },
+      "change_id": "CH.CR09.REPORT",
+      "evidence_ids": [
+        "EV.CR09.01",
+        "EV.CR09.02",
+        "EV.CR09.03",
+        "EV.CR09.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CR09.HOUSEHOLD_STRESS"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.EA91217E929F",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.EA91217E929F",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:15.020144Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CR09.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CR09",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CR09.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 2481039,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of New York",
+    "jurisdiction_tags": [
+      "US",
+      "household_debt",
+      "delinquency",
+      "mortgages",
+      "student_loans",
+      "auto_loans",
+      "credit_scores"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 46,
+    "publication_date": "2026-05-12",
+    "source_file": "LOCAL_SNAPSHOT:CR09",
+    "source_id": "SRC.EA91217E929F6D9C",
+    "source_sha256": "ea91217e929f6d9ca92380f6dce7c96b159187cceb4084de60bff7c21a183b29",
+    "title": "Quarterly Report on Household Debt and Credit, 2026 Q1"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.206573Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:32.206215Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CR09",
+      "at": "2026-07-15T11:22:15.038546Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR09",
+      "at": "2026-07-15T11:22:15.064457Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR09",
+      "at": "2026-07-15T11:22:15.090450Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Share of balances newly transitioning into 90-plus-days delinquent status by product.",
+      "evidence_ids": [
+        "EV.CR09.02",
+        "EV.CR09.03"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "flow into serious delinquency",
+      "provider": "New York Fed Consumer Credit Panel/Equifax",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent of balance",
+      "variable_id": "V.CR09.DELINQ",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Outstanding consumer debt by product category.",
+      "evidence_ids": [
+        "EV.CR09.01",
+        "EV.CR09.02"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "household debt balance",
+      "provider": "Federal Reserve Bank of New York",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "U.S. dollars",
+      "variable_id": "V.CR09.DEBT",
+      "vintage_rule": null
+    },
+    {
+      "definition": "New mortgage, auto, card, or other credit extended during the quarter.",
+      "evidence_ids": [
+        "EV.CR09.02",
+        "EV.CR09.03"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "credit originations",
+      "provider": "Federal Reserve Bank of New York",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "U.S. dollars",
+      "variable_id": "V.CR09.ORIG",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Risk stratum based on the score methodology applicable to the report vintage.",
+      "evidence_ids": [
+        "EV.CR09.02",
+        "EV.CR09.04"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "borrower credit-score band",
+      "provider": "Federal Reserve Bank of New York",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "score band",
+      "variable_id": "V.CR09.SCORE",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Mortgage, HELOC, auto, card, student-loan, or other category.",
+      "evidence_ids": [
+        "EV.CR09.02"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "credit product",
+      "provider": "Federal Reserve Bank of New York",
+      "release_lag": null,
+      "role": "CONTROL",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "category",
+      "variable_id": "V.CR09.PRODUCT",
+      "vintage_rule": null
+    }
+  ]
+}

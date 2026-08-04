@@ -1,0 +1,378 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CW02.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Assessing current wage inflation",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The article motivates a measure that distinguishes the persistent state of wage growth from volatile worker-level observations and sector-specific noise.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW02",
+        "MR.CW02.WAGE_LATENT_STATE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW02.02",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Trend Wage Inflation construction",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Worker-level wage changes are combined with time-series filtering to estimate a persistent wage-inflation trend and its uncertainty interval.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW02",
+        "MR.CW02.WAGE_LATENT_STATE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW02.03",
+      "extraction_confidence": 0.9,
+      "kind": "MECHANISM",
+      "locator_label": "Common and industry decomposition",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The latent trend is decomposed into an economy-wide component and industry components so broad labor-cost pressure can be separated from sectoral reallocation.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW02",
+        "MR.CW02.WAGE_LATENT_STATE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW02.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Uncertainty and missing observations",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The estimate is surrounded by a sixty-eight percent uncertainty band and can be affected by missing or disrupted source months, so point movements must not be overinterpreted.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW02",
+        "MR.CW02.WAGE_LATENT_STATE"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The New York Fed Trend Wage Inflation framework decomposes worker-level wage growth into persistent and transitory movements and into economy-wide versus industry-specific components. For MacroTrace it is a latent-state labor-cost node with explicit uncertainty and sector heterogeneity, not a single observed wage-growth series or an unconditional claim about future price inflation.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "labor-cost pressure factor with common and sector-specific evidence kept separately visible",
+      "control_variable_ids": [
+        "V.CW02.NOISE"
+      ],
+      "dependent_variable_ids": [
+        "V.CW02.TWIN",
+        "V.CW02.COMMON",
+        "V.CW02.IND"
+      ],
+      "diagnostic_requirements": [
+        "standardized state-space innovations",
+        "filter and smoother uncertainty coverage",
+        "industry-loading and state-persistence stability",
+        "missing-month and sample-composition audit"
+      ],
+      "downstream_refs": [],
+      "estimand": "persistent common and industry-specific components of observed worker-level wage growth as of each vintage",
+      "evidence_ids": [
+        "EV.CW02.01",
+        "EV.CW02.02",
+        "EV.CW02.03",
+        "EV.CW02.04"
+      ],
+      "formula": "wage_{i,s,t}=common_t+industry_{s,t}+transitory_{i,s,t}; latent states follow registered transition equations",
+      "free_data_feasibility": "PARTIAL",
+      "identification_strategy": "time-series persistence and cross-industry covariance distinguish common trend, sector trends, and transitory noise",
+      "identifying_assumptions": [
+        "worker observations are comparable over time after registered sample controls",
+        "latent-state dynamics are stable enough for filtering",
+        "missing observations are handled using only information available at the as-of date"
+      ],
+      "independent_variable_ids": [
+        "V.CW02.WAGE"
+      ],
+      "lane_ref": "US.LABOR",
+      "mechanism_ref": "MECH.LABOR.WAGE_PERSISTENCE_AND_HETEROGENEITY",
+      "method_family": "hierarchical latent-state wage decomposition",
+      "method_route_id": "MR.CW02.WAGE_LATENT_STATE",
+      "node_ref": "N.CANDIDATE.LABOR.TREND_WAGE_INFLATION",
+      "research_question_id": "Q.CW02",
+      "robustness_requirements": [
+        "alternative persistence parameters",
+        "balanced-worker versus full sample",
+        "leave-one-industry-out common trend",
+        "real-time versus revised-vintage comparison"
+      ],
+      "sample_definition": "worker wage observations and industry assignments available in each monthly real-time vintage",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CW02",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CW02.01"
+      ],
+      "horizon_text": "current latent wage trend and near-term persistence",
+      "question_id": "Q.CW02",
+      "question_text": "What portion of current U.S. wage inflation is persistent and common across industries, and what portion is transitory or industry specific?",
+      "target_variables": [
+        "V.CW02.TWIN"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "DRIVER"
+      ]
+    }
+  ],
+  "record_id": "REV.DF19071B9115E292.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.STATE_SPACE.TREND_WAGE_INFLATION.V1",
+          "FACTOR.LABOR.WAGE_COMMON_TREND",
+          "FACTOR.LABOR.WAGE_INDUSTRY_HETEROGENEITY",
+          "DIAGNOSTIC.STATE_SPACE.MISSING_MONTH"
+        ],
+        "category": "METHOD_WEB",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of New York",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 1,
+        "publication_date": "2026-05-26",
+        "report_id": "RC.DF19071B9115",
+        "review_status": "reviewed",
+        "source_catalog_id": "CW02",
+        "source_sha256": "df19071b9115e292e5aee9d0175100b44f36f92ef8407bde49dc0a364b0cea2b",
+        "source_url": "https://libertystreeteconomics.newyorkfed.org/2026/05/assessing-the-current-state-of-wage-inflation/",
+        "status": "reviewed",
+        "title": "Assessing the Current State of Wage Inflation"
+      },
+      "change_id": "CH.CW02.REPORT",
+      "evidence_ids": [
+        "EV.CW02.01",
+        "EV.CW02.02",
+        "EV.CW02.03",
+        "EV.CW02.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CW02.WAGE_LATENT_STATE"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.DF19071B9115",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.DF19071B9115",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:15.329780Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CW02.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CW02",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CW02.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 21423,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of New York",
+    "jurisdiction_tags": [
+      "US",
+      "wages",
+      "labor",
+      "inflation",
+      "common_factor",
+      "industry_heterogeneity"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "text/plain",
+    "page_count": 1,
+    "publication_date": "2026-05-26",
+    "source_file": "LOCAL_SNAPSHOT:CW02",
+    "source_id": "SRC.DF19071B9115E292",
+    "source_sha256": "df19071b9115e292e5aee9d0175100b44f36f92ef8407bde49dc0a364b0cea2b",
+    "title": "Assessing the Current State of Wage Inflation"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.241978Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:32.651679Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CW02",
+      "at": "2026-07-15T11:22:15.347778Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW02",
+      "at": "2026-07-15T11:22:15.378773Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW02",
+      "at": "2026-07-15T11:22:15.405767Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Individual wage changes used as noisy observations of underlying wage inflation.",
+      "evidence_ids": [
+        "EV.CW02.01",
+        "EV.CW02.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "worker-level wage growth",
+      "provider": "U.S. household microdata used by the Federal Reserve Bank of New York",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent change",
+      "variable_id": "V.CW02.WAGE",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Estimated persistent component of aggregate wage inflation after filtering transitory worker-level variation.",
+      "evidence_ids": [
+        "EV.CW02.02",
+        "EV.CW02.04"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "Trend Wage Inflation",
+      "provider": "Federal Reserve Bank of New York",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "annualized percent",
+      "variable_id": "V.CW02.TWIN",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Economy-wide latent component shared across industry wage-growth processes.",
+      "evidence_ids": [
+        "EV.CW02.03"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "common wage trend",
+      "provider": "Federal Reserve Bank of New York",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "annualized percentage points",
+      "variable_id": "V.CW02.COMMON",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Persistent industry deviations from the common wage-inflation component.",
+      "evidence_ids": [
+        "EV.CW02.03"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "industry-specific wage trends",
+      "provider": "Federal Reserve Bank of New York",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "annualized percentage points",
+      "variable_id": "V.CW02.IND",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Worker-specific and short-lived wage movements not attributed to the persistent trend.",
+      "evidence_ids": [
+        "EV.CW02.01",
+        "EV.CW02.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "transitory wage noise",
+      "provider": "model residual",
+      "release_lag": null,
+      "role": "OTHER",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percentage points",
+      "variable_id": "V.CW02.NOISE",
+      "vintage_rule": null
+    }
+  ]
+}

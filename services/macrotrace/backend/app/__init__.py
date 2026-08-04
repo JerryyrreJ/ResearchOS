@@ -1,0 +1,2 @@
+"""MacroTrace FastAPI application."""
+

@@ -1,0 +1,357 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CW01.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Financial conditions and monetary transmission",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The article asks how monetary-policy actions affect a weighted summary of asset prices and other financial variables that influence economic activity.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW01",
+        "MR.CW01.HF_EVENT_STUDY"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW01.02",
+      "extraction_confidence": 0.9,
+      "kind": "IDENTIFICATION",
+      "locator_label": "High-frequency event-study design",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Policy surprises are measured from interest-rate changes in a narrow thirty-minute announcement window, reducing contamination by unrelated same-day news.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW01",
+        "MR.CW01.HF_EVENT_STUDY"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW01.03",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Event-study regressions",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The empirical exercise relates identified policy and CPI surprises to changes in the financial-conditions index on the event day and subsequent days.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW01",
+        "MR.CW01.HF_EVENT_STUDY"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW01.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Interpretation of the index",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "An index value of zero denotes its historical average, not a structural estimate of neutral financial conditions, and longer windows admit more confounding information.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW01",
+        "MR.CW01.HF_EVENT_STUDY"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The San Francisco Fed separates a broad financial-conditions index from the high-frequency policy and inflation surprises that move it. The page supports an event-study transmission node in which tightly timed rate or CPI news is linked to same-day and subsequent financial-condition changes, while the index level remains a historical standardization rather than a declaration that conditions are neutral.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "identified monetary-transmission evidence node feeding the financial-conditions lane",
+      "control_variable_ids": [],
+      "dependent_variable_ids": [
+        "V.CW01.DFCI",
+        "V.CW01.FCIC"
+      ],
+      "diagnostic_requirements": [
+        "pre-event leakage test",
+        "event-window contamination log",
+        "heteroskedasticity-robust or HAC covariance by horizon",
+        "joint horizon test and multiple-testing control"
+      ],
+      "downstream_refs": [],
+      "estimand": "change in broad financial conditions at event horizon k per unit of identified monetary-policy or inflation surprise",
+      "evidence_ids": [
+        "EV.CW01.01",
+        "EV.CW01.02",
+        "EV.CW01.03",
+        "EV.CW01.04"
+      ],
+      "formula": "Delta FCI_{t+k}=alpha_k+beta_k MPsurprise_t+theta_k CPIsurprise_t+epsilon_{t+k}",
+      "free_data_feasibility": "PARTIAL",
+      "identification_strategy": "narrow-window market surprises isolate the unexpected component of scheduled announcements under a no-concurrent-news assumption",
+      "identifying_assumptions": [
+        "market prices incorporate the scheduled announcement inside the registered window",
+        "no other material news systematically coincides with the narrow window",
+        "event dates and horizons are fixed before estimation"
+      ],
+      "independent_variable_ids": [
+        "V.CW01.MPS",
+        "V.CW01.CPIS"
+      ],
+      "lane_ref": "US.MONETARY",
+      "mechanism_ref": "MECH.MONETARY.FINANCIAL_CONDITIONS_TRANSMISSION",
+      "method_family": "high-frequency event study with local post-event projections",
+      "method_route_id": "MR.CW01.HF_EVENT_STUDY",
+      "node_ref": "N.CANDIDATE.MONETARY.HIGH_FREQUENCY_EVENT_STUDY",
+      "research_question_id": "Q.CW01",
+      "robustness_requirements": [
+        "alternative narrow windows",
+        "exclude overlapping macro releases",
+        "component-level responses",
+        "placebo timestamps and leave-one-event-out estimates"
+      ],
+      "sample_definition": "registered FOMC and CPI announcement events with synchronized high-frequency market data",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CW01",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CW01.01"
+      ],
+      "horizon_text": "announcement window through registered post-event trading days",
+      "question_id": "Q.CW01",
+      "question_text": "How do monetary-policy and inflation surprises transmit into broad U.S. financial conditions over event and short post-event horizons?",
+      "target_variables": [
+        "V.CW01.DFCI"
+      ],
+      "task_types": [
+        "CAUSAL",
+        "ASSET_TRANSMISSION"
+      ]
+    }
+  ],
+  "record_id": "REV.212AF99E66C955DB.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.EVENT_STUDY.HIGH_FREQUENCY.V1",
+          "NODE.MONETARY.POLICY_SURPRISE_TO_FCI",
+          "FACTOR.MONETARY.HF_POLICY_SURPRISE",
+          "DIAGNOSTIC.EVENT.WINDOW_CONTAMINATION"
+        ],
+        "category": "METHOD_WEB",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of San Francisco",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 1,
+        "publication_date": "2024-03-25",
+        "report_id": "RC.212AF99E66C9",
+        "review_status": "reviewed",
+        "source_catalog_id": "CW01",
+        "source_sha256": "212af99e66c955db4eb0a79f2b7ed45718b76a237daca40818d5bd847826f36d",
+        "source_url": "https://www.frbsf.org/research-and-insights/publications/economic-letter/2024/03/monetary-policy-and-financial-conditions/",
+        "status": "reviewed",
+        "title": "Monetary Policy and Financial Conditions"
+      },
+      "change_id": "CH.CW01.REPORT",
+      "evidence_ids": [
+        "EV.CW01.01",
+        "EV.CW01.02",
+        "EV.CW01.03",
+        "EV.CW01.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CW01.HF_EVENT_STUDY"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.212AF99E66C9",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.212AF99E66C9",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:15.226425Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CW01.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CW01",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CW01.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 15560,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of San Francisco",
+    "jurisdiction_tags": [
+      "US",
+      "monetary_policy",
+      "financial_conditions",
+      "asset_transmission"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "text/plain",
+    "page_count": 1,
+    "publication_date": "2024-03-25",
+    "source_file": "LOCAL_SNAPSHOT:CW01",
+    "source_id": "SRC.212AF99E66C955DB",
+    "source_sha256": "212af99e66c955db4eb0a79f2b7ed45718b76a237daca40818d5bd847826f36d",
+    "title": "Monetary Policy and Financial Conditions"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.227340Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:32.633685Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CW01",
+      "at": "2026-07-15T11:22:15.242426Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW01",
+      "at": "2026-07-15T11:22:15.271416Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW01",
+      "at": "2026-07-15T11:22:15.299539Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Event-to-event change in a weighted financial-conditions index summarizing rates, credit, equities, and related market prices.",
+      "evidence_ids": [
+        "EV.CW01.01",
+        "EV.CW01.03",
+        "EV.CW01.04"
+      ],
+      "frequency": "intraday/daily",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "change in broad financial conditions",
+      "provider": "Federal Reserve Bank of San Francisco",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized index change",
+      "variable_id": "V.CW01.DFCI",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Unexpected policy news proxied by the change in market interest rates within a narrow FOMC announcement window.",
+      "evidence_ids": [
+        "EV.CW01.02",
+        "EV.CW01.03"
+      ],
+      "frequency": "FOMC event",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "monetary-policy surprise",
+      "provider": "financial-market data",
+      "release_lag": null,
+      "role": "TREATMENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "basis points",
+      "variable_id": "V.CW01.MPS",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Released CPI inflation minus the pre-release survey consensus available to market participants.",
+      "evidence_ids": [
+        "EV.CW01.03"
+      ],
+      "frequency": "CPI release event",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "CPI news surprise",
+      "provider": "U.S. Bureau of Labor Statistics and survey consensus",
+      "release_lag": null,
+      "role": "TREATMENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percentage points",
+      "variable_id": "V.CW01.CPIS",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Component-level rate, spread, equity, exchange-rate, and other market responses underlying the composite index.",
+      "evidence_ids": [
+        "EV.CW01.01",
+        "EV.CW01.03"
+      ],
+      "frequency": "intraday/daily",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "financial-condition components",
+      "provider": "financial-market sources",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "component specific",
+      "variable_id": "V.CW01.FCIC",
+      "vintage_rule": null
+    }
+  ]
+}

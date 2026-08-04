@@ -1,0 +1,11 @@
+{
+  "registry_type": "parameter_policies",
+  "registry_version": "0.2.0",
+  "items": [
+    {"policy_id":"P.TIME_WINDOW.V1","description":"Estimation windows are selected only from recipe allowlists and must end at the job as-of date.","rules":{"no_future_observations":true,"minimum_effective_observations":60,"default_monthly_years":10},"status":"active"},
+    {"policy_id":"P.COVARIANCE.V1","description":"Covariance estimators are method-specific; clustered inference requires at least eight clusters for a warning and thirty for high confidence.","rules":{"panel_default":"CLUSTER_ENTITY","time_series_default":"HAC","cluster_warning_below":30,"cluster_fail_below":8},"status":"active"},
+    {"policy_id":"P.TRANSFORMS.V1","description":"Only registered transforms may be applied. Winsorization and standardization must be disclosed in lineage.","rules":{"winsorize_options":["NONE","P01_P99","P025_P975"],"standardize_options":["NONE","TRAINING_Z_SCORE"],"no_full_sample_standardization_for_oos":true},"status":"active"},
+    {"policy_id":"P.HORIZON.V1","description":"Natural-language horizon is authoritative. Missing horizon uses a visible workflow policy default.","rules":{"frontend_horizon_forbidden":true,"default_source_label":"POLICY_DEFAULT","model_horizon_clamped_to_recipe":true},"status":"active"},
+    {"policy_id":"P.MISSING.V1","description":"Missingness never triggers silent imputation across release dates.","rules":{"default":"INNER_JOIN_COMPLETE_CASE","ragged_edge_only_for_dfm":true,"minimum_factor_coverage":0.8},"status":"active"}
+  ]
+}

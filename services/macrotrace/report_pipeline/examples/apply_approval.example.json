@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0.0",
+  "changeset_id": "CS.BATCH.EXAMPLE.001.REPLACE_WITH_EXACT_ID",
+  "content_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "decision": "APPROVE_APPLY",
+  "reviewer": "replace-with-codex-review-pass",
+  "reviewer_type": "CODEX",
+  "approved_at": "2026-07-15T00:00:00Z",
+  "rationale": "Replace this example with the exact reviewed changeset ID and content hash."
+}

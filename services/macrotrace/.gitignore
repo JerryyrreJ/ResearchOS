@@ -1,0 +1,25 @@
+# Local secrets
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+# Local data and run artifacts
+data/
+artifacts/
+output/
+release/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Browser and local QA caches
+.playwright-cli/
+.firecrawl/
+
+# Frontend build
+dist/

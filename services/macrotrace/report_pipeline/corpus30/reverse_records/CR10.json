@@ -1,0 +1,384 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CR10.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Release narrative",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The survey asks manufacturers about current activity, orders, shipments, labor, prices, and expected conditions and summarizes expansion versus contraction.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR10",
+        "MR.CR10.MBOS_DIFFUSION"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR10.02",
+      "extraction_confidence": 0.9,
+      "kind": "VARIABLE_DEFINITION",
+      "locator_label": "Tables and notes",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 3,
+      "page_start": 1,
+      "paraphrase": "Diffusion indexes are derived from response shares reporting increases, decreases, or no change; special questions separately report production growth and capacity utilization.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR10",
+        "MR.CR10.MBOS_DIFFUSION"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR10.03",
+      "extraction_confidence": 0.9,
+      "kind": "RESULT",
+      "locator_label": "Current and future indexes",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 3,
+      "page_start": 1,
+      "paraphrase": "Current and six-month indicators across demand, output, labor, and prices provide a multidimensional regional manufacturing signal.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR10",
+        "MR.CR10.MBOS_DIFFUSION"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR10.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Survey notes",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 3,
+      "page_start": 3,
+      "paraphrase": "The survey is regional and sample-based, response shares and seasonal adjustment matter, and a diffusion index is directional rather than a direct growth rate.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR10",
+        "MR.CR10.MBOS_DIFFUSION"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The June 2026 Manufacturing Business Outlook Survey reports diffusion indexes for general activity, new orders, shipments, employment, workweek, prices paid/received, delivery times, inventories, and six-month expectations, plus special questions on production and capacity utilization. Its three-page release is compact but methodologically useful: survey shares must be transformed with a documented diffusion formula and uncertainty must reflect respondent count and revisions.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "auxiliary high-frequency manufacturing node",
+      "control_variable_ids": [],
+      "dependent_variable_ids": [
+        "V.CR10.DIFF",
+        "V.CR10.PRICE"
+      ],
+      "diagnostic_requirements": [
+        "respondent count and missingness",
+        "diffusion add-up",
+        "release revisions",
+        "rolling bridge RMSE",
+        "regional-to-national calibration"
+      ],
+      "downstream_refs": [],
+      "estimand": "direction and breadth of manufacturing activity and price pressure among survey respondents",
+      "evidence_ids": [
+        "EV.CR10.01",
+        "EV.CR10.02",
+        "EV.CR10.03",
+        "EV.CR10.04"
+      ],
+      "formula": "diffusion_index=100*(share_increase-share_decrease); national_target_{t+h}=alpha+beta*index_t+controls+error",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "descriptive survey signal and predictive bridge; not a causal regional effect",
+      "identifying_assumptions": [
+        "increase/decrease shares use the published denominator",
+        "seasonal-adjustment status is recorded",
+        "regional signal is calibrated before national inference"
+      ],
+      "independent_variable_ids": [
+        "V.CR10.ORDERS",
+        "V.CR10.EMP",
+        "V.CR10.CAP"
+      ],
+      "lane_ref": "US.ACTIVITY",
+      "mechanism_ref": "MECH.CANDIDATE.MANUFACTURING.SURVEY_MOMENTUM",
+      "method_family": "survey diffusion-index state and bridge model",
+      "method_route_id": "MR.CR10.MBOS_DIFFUSION",
+      "node_ref": "N.CANDIDATE.MANUFACTURING.MBOS",
+      "research_question_id": "Q.CR10",
+      "robustness_requirements": [
+        "current versus future index",
+        "orders/shipments cross-check",
+        "three-month average",
+        "comparison with other regional Fed surveys and industrial production"
+      ],
+      "sample_definition": "monthly Third District manufacturing respondents available at each release vintage",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CR10",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CR10.01"
+      ],
+      "horizon_text": "current month, current quarter, and six-month expectations",
+      "question_id": "Q.CR10",
+      "question_text": "Are Third District manufacturing activity, demand, employment, and price pressure expanding or contracting, and what do firms expect over the next six months?",
+      "target_variables": [
+        "V.CR10.DIFF",
+        "V.CR10.PRICE"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "FORECAST",
+        "DRIVER"
+      ]
+    }
+  ],
+  "record_id": "REV.34FC7168E6F04CE1.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "NODE.MANUFACTURING.MBOS_DIFFUSION",
+          "FACTOR.MBOS.NEW_ORDERS",
+          "FACTOR.MBOS.PRICES_PAID",
+          "TRANSFORM.SURVEY.DIFFUSION_INDEX",
+          "DIAGNOSTIC.SURVEY.RESPONDENT_COVERAGE"
+        ],
+        "category": "INSTITUTIONAL_REPORT_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of Philadelphia",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 3,
+        "publication_date": "2026-06-18",
+        "report_id": "RC.34FC7168E6F0",
+        "review_status": "reviewed",
+        "source_catalog_id": "CR10",
+        "source_sha256": "34fc7168e6f04ce1f66b6de7913f53005a92a9f8250fb59ac8e656ff1c7a7bb5",
+        "source_url": "https://www.philadelphiafed.org/-/media/FRBP/Assets/Surveys-And-Data/MBOS/2026/bos0626.pdf?sc_lang=en",
+        "status": "reviewed",
+        "title": "Manufacturing Business Outlook Survey, June 2026"
+      },
+      "change_id": "CH.CR10.REPORT",
+      "evidence_ids": [
+        "EV.CR10.01",
+        "EV.CR10.02",
+        "EV.CR10.03",
+        "EV.CR10.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CR10.MBOS_DIFFUSION"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.34FC7168E6F0",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.34FC7168E6F0",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:15.123443Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CR10.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CR10",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CR10.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 381729,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of Philadelphia",
+    "jurisdiction_tags": [
+      "US",
+      "manufacturing",
+      "new_orders",
+      "employment",
+      "prices_paid",
+      "capacity",
+      "expectations"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 3,
+    "publication_date": "2026-06-18",
+    "source_file": "LOCAL_SNAPSHOT:CR10",
+    "source_id": "SRC.34FC7168E6F04CE1",
+    "source_sha256": "34fc7168e6f04ce1f66b6de7913f53005a92a9f8250fb59ac8e656ff1c7a7bb5",
+    "title": "Manufacturing Business Outlook Survey, June 2026"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.211834Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:32.613689Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CR10",
+      "at": "2026-07-15T11:22:15.141444Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR10",
+      "at": "2026-07-15T11:22:15.166438Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR10",
+      "at": "2026-07-15T11:22:15.196430Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Share reporting increase minus share reporting decrease for general activity.",
+      "evidence_ids": [
+        "EV.CR10.01",
+        "EV.CR10.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "general activity diffusion index",
+      "provider": "Federal Reserve Bank of Philadelphia",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "diffusion points",
+      "variable_id": "V.CR10.DIFF",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Diffusion measure of input-price increases versus decreases among respondents.",
+      "evidence_ids": [
+        "EV.CR10.02",
+        "EV.CR10.03"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "prices paid diffusion index",
+      "provider": "Federal Reserve Bank of Philadelphia",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "diffusion points",
+      "variable_id": "V.CR10.PRICE",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Directional balance of firms reporting higher versus lower new orders.",
+      "evidence_ids": [
+        "EV.CR10.02",
+        "EV.CR10.03"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "new orders diffusion index",
+      "provider": "Federal Reserve Bank of Philadelphia",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "diffusion points",
+      "variable_id": "V.CR10.ORDERS",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Directional balance of firms reporting higher versus lower employment.",
+      "evidence_ids": [
+        "EV.CR10.02",
+        "EV.CR10.03"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "employment diffusion index",
+      "provider": "Federal Reserve Bank of Philadelphia",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "diffusion points",
+      "variable_id": "V.CR10.EMP",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Self-reported plant capacity-utilization band in the special questions.",
+      "evidence_ids": [
+        "EV.CR10.02",
+        "EV.CR10.03"
+      ],
+      "frequency": "quarterly special question",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "capacity utilization",
+      "provider": "Federal Reserve Bank of Philadelphia",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent/band",
+      "variable_id": "V.CR10.CAP",
+      "vintage_rule": null
+    }
+  ]
+}

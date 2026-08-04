@@ -1,0 +1,21 @@
+{
+  "registry_type": "datasets",
+  "registry_version": "0.2.0",
+  "items": [
+    {"dataset_id":"DS.BLS.CPI","source":"BLS","series_ids":["CUSR0000SA0","CUSR0000SA0L1E"],"license":"US public data","frequency":"M","vintage":"snapshot_with_release_metadata","status":"active"},
+    {"dataset_id":"DS.BLS.LABOR","source":"BLS","series_ids":["CES0000000001","LNS14000000","CES0500000003","CES5000000001","CES5000000003","CES6000000001","CES6000000003"],"license":"US public data","frequency":"M","vintage":"snapshot_with_release_metadata","status":"active"},
+    {"dataset_id":"DS.BLS.CPS_DEMOGRAPHICS","source":"BLS CPS","series_ids":["LNS14024887","LNS12324887","LNS14027662","LNS14027660"],"license":"US public data","frequency":"M","vintage":"snapshot_with_release_metadata","status":"active"},
+    {"dataset_id":"DS.BLS.JOLTS","source":"BLS JOLTS","series_ids":["JTS000000000000000JOL","JTS000000000000000HIL","JTS000000000000000QUL","JTS000000000000000LDL","JTS510099000000000JOL","JTS510099000000000LDL","JTS540099000000000JOL","JTS540099000000000LDL"],"license":"US public data","frequency":"M","vintage":"snapshot_with_release_metadata","status":"active"},
+    {"dataset_id":"DS.CENSUS.BTOS","source":"US Census Business Trends and Outlook Survey","series_ids":["BTOS_AI_USE"],"license":"US public data","frequency":"BIWEEKLY","vintage":"period_specific_snapshot","status":"reviewed"},
+    {"dataset_id":"DS.ONET.OCCUPATIONS","source":"US Department of Labor O*NET","series_ids":["ONET_AI_EXPOSURE_CROSSWALK"],"license":"Creative Commons","frequency":"RELEASE","vintage":"versioned_release","status":"blocked"},
+    {"dataset_id":"DS.FRED.ACTIVITY","source":"FRED","series_ids":["INDPRO","RSAFS","GDPC1","CFNAI","PCEC96","DSPIC96","USREC"],"license":"series-specific public data","frequency":"M/Q","vintage":"ALFRED_when_as_of","status":"active"},
+    {"dataset_id":"DS.FRED.PCE","source":"FRED","series_ids":["PCEPI","PCEPILFE"],"license":"BEA public data distributed by FRED","frequency":"M","vintage":"ALFRED_when_as_of","status":"active"},
+    {"dataset_id":"DS.FRED.RATES","source":"FRED","series_ids":["DGS2","DGS10","DFII10","T10YIE","NFCI","T10Y2Y","BAA10Y","DGS5","DGS30","FEDFUNDS","THREEFYTP10","T5YIFR"],"license":"public series distributed by FRED","frequency":"D/W","vintage":"snapshot","status":"active"},
+    {"dataset_id":"DS.FRED.HOUSEHOLD","source":"FRED","series_ids":["PCEC96","DSPIC96","PSAVERT","HOUST","PERMIT"],"license":"official public series distributed by FRED","frequency":"M","vintage":"ALFRED_when_as_of","status":"active"},
+    {"dataset_id":"DS.FRED.CLAIMS","source":"FRED / US Department of Labor","series_ids":["ICSA","CCSA"],"license":"US public data distributed by FRED","frequency":"W","vintage":"ALFRED_when_as_of","status":"active"},
+    {"dataset_id":"DS.EIA.WTI","source":"EIA","series_ids":["RWTC"],"license":"US public data","frequency":"W","vintage":"snapshot","status":"active"},
+    {"dataset_id":"DS.TREASURY.DEBT","source":"Treasury Fiscal Data","series_ids":["DEBT_TO_PENNY_TOTAL"],"license":"US public data","frequency":"D","vintage":"snapshot","status":"active"},
+    {"dataset_id":"DS.FRED.STATE_PANEL","source":"FRED","series_ids":["STATE_UR","STATE_STHPI"],"license":"BLS/FHFA public data distributed by FRED","frequency":"M/Q","vintage":"snapshot","status":"fixture"},
+    {"dataset_id":"DS.FRED.FISCAL","source":"FRED / OMB / BEA","series_ids":["GFDEGDQ188S","FGDEF"],"license":"US official public data distributed by FRED","frequency":"Q","vintage":"ALFRED_when_as_of","status":"active"}
+  ]
+}

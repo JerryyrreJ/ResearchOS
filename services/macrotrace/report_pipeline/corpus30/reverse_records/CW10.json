@@ -1,0 +1,376 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CW10.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "ADS purpose",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The page presents a high-frequency business-conditions measure designed to update the current state of the U.S. economy as heterogeneous releases arrive.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW10",
+        "MR.CW10.ADS_STATE_SPACE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW10.02",
+      "extraction_confidence": 0.9,
+      "kind": "DATA_SOURCE",
+      "locator_label": "Six activity indicators",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Inputs are weekly initial unemployment claims; monthly payroll employment, industrial production, real income less transfers, and real manufacturing and trade sales; and quarterly real GDP.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW10",
+        "MR.CW10.ADS_STATE_SPACE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW10.03",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Mixed-frequency latent-state model",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "A state-space framework reconciles asynchronous observations into a common business-condition index and updates the estimate when new or revised data become available.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW10",
+        "MR.CW10.ADS_STATE_SPACE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW10.04",
+      "extraction_confidence": 0.9,
+      "kind": "ROBUSTNESS",
+      "locator_label": "Real-time vintages and tentacle plot",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Archived vintages and the tentacle visualization expose how the contemporaneous state estimate changes as later releases and revisions expand the information set.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW10",
+        "MR.CW10.ADS_STATE_SPACE"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The Philadelphia Fed ADS index estimates a high-frequency latent U.S. business-condition state from six indicators arriving at weekly, monthly, and quarterly frequencies. Its real-time vintages and tentacle plot make revisions and ragged-edge uncertainty part of the evidence. MacroTrace should implement it as a mixed-frequency state-space node whose release-by-release state changes are traceable, not as a static descriptive composite.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "core activity-state node with release-news lineage and vintage uncertainty visible",
+      "control_variable_ids": [],
+      "dependent_variable_ids": [
+        "V.CW10.ADS"
+      ],
+      "diagnostic_requirements": [
+        "standardized innovations by series",
+        "state and loading stability",
+        "ragged-edge availability map",
+        "real-time nowcast error and revision decomposition"
+      ],
+      "downstream_refs": [],
+      "estimand": "latent U.S. business-condition state conditional on the exact information set available at each date",
+      "evidence_ids": [
+        "EV.CW10.01",
+        "EV.CW10.02",
+        "EV.CW10.03",
+        "EV.CW10.04"
+      ],
+      "formula": "x_{j,t}=lambda_j ADS_t+e_{j,t}; ADS_t=A(L)ADS_{t-1}+u_t; Kalman filter handles mixed-frequency missing observations",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "measurement and transition equations map multiple activity indicators to a common latent state; predictive/state estimation rather than causal identification",
+      "identifying_assumptions": [
+        "release calendars and vintages are faithfully reconstructed",
+        "measurement loadings and transition dynamics are stable enough for filtering",
+        "missing observations enter as ragged edge rather than imputed future values"
+      ],
+      "independent_variable_ids": [
+        "V.CW10.CLAIMS",
+        "V.CW10.MONTH",
+        "V.CW10.GDP",
+        "V.CW10.NEWS"
+      ],
+      "lane_ref": "US.ACTIVITY",
+      "mechanism_ref": "MECH.ACTIVITY.COMMON_REAL_STATE",
+      "method_family": "mixed-frequency dynamic-factor state-space nowcast",
+      "method_route_id": "MR.CW10.ADS_STATE_SPACE",
+      "node_ref": "N.CANDIDATE.ACTIVITY.ADS_STATE_SPACE",
+      "research_question_id": "Q.CW10",
+      "robustness_requirements": [
+        "leave-one-series-out index",
+        "first-release versus latest-vintage targets",
+        "alternative transition lags",
+        "expanding versus rolling parameter estimation"
+      ],
+      "sample_definition": "real-time weekly, monthly, and quarterly U.S. activity vintages available on each historical date",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CW10",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CW10.01"
+      ],
+      "horizon_text": "current high-frequency business state and near-term update path",
+      "question_id": "Q.CW10",
+      "question_text": "What is the current latent state of U.S. business conditions when weekly, monthly, and quarterly activity indicators arrive asynchronously and are subsequently revised?",
+      "target_variables": [
+        "V.CW10.ADS"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "FORECAST"
+      ]
+    }
+  ],
+  "record_id": "REV.31CD7BE7E70C712F.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.STATE_SPACE.ADS_STYLE.V1",
+          "FACTOR.ACTIVITY.ADS_REAL_TIME",
+          "EVIDENCE.ACTIVITY.RELEASE_NEWS",
+          "DIAGNOSTIC.VINTAGE.TENTACLE_REVISION"
+        ],
+        "category": "METHOD_WEB",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of Philadelphia",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 1,
+        "publication_date": null,
+        "report_id": "RC.31CD7BE7E70C",
+        "review_status": "reviewed",
+        "source_catalog_id": "CW10",
+        "source_sha256": "31cd7be7e70c712f81da1109aaeb9bfa1a7e7bb377bff04a183d80b4456e8f2f",
+        "source_url": "https://www.philadelphiafed.org/surveys-and-data/real-time-data-research/ads",
+        "status": "reviewed",
+        "title": "Aruoba-Diebold-Scotti Business Conditions Index"
+      },
+      "change_id": "CH.CW10.REPORT",
+      "evidence_ids": [
+        "EV.CW10.01",
+        "EV.CW10.02",
+        "EV.CW10.03",
+        "EV.CW10.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CW10.ADS_STATE_SPACE"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.31CD7BE7E70C",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.31CD7BE7E70C",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:16.161886Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CW10.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CW10",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CW10.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 5578,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of Philadelphia",
+    "jurisdiction_tags": [
+      "US",
+      "business_conditions",
+      "state_space",
+      "mixed_frequency",
+      "real_time_vintages"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "text/plain",
+    "page_count": 1,
+    "publication_date": null,
+    "source_file": "LOCAL_SNAPSHOT:CW10",
+    "source_id": "SRC.31CD7BE7E70C712F",
+    "source_sha256": "31cd7be7e70c712f81da1109aaeb9bfa1a7e7bb377bff04a183d80b4456e8f2f",
+    "title": "Aruoba-Diebold-Scotti Business Conditions Index"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.367911Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:32.800116Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CW10",
+      "at": "2026-07-15T11:22:16.178475Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW10",
+      "at": "2026-07-15T11:22:16.205484Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW10",
+      "at": "2026-07-15T11:22:16.231482Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Latent high-frequency state of U.S. real economic activity estimated from six mixed-frequency indicators.",
+      "evidence_ids": [
+        "EV.CW10.01",
+        "EV.CW10.03",
+        "EV.CW10.04"
+      ],
+      "frequency": "high frequency with release updates",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "ADS business conditions index",
+      "provider": "Federal Reserve Bank of Philadelphia",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized business-condition index",
+      "variable_id": "V.CW10.ADS",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Weekly new claims for unemployment insurance, direction-adjusted as a timely labor signal.",
+      "evidence_ids": [
+        "EV.CW10.02"
+      ],
+      "frequency": "weekly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "initial unemployment claims",
+      "provider": "U.S. Department of Labor",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "persons",
+      "variable_id": "V.CW10.CLAIMS",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Payrolls, industrial production, real personal income less transfers, and real manufacturing and trade sales.",
+      "evidence_ids": [
+        "EV.CW10.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "monthly activity indicators",
+      "provider": "U.S. Bureau of Labor Statistics, Federal Reserve, and U.S. Bureau of Economic Analysis",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "series-specific growth or level",
+      "variable_id": "V.CW10.MONTH",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Quarterly real gross domestic product anchoring the broad activity concept at lower frequency.",
+      "evidence_ids": [
+        "EV.CW10.02"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "real GDP",
+      "provider": "U.S. Bureau of Economic Analysis",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "real growth or level",
+      "variable_id": "V.CW10.GDP",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Difference between newly released or revised data and the state-space model expectation under the prior vintage.",
+      "evidence_ids": [
+        "EV.CW10.03",
+        "EV.CW10.04"
+      ],
+      "frequency": "release event",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "release and revision news",
+      "provider": "real-time model calculation",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "series specific",
+      "variable_id": "V.CW10.NEWS",
+      "vintage_rule": null
+    }
+  ]
+}
