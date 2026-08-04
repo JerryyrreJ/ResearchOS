@@ -46,6 +46,20 @@ Radius:
 
 Pills are reserved for true tags or states. Containers never use fully rounded geometry.
 
+## Responsive model
+
+ResearchOS is device-agnostic; breakpoints respond to available width rather than browser user-agent strings.
+
+| Mode | Width | Product structure |
+|---|---:|---|
+| Phone | `< 720 px` | Single-column reading surface, six-item bottom navigation, safe-area padding, Inspector as a bottom sheet |
+| Tablet / iPad | `720–1180 px` | Persistent compact sidebar, one main workspace column, Inspector as a right-side drawer |
+| Laptop / Desktop | `> 1180 px` | Persistent sidebar, central workspace, persistent contextual Inspector |
+
+Tailwind CSS v4 owns the named `phone`, `tablet`, `laptop`, and `desktop` breakpoints plus container-query capability. Radix Dialog owns the accessible tablet/mobile Inspector overlay, focus trap, Escape behavior, and semantic title. Layout changes remain CSS-driven; JavaScript never detects device names.
+
+Touch targets are at least 44 px for primary mobile actions. Fixed bottom navigation and drawers include `env(safe-area-inset-bottom)` for modern phones and tablets.
+
 ## Spacing
 
 The spacing system uses a 4 px base: `4, 8, 12, 16, 24, 32`. Page-level reading margins may use 40–60 px on desktop. Alignment takes priority over introducing new spacing values.

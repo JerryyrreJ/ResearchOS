@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 import { localeNames, tx, type Locale } from "./i18n";
 
 type View = "thesis" | "workspace" | "validation" | "macrotrace" | "recompile" | "versions";
@@ -29,7 +30,7 @@ function LocaleSwitcher({ locale, onChange, compact = false }: { locale: Locale;
   return <label className={`locale-switcher ${compact ? "compact" : ""}`}><span className="sr-only">Language</span><select value={locale} onChange={e=>onChange(e.target.value as Locale)} aria-label="Language">{(Object.keys(localeNames) as Locale[]).map(key=><option value={key} key={key}>{localeNames[key]}</option>)}</select><i>⌄</i></label>;
 }
 
-function Topbar({ title, subtitle, onCommand, locale, onLocale }: { title: string; subtitle: string; onCommand: () => void; locale: Locale; onLocale: (locale: Locale) => void }) {
+function Topbar({ title, subtitle, onCommand, onInspector, locale, onLocale }: { title: string; subtitle: string; onCommand: () => void; onInspector: () => void; locale: Locale; onLocale: (locale: Locale) => void }) {
   return (
     <header className="topbar">
       <div className="breadcrumbs"><span>{tx(locale,"Fiscal transmission study")}</span><i>/</i><strong>{tx(locale,title)}</strong></div>
@@ -37,6 +38,7 @@ function Topbar({ title, subtitle, onCommand, locale, onLocale }: { title: strin
         <Badge tone="amber">{tx(locale,"FIXTURE MODE")}</Badge>
         <LocaleSwitcher locale={locale} onChange={onLocale} compact/>
         <button className="command-trigger" onClick={onCommand}><span>{tx(locale,"Search or command")}</span><kbd>⌘ K</kbd></button>
+        <button className="inspector-trigger" onClick={onInspector} aria-label={tx(locale,"Inspector")}>⌘</button>
         <button className="avatar" aria-label="User menu">TW</button>
       </div>
       <div className="page-heading"><div><h1>{tx(locale,title)}</h1><p>{tx(locale,subtitle)}</p></div><div className="heading-actions"><button className="button secondary">{tx(locale,"Share")}</button><button className="button primary">{tx(locale,"Compile thesis")} <span>⌘↵</span></button></div></div>
@@ -62,6 +64,10 @@ function Inspector({ selectedSource, locale }: { selectedSource?: typeof sources
       <section className="inspector-section"><h4>{tx(locale,"Provenance")}</h4><button className="source-link"><span>↗</span><div><b>{tx(locale,"Open frozen fixture")}</b><small>sample_thesis_build.json</small></div></button></section>
     </aside>
   );
+}
+
+function InspectorDrawer({ open, onOpenChange, selectedSource, locale }: { open: boolean; onOpenChange: (open: boolean) => void; selectedSource?: typeof sources[number]; locale: Locale }) {
+  return <Dialog.Root open={open} onOpenChange={onOpenChange}><Dialog.Portal><Dialog.Overlay className="drawer-overlay"/><Dialog.Content className="drawer-content"><Dialog.Title className="sr-only">{tx(locale,"Inspector")}</Dialog.Title><Dialog.Close className="drawer-close" aria-label="Close">×</Dialog.Close><Inspector selectedSource={selectedSource} locale={locale}/></Dialog.Content></Dialog.Portal></Dialog.Root>;
 }
 
 function ThesisView({ locale }: { locale: Locale }) {
@@ -162,13 +168,15 @@ export default function Home() {
   const [selectedSource, setSelectedSource] = useState<typeof sources[number]>();
   const [entered, setEntered] = useState(false);
   const [locale, setLocale] = useState<Locale>("zh-CN");
+  const [inspectorOpen, setInspectorOpen] = useState(false);
   useEffect(()=>{ const key=(e:KeyboardEvent)=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();setCommandOpen(v=>!v)} if(e.key==="Escape")setCommandOpen(false)}; addEventListener("keydown",key);return()=>removeEventListener("keydown",key)},[]);
   const current = useMemo(()=>nav.find(n=>n.id===view)!,[view]);
   const subtitles: Record<View,string> = { thesis:"Compile a research claim against frozen definitions and evidence policy.",workspace:"Shared research state, versioned objects, and traceable relations.",validation:"A continuous protocol from question to evidence-bounded conclusion.",macrotrace:"Registered empirical execution, diagnostics, and evidence output.",recompile:"Review how evidence constrains the language of the thesis.",versions:"Understand incremental changes, recomputation, and reuse."};
-  if (!entered) return <LoginScreen onEnter={()=>setEntered(true)} locale={locale} onLocale={setLocale}/>;
+  if (!entered) return <LoginScreen onEnter={()=>{setEntered(true);requestAnimationFrame(()=>window.scrollTo({top:0,behavior:"auto"}))}} locale={locale} onLocale={setLocale}/>;
   return <main className="app-shell" lang={locale} data-locale={locale}>
     <aside className="sidebar"><div className="brand"><div className="brand-mark"><i/><i/><i/></div><div><b>ResearchOS</b><span>{tx(locale,"Evidence workspace")}</span></div><button>⌄</button></div><button className="new-thesis">＋ <span>{tx(locale,"New thesis")}</span><kbd>N</kbd></button><nav><span className="nav-label">{tx(locale,"Research")}</span>{nav.map(item=><button key={item.id} className={view===item.id?"active":""} onClick={()=>setView(item.id)}><i>{item.icon}</i><span>{tx(locale,item.label)}</span>{item.meta&&<em>{item.meta}</em>}</button>)}</nav><div className="sidebar-project"><span className="nav-label">{tx(locale,"Active project")}</span><div className="project-card"><div className="project-icon">FT</div><div><b>{tx(locale,"Fiscal transmission")}</b><span>{tx(locale,"4 sources · 1 thesis")}</span></div><button>···</button></div></div><div className="sidebar-bottom"><button><i>⌁</i><span>{tx(locale,"Activity")}</span><em>3</em></button><button><i>?</i><span>{tx(locale,"Help & shortcuts")}</span></button><div className="sync-state"><span className="status-dot green"/><div><b>{tx(locale,"Workspace synced")}</b><small>{tx(locale,"Just now")}</small></div></div></div></aside>
-    <section className="main-frame"><Topbar title={current.label} subtitle={subtitles[view]} onCommand={()=>setCommandOpen(true)} locale={locale} onLocale={setLocale}/><div className="content-frame">{view==="thesis"&&<ThesisView locale={locale}/>}{view==="workspace"&&<WorkspaceView onSelect={setSelectedSource}/>} {view==="validation"&&<ValidationView/>}{view==="macrotrace"&&<MacroTraceView/>}{view==="recompile"&&<RecompileView/>}{view==="versions"&&<VersionView/>}<Inspector selectedSource={selectedSource} locale={locale}/></div></section>
+    <section className="main-frame"><Topbar title={current.label} subtitle={subtitles[view]} onCommand={()=>setCommandOpen(true)} onInspector={()=>setInspectorOpen(true)} locale={locale} onLocale={setLocale}/><div className="content-frame">{view==="thesis"&&<ThesisView locale={locale}/>}{view==="workspace"&&<WorkspaceView onSelect={(item)=>{setSelectedSource(item);setInspectorOpen(true)}}/>} {view==="validation"&&<ValidationView/>}{view==="macrotrace"&&<MacroTraceView/>}{view==="recompile"&&<RecompileView/>}{view==="versions"&&<VersionView/>}<Inspector selectedSource={selectedSource} locale={locale}/></div></section>
+    <InspectorDrawer open={inspectorOpen} onOpenChange={setInspectorOpen} selectedSource={selectedSource} locale={locale}/>
     {commandOpen&&<div className="command-overlay" onMouseDown={()=>setCommandOpen(false)}><div className="command" onMouseDown={e=>e.stopPropagation()}><div className="command-input"><span>⌕</span><input autoFocus placeholder={`${tx(locale,"Search or command")}…`}/><kbd>ESC</kbd></div><span className="command-label">Navigate</span>{nav.map(n=><button key={n.id} onClick={()=>{setView(n.id);setCommandOpen(false)}}><i>{n.icon}</i><span>{tx(locale,n.label)}</span><kbd>↵</kbd></button>)}</div></div>}
   </main>;
 }

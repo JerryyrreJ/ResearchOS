@@ -43,3 +43,17 @@ test("ships Simplified Chinese, Traditional Chinese, and English UI catalogs", a
   assert.match(catalog, /進入你的研究空間/);
   assert.match(catalog, /Enter your research workspace/);
 });
+
+test("defines phone, tablet, and desktop adaptive behavior", async () => {
+  const [page, css, packageJson] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ]);
+  assert.match(packageJson, /@radix-ui\/react-dialog/);
+  assert.match(page, /InspectorDrawer/);
+  assert.match(css, /--breakpoint-phone/);
+  assert.match(css, /--breakpoint-tablet/);
+  assert.match(css, /safe-area-inset-bottom/);
+  assert.match(css, /drawer-content/);
+});
