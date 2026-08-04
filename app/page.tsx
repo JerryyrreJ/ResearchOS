@@ -122,13 +122,42 @@ function VersionView() {
   return <div className="workspace-scroll versions"><div className="version-header"><div><span className="eyebrow">VERSION COMPARISON</span><h2>THESIS_VER_001 <span>→</span> THESIS_VER_002</h2><p>The causal claim was downgraded after associational evidence was added.</p></div><button className="button secondary">Export diff</button></div><div className="version-timeline"><span className="v-dot old">v1</span><i/><div><b>MacroTrace evidence added</b><small>EVIDENCE_DEMO_001 · ASSOCIATIONAL</small></div><i/><span className="v-dot new">v2</span></div><div className="diff-groups">{groups.map(([title,count,tone,items])=><section key={title} className={`diff-group ${tone}`}><div><span>{title}</span><b>{count}</b></div>{items.map((item)=><button key={item}><i>{title === "Changed" ? "△" : title === "Recomputed" ? "↻" : title === "Reused" ? "✓" : "—"}</i><span><b>{item}</b><small>{title === "Changed" ? "Modified in THESIS_VER_002" : title === "Recomputed" ? "Affected by new evidence" : title === "Reused" ? "Pinned version unchanged" : "No downstream impact"}</small></span><em>→</em></button>)}</section>)}</div><section className="impact-summary"><div><span>Conclusion</span><b>SUPPORTED</b></div><div><span>Model runs recomputed</span><b>1</b></div><div><span>Compile issues changed</span><b>1</b></div><div><span>Objects reused</span><b>1</b></div></section></div>;
 }
 
+function LoginScreen({ onEnter }: { onEnter: () => void }) {
+  const [email, setEmail] = useState("");
+  return <main className="login-shell">
+    <section className="login-brand-panel">
+      <div className="login-brand"><div className="brand-glyph"><span>R</span><i/><i/></div><span>ResearchOS</span></div>
+      <div className="login-statement"><span className="login-index">RESEARCH OPERATING SYSTEM · 01</span><h1>Evidence<br/><em>becomes</em><br/>structure.</h1><p>把散落的研究材料变成可追溯的证据结构，再让每一句结论通过编译。</p></div>
+      <div className="evidence-field" aria-hidden="true">
+        <div className="e-node n-source"><span>01</span><b>Source</b></div><i className="e-line l1"/><div className="e-node n-evidence"><span>02</span><b>Evidence</b></div><i className="e-line l2"/><div className="e-node n-thesis"><span>03</span><b>Thesis</b></div>
+      </div>
+      <div className="login-foot"><span>研构 · ResearchOS</span><span>v0.1 · Frozen contracts</span></div>
+    </section>
+    <section className="login-form-panel">
+      <div className="login-form-wrap">
+        <span className="form-overline">PRIVATE RESEARCH WORKSPACE</span>
+        <h2>进入你的研究空间</h2>
+        <p className="form-intro">继续访问 Fiscal transmission study。你的对象版本、证据来源与编译历史会保持可追溯。</p>
+        <label className="auth-field"><span>工作邮箱</span><input value={email} onChange={e=>setEmail(e.target.value)} placeholder="name@organization.com" type="email"/></label>
+        <button className="auth-primary" onClick={onEnter}><span>继续进入 ResearchOS</span><i>→</i></button>
+        <div className="auth-separator"><span>或</span></div>
+        <button className="auth-secondary" onClick={onEnter}><span className="openai-mark">◌</span><span>使用 ChatGPT 账号继续</span></button>
+        <p className="auth-note"><i>◇</i> 当前为团队演示入口。真实身份验证由部署环境提供，本页面不会采集或保存密码。</p>
+      </div>
+      <div className="login-form-footer"><button>隐私</button><button>使用条款</button><span>© 2026 ResearchOS</span></div>
+    </section>
+  </main>
+}
+
 export default function Home() {
   const [view, setView] = useState<View>("thesis");
   const [commandOpen, setCommandOpen] = useState(false);
   const [selectedSource, setSelectedSource] = useState<typeof sources[number]>();
+  const [entered, setEntered] = useState(false);
   useEffect(()=>{ const key=(e:KeyboardEvent)=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();setCommandOpen(v=>!v)} if(e.key==="Escape")setCommandOpen(false)}; addEventListener("keydown",key);return()=>removeEventListener("keydown",key)},[]);
   const current = useMemo(()=>nav.find(n=>n.id===view)!,[view]);
   const subtitles: Record<View,string> = { thesis:"Compile a research claim against frozen definitions and evidence policy.",workspace:"Shared research state, versioned objects, and traceable relations.",validation:"A continuous protocol from question to evidence-bounded conclusion.",macrotrace:"Registered empirical execution, diagnostics, and evidence output.",recompile:"Review how evidence constrains the language of the thesis.",versions:"Understand incremental changes, recomputation, and reuse."};
+  if (!entered) return <LoginScreen onEnter={()=>setEntered(true)}/>;
   return <main className="app-shell">
     <aside className="sidebar"><div className="brand"><div className="brand-mark"><i/><i/><i/></div><div><b>ResearchOS</b><span>Evidence workspace</span></div><button>⌄</button></div><button className="new-thesis">＋ <span>New thesis</span><kbd>N</kbd></button><nav><span className="nav-label">Research</span>{nav.map(item=><button key={item.id} className={view===item.id?"active":""} onClick={()=>setView(item.id)}><i>{item.icon}</i><span>{item.label}</span>{item.meta&&<em>{item.meta}</em>}</button>)}</nav><div className="sidebar-project"><span className="nav-label">Active project</span><div className="project-card"><div className="project-icon">FT</div><div><b>Fiscal transmission</b><span>4 sources · 1 thesis</span></div><button>···</button></div></div><div className="sidebar-bottom"><button><i>⌁</i><span>Activity</span><em>3</em></button><button><i>?</i><span>Help & shortcuts</span></button><div className="sync-state"><span className="status-dot green"/><div><b>Workspace synced</b><small>Just now</small></div></div></div></aside>
     <section className="main-frame"><Topbar title={current.label} subtitle={subtitles[view]} onCommand={()=>setCommandOpen(true)}/><div className="content-frame">{view==="thesis"&&<ThesisView/>}{view==="workspace"&&<WorkspaceView onSelect={setSelectedSource}/>} {view==="validation"&&<ValidationView/>}{view==="macrotrace"&&<MacroTraceView/>}{view==="recompile"&&<RecompileView/>}{view==="versions"&&<VersionView/>}<Inspector selectedSource={selectedSource}/></div></section>

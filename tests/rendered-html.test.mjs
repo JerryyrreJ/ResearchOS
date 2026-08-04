@@ -9,17 +9,18 @@ async function render() {
   return worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
 }
 
-test("server-renders the ResearchOS thesis workspace", async () => {
+test("server-renders the branded ResearchOS entry", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
   assert.match(html, /<title>ResearchOS — Evidence becomes structure<\/title>/i);
-  assert.match(html, /Thesis Build/);
-  assert.match(html, /BUILD FAILED/);
-  assert.match(html, /FIXTURE MODE/);
-  assert.match(html, /CLAIM_LANG001/);
-  assert.match(html, /Compile thesis/);
+  assert.match(html, /Evidence/);
+  assert.match(html, /becomes/);
+  assert.match(html, /structure\./);
+  assert.match(html, /进入你的研究空间/);
+  assert.match(html, /使用 ChatGPT 账号继续/);
+  assert.match(html, /不会采集或保存密码/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
 });
 
@@ -30,4 +31,6 @@ test("preserves frozen evidence semantics in the UI", async () => {
   assert.match(page, /contains no real empirical conclusion/i);
   assert.match(page, /EVIDENCE_DEMO_001/);
   assert.match(page, /THESIS_VER_002/);
+  assert.match(page, /FIXTURE MODE/);
+  assert.match(page, /CLAIM_LANG001/);
 });
