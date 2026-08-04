@@ -34,3 +34,12 @@ test("preserves frozen evidence semantics in the UI", async () => {
   assert.match(page, /FIXTURE MODE/);
   assert.match(page, /CLAIM_LANG001/);
 });
+
+test("ships Simplified Chinese, Traditional Chinese, and English UI catalogs", async () => {
+  const catalog = await readFile(new URL("../app/i18n.ts", import.meta.url), "utf8");
+  assert.match(catalog, /"zh-CN"/);
+  assert.match(catalog, /"zh-TW"/);
+  assert.match(catalog, /\ben:\s*\{/);
+  assert.match(catalog, /進入你的研究空間/);
+  assert.match(catalog, /Enter your research workspace/);
+});
