@@ -5,7 +5,12 @@ from pathlib import Path
 import pytest
 
 from backend.app.registry import RegistryStore
-from backend.app.research_report import build_research_report, merge_llm_report_language
+from backend.app.research_report import (
+    _directional_headline,
+    build_research_report,
+    merge_llm_direct_answer,
+    merge_llm_report_language,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -112,7 +117,7 @@ def test_report_directly_answers_question_and_orders_reader_sections() -> None:
 
     assert report["schema_version"] == "0.3.0"
     assert "直接回答是" not in report["direct_answer"]["text"]
-    assert report["direct_answer"]["text"].startswith("现有可执行证据整体更支持")
+    assert report["direct_answer"]["text"].startswith("对“美国经济当前是在走弱还是重新加速")
     assert "实体活动方向" in report["direct_answer"]["headline"]
     assert report["abstract"]["text"]
     assert len(report["economic_mechanisms"]) == 2
@@ -192,3 +197,57 @@ def test_identification_limit_never_replaces_an_available_stance() -> None:
     assert "不能确认" not in report["direct_answer"]["headline"]
     assert "严格因果效应" in report["direct_answer"]["text"]
     assert "直接回答是" not in report["direct_answer"]["text"]
+
+
+def test_market_headline_preserves_a_weak_but_explicit_direction() -> None:
+    headline = _directional_headline(
+        "Will the S&P 500 rise or fall over the next week?",
+        {"query": {"domain": "EQUITY_INDEX"}},
+        {"primary_score": -0.03},
+        ["方向证据接近中性"],
+    )
+
+    assert "边际偏向下跌" in headline
+    assert "接近中性" not in headline
+
+
+def test_new_york_fed_ai_question_remains_the_final_answer_anchor() -> None:
+    question = (
+        "纽约联储的研究观点是否成立：AI技术应用是否显著重塑了劳动力市场结构与招聘行为？"
+        "其传导机制（如岗位技能需求变化、招聘渠道与筛选流程变革）是什么？影响幅度有多大，持续时间多长，预测期限如何？"
+        "在不同行业、地区、企业规模及劳动者群体间是否存在异质性？在何种条件下该观点可能不成立或效果减弱？"
+    )
+    plan = _plan()
+    plan["query"] = {"question": question, "domain": "MACRO", "question_form": "HYPOTHESIS_TEST"}
+    aggregation = _aggregation()
+    aggregation["primary_score"] = 0.04
+    aggregation["primary_findings"] = [{"finding_zh": "劳动力市场：偏强"}]
+
+    report = build_research_report(
+        question,
+        plan,
+        _results(),
+        aggregation,
+        _registry(),
+        limitations=["现有结果不能单独识别 AI 应用的严格因果效应。"],
+        falsifiers=["直接招聘证据与当前方向相反。"],
+    )
+
+    headline = report["direct_answer"]["headline"]
+    assert "纽约联储" in headline
+    assert "AI技术应用" in headline
+    assert "较支持该观点成立" in headline
+    assert headline != "劳动力市场：偏强"
+    assert report["direct_answer"]["text"].startswith(headline)
+
+    edited = merge_llm_direct_answer(
+        report,
+        {
+            "headline": f"对“{question[:30]}…”，现有证据仅初步支持纽约联储关于人工智能重塑招聘与劳动力结构的观点",
+            "direct_answer": "现有证据提供了初步支持，但主要来自劳动力状态与招聘相关背景，尚不足以确认人工智能应用造成了结构性变化。",
+            "abstract": "当前结果应理解为对纽约联储观点的有限支持：方向证据可以作为研究线索，因果机制、影响幅度、持续时间与群体异质性仍需直接数据验证。",
+            "key_points": ["劳动力偏强只是背景证据，不能单独证明人工智能重塑招聘结构", "现有识别边界要求保留条件性结论"],
+        },
+    )
+    assert "纽约联储" in edited["direct_answer"]["headline"]
+    assert "有限支持" in edited["abstract"]["text"]

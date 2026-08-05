@@ -203,6 +203,61 @@ def test_twice_invalid_llm_output_cannot_delete_registered_complex_research_prog
     assert any(item["status"] == "FALLBACK_AFTER_REPAIR" and item["detail"].get("nodes_removed") for item in constrained.trace)
 
 
+def test_hybrid_router_preserves_registered_equity_core_when_llm_is_invalid() -> None:
+    constrained = ResearchCompiler(registry(), HostileLlm())
+    plan = constrained.compile("Will the S&P 500 rise or fall over the next week?", date(2026, 8, 5))
+
+    assert plan.workflow_id == "WF.US.EQUITY_MARKET.V1"
+    assert plan.query.domain == "EQUITY_INDEX"
+    assert {lane.lane_id for lane in plan.lanes} >= {"US.EQUITY_MARKET", "US.MONETARY"}
+    assert {model.node_id for model in plan.models} >= {
+        "N.EQUITY.PRICE_DIRECTION",
+        "N.EQUITY.VOLATILITY",
+        "N.EQUITY.DISCOUNT_RATE",
+    }
+    assert len(plan.models) >= 12
+
+
+def test_commodity_route_runs_proxy_models_and_keeps_curve_research_blocked() -> None:
+    store = registry()
+    plan = ResearchCompiler(store, DeepSeekClient("", "deepseek-chat", "https://api.deepseek.com")).compile(
+        "Will WTI oil rise or fall over the next month?",
+        date(2026, 8, 5),
+    )
+
+    assert plan.workflow_id == "WF.US.COMMODITY_MARKET.V1"
+    assert plan.query.domain == "COMMODITY"
+    assert {model.node_id for model in plan.models} >= {
+        "N.COMMODITY.PRICE_DIRECTION",
+        "N.COMMODITY.SUPPLY_BALANCE",
+        "N.COMMODITY.MACRO_TRANSMISSION",
+    }
+    assert not ({model.node_id for model in plan.models} & {
+        "N.FUTURES.TS_MOMENTUM",
+        "N.COMMODITY.STORAGE_EQUILIBRIUM",
+        "N.COMMODITY.INVENTORY_BASIS",
+        "N.COMMODITY.OIL_TERM_STRUCTURE",
+    })
+    assert store.get("nodes", "N.COMMODITY.OIL_TERM_STRUCTURE")["status"] == "blocked"
+
+    graph = GraphBuilder("JOB_COMMODITY_UNIVERSE", store)
+    graph.from_plan(plan)
+    exported = {item["node_id"]: item for item in graph.export()["nodes"]}
+    assert exported["RN::N.COMMODITY.PRICE_DIRECTION"]["status"] == "PLANNED"
+    assert exported["RN::N.COMMODITY.OIL_TERM_STRUCTURE"]["status"] == "BLOCKED"
+    assert exported["RN::N.EQUITY.SECTOR_FORECAST"]["status"] == "BLOCKED"
+
+
+def test_non_us_market_question_fails_closed_without_us_proxy_execution() -> None:
+    plan = compiler().compile("Will the Shanghai Composite rise tomorrow?", date(2026, 8, 5))
+
+    assert plan.query.jurisdiction == "OTHER"
+    assert plan.coverage == "UNSUPPORTED"
+    assert plan.lanes == []
+    assert plan.models == []
+    assert any("只覆盖美国市场" in item for item in plan.unsupported_aspects)
+
+
 def test_frozen_json_schema_accepts_public_request_and_actual_graph() -> None:
     schema = json.loads((ROOT / "schemas" / "research_job.schema.json").read_text(encoding="utf-8"))
     validator = Draft202012Validator(schema)

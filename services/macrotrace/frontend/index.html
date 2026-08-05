@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="MacroTrace — 从每日信息到可审计实证结论的研究系统">
   <title>MacroTrace / 白盒实证研究系统</title>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -20,7 +20,7 @@
       <span><strong>MacroTrace</strong><small>白盒实证研究操作系统</small></span>
     </a>
     <nav class="primary-nav" aria-label="主要导航">
-      <a class="active" href="#dailyBrief">01 每日日报</a>
+      <a class="active" href="#dailyBrief">01 研究报告</a>
       <a href="#researchForm">02 研究工作台</a>
       <a href="#workspace">03 证据图谱</a>
       <button id="historyButton" type="button">本地记录</button>
@@ -39,39 +39,62 @@
     <section id="dailyBrief" class="daily-brief" aria-labelledby="dailyBriefTitle">
       <header class="daily-brief-head">
         <div>
-          <span>01 / 每日研究简报</span>
-          <h1 id="dailyBriefTitle">先阅读观点，再决定检验什么</h1>
-          <p>以买方日报的方式阅读美国宏观与资产市场；选中一句或一段文字，即可把它编译成值得完整研究的实证问题。</p>
-        </div>
-        <div class="daily-head-actions">
-          <label class="daily-upload" for="dailyPdfInput">阅读本地 PDF</label>
-          <input id="dailyPdfInput" type="file" accept="application/pdf,.pdf" hidden>
-          <button id="refreshDailyBrief" class="daily-refresh" type="button"><span>刷新今日日报</span><i>↻</i></button>
+          <span>01 / 研究报告生成器</span>
+          <h1 id="dailyBriefTitle">选择来源，生成今天要读的研究</h1>
+          <p>左侧勾选研究来源，右侧选择日报、周报、月报、美股报告或期货报告。Agents 从选定来源提取事实，但报告正文输出的是明确的投资观点、表达工具、催化剂与反证条件。</p>
         </div>
       </header>
-      <div class="daily-reader-shell">
-        <aside class="daily-reader-nav">
-          <span>阅读目录</span>
-          <strong id="dailyReaderModeLabel">美国市场日报</strong>
-          <div id="dailyDomainFilters" class="daily-domain-filters"></div>
-          <div id="dailySourceState" class="daily-source-state"></div>
-          <span id="dailyBriefMeta" class="daily-reader-meta">—</span>
-          <button id="backToDailyBrief" class="daily-back hidden" type="button">← 返回每日日报</button>
-          <p>阅读时拖动选中文字。松开鼠标后，可将选段送入实证研究。</p>
-        </aside>
-        <article id="dailyBriefDocument" class="daily-report-paper" aria-live="polite">
-          <header class="daily-paper-head">
-            <div><span>MACROTRACE RESEARCH</span><b id="dailyBriefDate">最近可获取信息</b></div>
-            <p id="dailyPaperMarket">美国市场 · 每日研究简报</p>
-            <h2 id="dailyBriefHeadline">正在读取日报…</h2>
-            <p id="dailyBriefSummary">系统正在检查本地日报缓存和已登记公开来源。</p>
+      <div class="daily-studio">
+        <aside class="daily-source-picker" aria-labelledby="dailySourcePickerTitle">
+          <header>
+            <span>第一步</span>
+            <h2 id="dailySourcePickerTitle">勾选研究来源</h2>
+            <b id="dailySourceTotal" class="daily-source-total">正在读取来源目录</b>
+            <p>只使用被勾选且本轮读取成功的公开来源。</p>
           </header>
-          <div id="dailyBriefCards" class="daily-report-body"></div>
-          <footer id="dailyBriefLimitations" class="daily-brief-limitations"></footer>
-        </article>
+          <div class="daily-source-tools">
+            <button id="selectAllDailySources" type="button">全选</button>
+            <button id="clearDailySources" type="button">清空</button>
+          </div>
+          <div id="dailySourcePickerList" class="daily-source-picker-list" aria-live="polite">
+            <p class="daily-source-loading">正在读取来源目录…</p>
+          </div>
+          <div class="daily-source-summary">
+            <strong id="dailySelectedSourceCount">—</strong>
+            <span>个来源已勾选</span>
+          </div>
+          <div id="dailyDomainFilters" class="daily-domain-filters"></div>
+        </aside>
+        <section class="daily-output-stage">
+          <div class="daily-product-builder">
+            <div class="daily-product-heading">
+              <div><span>第二步</span><h2>选择研究产品</h2></div>
+              <span id="dailyBriefMeta">—</span>
+            </div>
+            <div id="dailyProductList" class="daily-product-list" role="radiogroup" aria-label="研究报告类型"></div>
+            <div class="daily-generate-row">
+              <div class="daily-head-actions">
+                <label class="daily-upload" for="dailyPdfInput">阅读本地 PDF</label>
+                <input id="dailyPdfInput" type="file" accept="application/pdf,.pdf" hidden>
+                <button id="backToDailyBrief" class="daily-back hidden" type="button">返回研究报告</button>
+                <button id="refreshDailyBrief" class="daily-refresh" type="button"><span>生成研究报告</span><i>→</i></button>
+              </div>
+            </div>
+          </div>
+          <article id="dailyBriefDocument" class="daily-report-paper" aria-live="polite">
+            <header class="daily-paper-head">
+              <div><span>MACROTRACE 机构研究</span><b id="dailyBriefDate">最近可获取信息</b></div>
+              <p id="dailyPaperMarket">美国市场 · 研究报告</p>
+              <h2 id="dailyBriefHeadline">正在读取最近一份报告…</h2>
+              <p id="dailyBriefSummary">系统正在检查本地研究报告缓存和已登记公开来源。</p>
+            </header>
+            <div id="dailyBriefCards" class="daily-report-body"></div>
+            <footer id="dailyBriefLimitations" class="daily-brief-limitations"></footer>
+          </article>
+        </section>
       </div>
       <div id="selectionToolbar" class="selection-toolbar hidden" role="toolbar" aria-label="选中文字操作">
-        <span>已选择观点</span>
+        <span>已选择投资观点</span>
         <button id="selectionResearchButton" type="button">进入实证研究 →</button>
       </div>
     </section>
@@ -101,7 +124,7 @@
 
       <form id="researchForm" class="query-console">
         <div class="console-rule"><span>新研究 / 用自然语言说明期限</span><span id="charCount">0 / 4000</span></div>
-        <textarea id="questionInput" maxlength="4000" required placeholder="例如：明天上证指数更可能上涨还是下跌？主要驱动因素是什么？"></textarea>
+        <textarea id="questionInput" maxlength="4000" required placeholder="例如：未来一周标普 500 更可能上涨还是下跌？利率、盈利与风险偏好如何共同影响？"></textarea>
         <div class="console-bottom">
           <div id="exampleQuestions" class="examples" aria-label="示例问题"></div>
           <button id="runButton" class="run-button" type="submit">
@@ -171,7 +194,7 @@
         </div>
       </article>
 
-      <section id="dataEvidencePanel" class="data-evidence-panel" aria-labelledby="dataEvidenceTitle">
+      <section id="dataEvidencePanel" class="data-evidence-panel hidden" aria-labelledby="dataEvidenceTitle">
         <header class="data-evidence-head">
           <div>
             <span>03 / 数据证据层</span>
@@ -186,9 +209,17 @@
         </header>
         <div class="data-evidence-toolbar">
           <div id="dataPluginBadges" class="data-plugin-badges"><span>正在读取 A 的数据插件与资产目录…</span></div>
-          <div class="data-zoom-controls"><button id="dataZoomOut" type="button">−</button><button id="dataZoomReset" type="button">100%</button><button id="dataZoomIn" type="button">＋</button></div>
+          <div class="data-view-actions">
+            <button id="dataFocusToggle" class="data-focus-toggle" type="button" aria-pressed="false"><i></i><span>只看本次路径</span></button>
+            <div class="data-zoom-controls"><button id="dataZoomOut" type="button" aria-label="缩小数据网络">−</button><button id="dataZoomReset" type="button">100%</button><button id="dataZoomIn" type="button" aria-label="放大数据网络">＋</button></div>
+          </div>
         </div>
         <div id="dataEvidenceViewport" class="data-evidence-viewport">
+          <aside id="dataEvidenceInspector" class="data-evidence-inspector" aria-live="polite">
+            <span>节点检查器</span>
+            <strong>把鼠标移到任一节点</strong>
+            <p>查看数据来源、节点类型以及它是否进入了本次实证路径。</p>
+          </aside>
           <div id="dataEvidenceCanvas" class="data-evidence-canvas">
             <svg id="dataEvidenceEdges" class="data-evidence-edges" aria-hidden="true"></svg>
             <div id="dataEvidenceNodes" class="data-evidence-nodes"></div>
@@ -215,7 +246,7 @@
           <div class="legend">
             <span><i class="core"></i>已路由</span><span><i class="support"></i>辅助证据</span><span><i class="warn"></i>受阻 / 警告</span><span><i class="fail"></i>失败</span><span>灰色 = 已登记但未路由</span>
           </div>
-          <div class="zoom-controls"><button id="zoomOut" type="button" aria-label="Zoom out">−</button><button id="zoomReset" type="button">100%</button><button id="zoomIn" type="button" aria-label="Zoom in">＋</button></div>
+          <div class="zoom-controls"><button id="zoomOut" type="button" aria-label="缩小研究图谱">−</button><button id="zoomReset" type="button">100%</button><button id="zoomIn" type="button" aria-label="放大研究图谱">＋</button></div>
         </div>
         <div id="graphViewport" class="graph-viewport">
           <div id="graphCanvas" class="graph-canvas">

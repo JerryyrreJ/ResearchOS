@@ -57,6 +57,139 @@ def _sample_summary(detail: dict[str, Any]) -> str:
     return f"样本期 {start} 至 {end}，{frequency}{count}"
 
 
+def _as_string_list(values: Any) -> list[str]:
+    if not isinstance(values, list):
+        return []
+    output: list[str] = []
+    for value in values:
+        if isinstance(value, dict):
+            value = value.get("factor_id") or value.get("variable_id") or value.get("definition")
+        if value is not None and str(value).strip():
+            output.append(str(value).strip())
+    return output
+
+
+def _factor_label(registry: RegistryStore, factor_id: Any) -> str:
+    value = str(factor_id or "").strip()
+    if not value:
+        return "未登记变量"
+    record = _registry_get(registry, "factors", value)
+    definition = str(record.get("definition") or "").strip()
+    return f"{value}（{definition}）" if definition else value
+
+
+def _research_question(detail: dict[str, Any], metadata: dict[str, Any]) -> str:
+    provenance = detail.get("provenance") or {}
+    registry_metadata = provenance.get("registry_metadata") or {}
+    for candidate in (
+        detail.get("research_question"),
+        detail.get("original_question"),
+        metadata.get("research_question"),
+        metadata.get("original_question"),
+        registry_metadata.get("research_question"),
+        registry_metadata.get("original_question"),
+    ):
+        if candidate is not None and str(candidate).strip():
+            return " ".join(str(candidate).split())
+    return ""
+
+
+def _method_intention(method: str) -> str:
+    normalized = method.lower()
+    if "vector autoregression" in normalized or re.search(r"\bvar\b", normalized):
+        return "VAR 用来联合刻画多个变量的动态先后关系并形成条件预测；除非另有已识别冲击，它不把变量排序升级为因果效应。"
+    if "local projection" in normalized or "局部投影" in method:
+        return "局部投影用来逐期估计响应路径；只有冲击识别合同成立时，响应才允许作因果解释。"
+    if "growth-at-risk" in normalized or "quantile" in normalized or "分位" in method:
+        return "分位数模型用来检验解释变量是否改变结果分布的下尾，而不是只比较均值。"
+    if "dynamic factor" in normalized or "动态因子" in method:
+        return "动态因子模型用来压缩多项同步指标的共同变化，并把共同状态桥接到目标量。"
+    if "autoregressive" in normalized or "自回归" in method:
+        return "自回归模型用目标变量自身的历史持续性建立预测基准，用于判断更复杂变量是否提供额外信息。"
+    if "ols" in normalized or "regression" in normalized or "回归" in method:
+        return "回归规格用来衡量给定控制条件下的统计关联或预测贡献；未注册识别设计时不能解释为因果效应。"
+    return "该方法把已注册变量映射到明确估计目标，并受预先登记的诊断与解释边界约束。"
+
+
+def _coefficient_interpretation(detail: dict[str, Any]) -> str:
+    coefficient_columns = (detail.get("table") or {}).get("coefficients") or {}
+    rows: list[dict[str, Any]] = []
+    if isinstance(coefficient_columns, dict):
+        for column in coefficient_columns.values():
+            if isinstance(column, list):
+                rows.extend(item for item in column if isinstance(item, dict))
+    identified: list[tuple[str, float, float | None]] = []
+    for item in rows:
+        p_value = item.get("p_value")
+        coefficient = item.get("coefficient", item.get("value"))
+        try:
+            p_number = float(p_value)
+            coefficient_number = float(coefficient) if coefficient is not None else None
+        except (TypeError, ValueError):
+            continue
+        label = str(item.get("label") or item.get("variable_id") or "已登记变量")
+        identified.append((label, p_number, coefficient_number))
+    if not identified:
+        return ""
+    def with_direction(label: str, coefficient: float | None) -> str:
+        if coefficient is None or coefficient == 0:
+            return label
+        return f"{label}（{'正向' if coefficient > 0 else '负向'}）"
+
+    significant = [with_direction(label, coefficient) for label, p_value, coefficient in identified if p_value < 0.05]
+    not_significant = [with_direction(label, coefficient) for label, p_value, coefficient in identified if p_value >= 0.05]
+    parts: list[str] = []
+    if significant:
+        parts.append(f"5% 阈值下可统计区分于零的系数包括：{'、'.join(dict.fromkeys(significant))}")
+    if not_significant:
+        parts.append(f"5% 阈值下尚不能统计区分于零的系数包括：{'、'.join(dict.fromkeys(not_significant))}")
+    return "；".join(parts) + "。"
+
+
+def _model_context(
+    detail: dict[str, Any],
+    metadata: dict[str, Any],
+    registry: RegistryStore,
+    title: str,
+) -> dict[str, Any]:
+    specification = detail.get("specification") or {}
+    recipe_id = detail.get("model_recipe_id") or metadata.get("model_recipe_id")
+    recipe = _registry_get(registry, "models", recipe_id)
+    research_node_id = detail.get("research_node_id") or metadata.get("research_node_id") or metadata.get("node_id")
+    research_node = _registry_get(registry, "nodes", research_node_id)
+    mechanism_id = detail.get("mechanism_id") or metadata.get("mechanism_id") or research_node.get("mechanism_id")
+    mechanism_record = _registry_get(registry, "mechanisms", mechanism_id)
+    method = str(detail.get("method") or metadata.get("method") or recipe.get("method") or title)
+    factor_ids = _as_string_list(detail.get("factor_ids") or metadata.get("factor_ids") or detail.get("variables") or [])
+    dependent_id = specification.get("dependent_variable") or metadata.get("dependent_variable")
+    independent_ids = _as_string_list(specification.get("independent_variables") or metadata.get("independent_variables") or [])
+    if not independent_ids:
+        independent_ids = [factor_id for factor_id in factor_ids if factor_id != dependent_id]
+    controls = _as_string_list(specification.get("controls") or metadata.get("controls") or [])
+    estimand = str(
+        specification.get("estimand")
+        or metadata.get("estimand")
+        or research_node.get("intermediate_claim")
+        or "估计目标未在该节点明细中单独登记"
+    )
+    return {
+        "question": _research_question(detail, metadata),
+        "method": method,
+        "method_intention": _method_intention(method),
+        "research_node_id": str(research_node_id or ""),
+        "research_claim": str(research_node.get("intermediate_claim") or research_node_id or "对应中间命题"),
+        "mechanism_name": str(mechanism_record.get("name") or mechanism_id or "已注册机制"),
+        "mechanism_hypothesis": str(mechanism_record.get("hypothesis") or "机制假设未在该节点明细中单独登记"),
+        "estimand": estimand,
+        "dependent_variable": _factor_label(registry, dependent_id),
+        "independent_variables": [_factor_label(registry, item) for item in independent_ids],
+        "controls": [_factor_label(registry, item) for item in controls],
+        "factor_ids": factor_ids,
+        "causal_allowed": specification.get("causal_interpretation_allowed") is True
+        or metadata.get("causal_interpretation_allowed") is True,
+    }
+
+
 def build_fixed_explanation(detail: dict[str, Any], registry: RegistryStore) -> dict[str, Any]:
     """Build the non-LLM explanation contract from registry and execution facts."""
     node_type = _node_type(detail)
@@ -64,15 +197,23 @@ def build_fixed_explanation(detail: dict[str, Any], registry: RegistryStore) -> 
     title = str(detail.get("title") or detail.get("label") or detail.get("node_id") or "研究节点")
     summary = str(detail.get("summary") or "").strip()
     specification = detail.get("specification") or {}
-    variables = detail.get("variables") or []
     sample_text = _sample_summary(detail)
-    node_id = str(detail.get("node_id") or "")
+    research_question = _research_question(detail, metadata)
 
     purpose = f"记录并执行“{title}”这一研究对象。"
     why = "它把研究过程拆成可检查的步骤，使最终结论能够沿图谱反向追溯。"
     mechanism = summary or "这是研究编译链中的结构化步骤，本身不额外创造经济结论。"
     data_summary = "本节点使用上游结构化输入，不直接运行新的宏观数据。"
     output_summary = "其结构化输出会传递给下游节点。"
+    research_intent = ""
+    estimand_text = "不适用"
+    variable_roles: dict[str, Any] = {
+        "dependent_variable": "不适用",
+        "independent_variables": [],
+        "controls": [],
+    }
+    result_interpretation = "该节点不直接产生模型估计结果。"
+    interpretation_boundary = "只解释该节点已经登记或执行的事实，不额外推断方向、显著性或因果关系。"
 
     if node_type == "QUESTION":
         purpose = "原样保存用户提出的自然语言宏观问题，作为整条研究链的根节点。"
@@ -152,28 +293,70 @@ def build_fixed_explanation(detail: dict[str, Any], registry: RegistryStore) -> 
         data_summary = f"处理因子 {metadata.get('factor_id') or '未记录'}；可选变换为 {', '.join(map(str, transforms)) or '未记录'}。"
         output_summary = "输出可直接进入模型设计矩阵的结构化时间序列。"
     elif node_type == "MODEL_SPECIFICATION":
-        factors = metadata.get("factor_ids") or specification.get("factor_ids") or []
-        mechanism_record = _registry_get(registry, "mechanisms", metadata.get("mechanism_id"))
-        purpose = f"冻结“{title}”的实证设计，包括模型配方、变量角色、参数边界和诊断套件。"
-        why = "把 specification 与 run 分开，可以保证 AI 只能选积木和参数，不能在执行时改公式或底层代码。"
-        mechanism = mechanism_record.get("hypothesis") or f"使用 {metadata.get('method') or title} 将已注册因子映射为可检验估计。"
-        data_summary = f"规格绑定 {_factor_list(factors)}，并要求 {len(metadata.get('diagnostic_suite') or [])} 项方法专属诊断。"
-        output_summary = "通过验证后生成一个 Model Run；受阻规格则保留原因但不会伪造结果。"
+        context = _model_context(detail, metadata, registry, title)
+        question_text = f"用户问题“{context['question']}”" if context["question"] else "本次用户问题（根问题文本尚未传入该节点）"
+        independent_text = "、".join(context["independent_variables"]) or "未单独登记解释变量"
+        research_intent = (
+            f"针对{question_text}，预先冻结 {context['method']}，用来检验“{context['mechanism_name']}”机制："
+            f"{context['mechanism_hypothesis']} 估计目标为 {context['estimand']}；"
+            f"因变量为 {context['dependent_variable']}，主要自变量为 {independent_text}。"
+        )
+        purpose = research_intent
+        why = f"{context['method_intention']} 把规格与运行分开还能防止执行阶段临时换变量、换公式或改解释边界。"
+        mechanism = (
+            f"本规格服务于中间命题“{context['research_claim']}”，检验路径为："
+            f"{independent_text} → {context['dependent_variable']}，目标量是 {context['estimand']}。"
+        )
+        factor_text = "、".join(_factor_label(registry, item) for item in context["factor_ids"]) or "未登记因子"
+        data_summary = f"规格绑定 {factor_text}，并要求 {len(metadata.get('diagnostic_suite') or [])} 项方法专属诊断。"
+        result_interpretation = "这是尚未执行的模型设定节点，不包含系数方向、显著性或预测结果；这些只能由对应 Model Run 报告。"
+        interpretation_boundary = (
+            "系数显著只表示在登记样本、变量与控制条件下可统计区分于零；不显著表示当前证据不足以区分于零，"
+            "不等于证明变量没有作用。"
+            + ("因果解释仍须满足该规格登记的识别假设与诊断。" if context["causal_allowed"] else "该规格未允许因果解释，任何结果都只能按预测性或关联性证据解读，不得升级为因果效应。")
+        )
+        estimand_text = context["estimand"]
+        variable_roles = {
+            "dependent_variable": context["dependent_variable"],
+            "independent_variables": context["independent_variables"],
+            "controls": context["controls"],
+        }
+        output_summary = "通过验证后才会生成一个 Model Run；受阻规格保留原因但不会伪造结果。"
     elif node_type == "MODEL_RUN":
-        recipe = _registry_get(registry, "models", detail.get("model_recipe_id") or metadata.get("model_recipe_id"))
-        research_node_id = detail.get("research_node_id") or metadata.get("research_node_id")
-        research_node = _registry_get(registry, "nodes", research_node_id)
-        factors = detail.get("factor_ids") or variables or metadata.get("factor_ids") or []
-        method = detail.get("method") or recipe.get("method") or title
-        purpose = f"实际执行 {method}，为“{research_node.get('intermediate_claim') or research_node_id or '对应中间命题'}”产生定量证据。"
-        why = "它是研究图中真正运行 Python 统计代码的步骤；没有这一层，机制叙事不能转化为可审计证据。"
+        context = _model_context(detail, metadata, registry, title)
+        question_text = f"用户问题“{context['question']}”" if context["question"] else "本次用户问题（根问题文本尚未传入该节点）"
+        independent_text = "、".join(context["independent_variables"]) or "未单独登记解释变量"
+        research_intent = (
+            f"针对{question_text}，实际运行 {context['method']}，用来检验“{context['mechanism_name']}”机制："
+            f"{context['mechanism_hypothesis']} 估计目标为 {context['estimand']}；"
+            f"因变量为 {context['dependent_variable']}，主要自变量为 {independent_text}。"
+        )
+        purpose = research_intent
+        why = f"{context['method_intention']} 本次运行因此服务于中间命题“{context['research_claim']}”，而不是为了展示模型名称。"
         formula = specification.get("formula")
-        estimand = specification.get("estimand")
-        mechanism = f"模型按照预注册公式{f' {formula}' if formula else ''}估计{estimand or '目标量'}；是否允许因果解释由规格合同单独限定。"
+        mechanism = (
+            f"模型按预注册公式{f' {formula}' if formula else ''}，检验 {independent_text} 对 "
+            f"{context['dependent_variable']} 的条件信息，并估计 {context['estimand']}。"
+        )
         sample_suffix = f"；{sample_text}" if sample_text else ""
-        data_summary = f"运行 {_factor_list(factors)}{sample_suffix}。数据快照和发布时间记录在 Provenance。"
+        factor_text = "、".join(_factor_label(registry, item) for item in context["factor_ids"]) or "未登记因子"
+        data_summary = f"运行变量为 {factor_text}{sample_suffix}。数据快照和发布时间记录在 Provenance。"
         result_text = summary or detail.get("error") or "执行结果尚未生成"
-        output_summary = f"输出回归/预测结果、方法专属诊断、稳健性结果和图表。当前摘要：{result_text}"
+        direction_text = f"汇总方向为 {detail.get('direction')}。" if detail.get("direction") else ""
+        significance_text = _coefficient_interpretation(detail)
+        result_interpretation = f"当前执行摘要：{result_text}。{direction_text}{significance_text}".strip()
+        interpretation_boundary = (
+            "显著系数只表示在本次样本、变量与控制条件下可统计区分于零；不显著系数表示当前证据不足以区分于零，"
+            "不等于证明变量没有作用。"
+            + ("因果解释还必须同时满足已注册识别假设与诊断。" if context["causal_allowed"] else "该模型未允许因果解释，方向、预测和显著性都不得升级为因果效应。")
+        )
+        estimand_text = context["estimand"]
+        variable_roles = {
+            "dependent_variable": context["dependent_variable"],
+            "independent_variables": context["independent_variables"],
+            "controls": context["controls"],
+        }
+        output_summary = f"输出回归/预测结果、方法专属诊断、稳健性结果和图表。{result_interpretation}"
     elif node_type == "DIAGNOSTIC":
         items = metadata.get("items") or detail.get("diagnostics") or []
         failed = metadata.get("failed", sum(item.get("status") in {"FAIL", "FAILED"} for item in items if isinstance(item, dict)))
@@ -216,21 +399,46 @@ def build_fixed_explanation(detail: dict[str, Any], registry: RegistryStore) -> 
         data_summary = "当前不运行数据；它等待未来官方发布或新的已注册证据进行核验。"
         output_summary = "输出结论失效条件，供后续更新和监测。"
 
+    if not research_intent:
+        research_intent = purpose
+    plain_summary = (
+        f"{research_intent} {result_interpretation} {interpretation_boundary}"
+        if node_type in {"MODEL_SPECIFICATION", "MODEL_RUN"}
+        else f"{purpose} {output_summary}"
+    )
     return {
         "version": "1.0",
         "fact_source": "REGISTRY_AND_EXECUTION",
+        "research_question": research_question or "根问题文本未随该节点传入",
+        "research_intent": str(research_intent),
+        "estimand": str(estimand_text),
+        "variable_roles": variable_roles,
+        "result_interpretation": str(result_interpretation),
+        "interpretation_boundary": str(interpretation_boundary),
         "purpose": str(purpose),
         "why_it_exists": str(why),
         "mechanism": str(mechanism),
         "data_summary": str(data_summary),
         "output_summary": str(output_summary),
-        "plain_summary": f"{purpose} {output_summary}",
+        "plain_summary": plain_summary,
     }
 
 
 def ensure_fixed_explanation(detail: dict[str, Any], registry: RegistryStore) -> dict[str, Any]:
     explanation = detail.get("explanation")
-    if not isinstance(explanation, dict) or not all(explanation.get(key) for key in ("purpose", "why_it_exists", "mechanism", "data_summary", "output_summary")):
+    required = {"purpose", "why_it_exists", "mechanism", "data_summary", "output_summary"}
+    if _node_type(detail) in {"MODEL_SPECIFICATION", "MODEL_RUN"}:
+        required.update(
+            {
+                "research_question",
+                "research_intent",
+                "estimand",
+                "variable_roles",
+                "result_interpretation",
+                "interpretation_boundary",
+            }
+        )
+    if not isinstance(explanation, dict) or not all(explanation.get(key) for key in required):
         explanation = {**(explanation or {}), **build_fixed_explanation(detail, registry)}
         detail["explanation"] = explanation
     return detail
@@ -248,7 +456,22 @@ def _safe_llm_payload(detail: dict[str, Any]) -> dict[str, Any]:
         "node_type": _node_type(detail),
         "title": detail.get("title"),
         "status": detail.get("status"),
-        "fixed_facts": {key: detail["explanation"][key] for key in ("purpose", "why_it_exists", "mechanism", "data_summary", "output_summary")},
+        "research_question": detail["explanation"].get("research_question"),
+        "fixed_facts": {
+            key: detail["explanation"].get(key)
+            for key in (
+                "research_intent",
+                "purpose",
+                "why_it_exists",
+                "mechanism",
+                "estimand",
+                "variable_roles",
+                "data_summary",
+                "result_interpretation",
+                "interpretation_boundary",
+                "output_summary",
+            )
+        },
         "registered_specification": {key: specification.get(key) for key in ("formula", "estimand", "dependent_variable", "independent_variables", "controls", "causal_interpretation_allowed")},
         "variables": variables,
         "sample": detail.get("sample"),
@@ -267,7 +490,7 @@ def add_llm_explanation(detail: dict[str, Any], llm: DeepSeekClient) -> dict[str
             "status": "FALLBACK_NO_KEY",
             "narrative_summary": explanation["plain_summary"],
             "mechanism_walkthrough": explanation["mechanism"],
-            "grounding_fields": ["purpose", "mechanism", "data_summary"],
+            "grounding_fields": ["research_question", "research_intent", "mechanism", "interpretation_boundary"],
         }
         return detail
 
@@ -276,13 +499,14 @@ def add_llm_explanation(detail: dict[str, Any], llm: DeepSeekClient) -> dict[str
 You are a presentation layer, not an analyst: never add data, variables, numbers, causal claims, model results or mechanisms not present in the payload.
 Do not modify, contradict, upgrade or hide limitations in fixed_facts. If the node is only semantic, governance or aggregation infrastructure, say so plainly.
 Return one JSON object with exactly: narrative_summary, mechanism_walkthrough, grounding_fields.
-narrative_summary: 1-2 sentences answering what this node does and why it exists.
+narrative_summary: 1-2 sentences. For MODEL_SPECIFICATION and MODEL_RUN, answer the research intention first: quote or clearly identify the original research question, explain why this method is being used for that question, name the tested mechanism, estimand, dependent variable and main independent variables, then state only supplied direction/significance facts.
 mechanism_walkthrough: 1-3 sentences explaining how its input becomes its output; distinguish economic mechanism from research/data-governance mechanism.
-grounding_fields: a non-empty subset of [purpose, why_it_exists, mechanism, data_summary, output_summary, registered_specification, variables, sample, numeric_result_summary].
+For non-causal specifications, explicitly preserve the predictive/associational boundary. A significant coefficient means distinguishable from zero under the supplied specification; a non-significant coefficient means insufficient evidence under that specification, not proof of no effect.
+grounding_fields: a non-empty subset of [research_question, research_intent, purpose, why_it_exists, mechanism, estimand, variable_roles, data_summary, result_interpretation, interpretation_boundary, output_summary, registered_specification, variables, sample, numeric_result_summary].
 No markdown."""
     try:
         output = llm.json_completion(system, json.dumps(payload, ensure_ascii=False), max_tokens=650)
-        allowed_grounding = {"purpose", "why_it_exists", "mechanism", "data_summary", "output_summary", "registered_specification", "variables", "sample", "numeric_result_summary"}
+        allowed_grounding = {"research_question", "research_intent", "purpose", "why_it_exists", "mechanism", "estimand", "variable_roles", "data_summary", "result_interpretation", "interpretation_boundary", "output_summary", "registered_specification", "variables", "sample", "numeric_result_summary"}
         narrative = str(output.get("narrative_summary") or "").strip()
         walkthrough = str(output.get("mechanism_walkthrough") or "").strip()
         grounding = output.get("grounding_fields") or []
@@ -312,6 +536,6 @@ No markdown."""
             "error_type": type(exc).__name__,
             "narrative_summary": explanation["plain_summary"],
             "mechanism_walkthrough": explanation["mechanism"],
-            "grounding_fields": ["purpose", "mechanism", "data_summary"],
+            "grounding_fields": ["research_question", "research_intent", "mechanism", "interpretation_boundary"],
         }
     return detail

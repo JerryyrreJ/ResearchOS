@@ -1,0 +1,17 @@
+.git
+.github
+.venv
+.pytest_cache
+__pycache__
+*.pyc
+*.pyo
+.env
+.env.*
+!.env.local.example
+!.env.production.example
+artifacts
+runtime
+release
+output
+tests
+docs/assets

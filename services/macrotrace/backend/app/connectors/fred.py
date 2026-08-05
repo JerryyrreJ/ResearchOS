@@ -32,7 +32,11 @@ class FredConnector:
         if as_of_date:
             params["realtime_start"] = as_of_date.isoformat()
             params["realtime_end"] = as_of_date.isoformat()
-        with httpx.Client(timeout=45) as client:
+        # Retry connection setup failures without retrying arbitrary HTTP
+        # responses. Daily market-series syncs otherwise fail too easily on a
+        # single transient TLS or proxy interruption.
+        transport = httpx.HTTPTransport(retries=2)
+        with httpx.Client(timeout=45, transport=transport) as client:
             response = client.get(self.endpoint, params=params)
             response.raise_for_status()
             payload = response.json()

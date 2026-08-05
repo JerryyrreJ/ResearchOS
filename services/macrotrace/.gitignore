@@ -1,25 +1,22 @@
-# Local secrets
+# Secrets: examples are tracked, populated files are not.
 .env
 .env.*
-!.env.example
 !.env.local.example
+!.env.production.example
+data/private/
 
-# Local data and run artifacts
-data/
+# Runtime state
+runtime/
 artifacts/
 output/
 release/
 *.log
 
-# Python
+# Local tooling
+.venv/
 __pycache__/
 *.pyc
-.venv/
 .pytest_cache/
-
-# Browser and local QA caches
 .playwright-cli/
 .firecrawl/
-
-# Frontend build
 dist/

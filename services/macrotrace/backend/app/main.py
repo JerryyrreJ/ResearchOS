@@ -8,6 +8,7 @@ import time
 from collections import defaultdict, deque
 from datetime import date
 from threading import Lock
+from typing import Literal
 from urllib.parse import urlparse
 
 import httpx
@@ -22,6 +23,7 @@ from pypdf import PdfReader
 from .config import get_settings
 from .connection_schemas import DataSourceSettingsUpdate, LLMSettingsUpdate
 from .connection_service import ConnectionService
+from .catalog import dataset_label_zh, factor_label_zh, series_label_zh
 from .credentials import LocalCredentialStore
 from .engine import ResearchEngine
 from .jobs import ResearchJobManager
@@ -313,20 +315,109 @@ class DailyBriefQuestionRequest(BaseModel):
     excerpt: str = Field(min_length=8, max_length=1800)
 
 
+class DailyBriefGenerateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    report_type: Literal["daily", "weekly", "monthly", "equity", "futures"]
+    source_ids: list[str] = Field(min_length=1, max_length=300)
+
+
+def _source_name_zh(source_id: str) -> str:
+    return {
+        "FRED": "圣路易斯联储经济数据库",
+        "BLS": "美国劳工统计局",
+        "EIA": "美国能源信息署",
+        "TREASURY": "美国财政部",
+        "CENSUS": "美国人口普查局",
+        "ONET": "美国职业信息网络",
+    }.get(source_id.upper(), "美国官方机构")
+
+
+def _frequency_zh(value: str) -> str:
+    return {
+        "D": "日频", "W": "周频", "M": "月频", "Q": "季频", "A": "年频",
+        "DAILY": "日频", "WEEKLY": "周频", "MONTHLY": "月频", "QUARTERLY": "季频",
+        "BIWEEKLY": "双周频", "MIXED": "混合频率",
+    }.get(str(value or "").upper(), "混合频率")
+
+
+def expanded_daily_brief_catalog() -> dict:
+    catalog = daily_brief_service.catalog()
+    sources = list(catalog["sources"])
+    sources.extend(
+        {
+            "source_id": f"SERIES::{row['series_id']}",
+            "name": series_label_zh(str(row["series_id"])),
+            "name_zh": series_label_zh(str(row["series_id"])),
+            "kind": f"{_source_name_zh(str(row['source_id']))}数据序列",
+            "description": f"{str(row.get('first_period') or '')[:10]} 至 {str(row.get('last_period') or '')[:10]} · {int(row.get('observations') or 0)} 条真实观测",
+            "home_url": "",
+            "default_selected": True,
+        }
+        for row in store.data_status()
+    )
+    sources.extend(
+        {
+            "source_id": f"DATASET::{item['dataset_id']}",
+            "name": dataset_label_zh(str(item["dataset_id"])),
+            "name_zh": dataset_label_zh(str(item["dataset_id"])),
+            "kind": "已登记研究数据集",
+            "description": f"{_source_name_zh(str(item.get('source', '')))} · {_frequency_zh(str(item.get('frequency', '')))} · {len(item.get('series_ids') or [])} 条序列",
+            "home_url": "",
+            "default_selected": True,
+        }
+        for item in engine.registry.all("datasets")
+        if item.get("status") == "active"
+    )
+    sources.extend(
+        {
+            "source_id": f"FACTOR::{item['factor_id']}",
+            "name": factor_label_zh(str(item["factor_id"])),
+            "name_zh": factor_label_zh(str(item["factor_id"])),
+            "kind": "已登记实证因子",
+            "description": f"{dataset_label_zh(str(item.get('dataset_id', '')))} · {_frequency_zh(str(item.get('frequency', '')))} · 可进入受限实证路由",
+            "home_url": "",
+            "default_selected": True,
+        }
+        for item in engine.registry.all("factors")
+        if item.get("status") == "active"
+    )
+    return {**catalog, "sources": sources, "source_count": len(sources)}
+
+
+@app.get("/api/daily-brief/sources")
+@app.get("/v1/daily-brief/sources")
+def daily_brief_sources() -> dict:
+    """Return the selectable report sources and research products."""
+    return expanded_daily_brief_catalog()
+
+
 @app.get("/api/daily-brief")
 @app.get("/v1/daily-brief")
-def daily_brief() -> dict:
+def daily_brief(report_type: Literal["daily", "weekly", "monthly", "equity", "futures"] = "daily") -> dict:
     """Return the last source-backed brief without forcing network traffic."""
-    return daily_brief_service.latest()
+    return daily_brief_service.latest(report_type)
 
 
 @app.post("/api/daily-brief/refresh")
 @app.post("/v1/daily-brief/refresh")
-def refresh_daily_brief(lookback_hours: int = 72) -> dict:
+def refresh_daily_brief(payload: DailyBriefGenerateRequest) -> dict:
     """Search registered public sources and compile a traceable daily brief."""
-    if not 12 <= lookback_hours <= 168:
-        raise HTTPException(status_code=422, detail="检索窗口必须在 12 到 168 小时之间。")
-    return daily_brief_service.generate(lookback_hours)
+    catalog = expanded_daily_brief_catalog()
+    catalog_ids = {source["source_id"] for source in catalog["sources"]}
+    unknown = sorted(set(payload.source_ids) - catalog_ids)
+    if unknown:
+        raise HTTPException(status_code=422, detail=f"未知数据来源：{', '.join(unknown)}")
+    searchable_ids = {source["source_id"] for source in daily_brief_service.catalog()["sources"]}
+    selected_search_sources = [source_id for source_id in payload.source_ids if source_id in searchable_ids]
+    if not selected_search_sources:
+        selected_search_sources = sorted(searchable_ids)
+    result = daily_brief_service.generate(source_ids=selected_search_sources, report_type=payload.report_type)
+    return {
+        **result,
+        "selected_source_count": len(payload.source_ids),
+        "selected_data_context_count": len(payload.source_ids) - len([source_id for source_id in payload.source_ids if source_id in searchable_ids]),
+    }
 
 
 @app.post("/api/daily-brief/research-question")

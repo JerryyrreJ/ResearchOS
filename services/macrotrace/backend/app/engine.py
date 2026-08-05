@@ -15,7 +15,7 @@ from .credentials import LocalCredentialStore
 from .llm import DeepSeekClient
 from .node_explanations import add_llm_explanation, ensure_fixed_explanation
 from .registry import RegistryStore
-from .research_report import build_research_report, merge_llm_report_language
+from .research_report import build_research_report, merge_llm_direct_answer, merge_llm_report_language
 from .research_graph import GraphBuilder
 from .storage import MacroStore
 
@@ -76,7 +76,12 @@ class ResearchEngine:
 
     def explain_node_detail(self, job_id: str, node_id: str, detail: dict[str, Any]) -> dict[str, Any]:
         """Add a deterministic fact card and a cached, grounded prose layer on demand."""
-        enriched = ensure_fixed_explanation(dict(detail), self.registry)
+        prepared = dict(detail)
+        if not prepared.get("research_question"):
+            job = self.store.get_job(job_id)
+            if job and job.get("question"):
+                prepared["research_question"] = job["question"]
+        enriched = ensure_fixed_explanation(prepared, self.registry)
         enriched = add_llm_explanation(enriched, self.llm)
         stored = {key: value for key, value in enriched.items() if key not in {"node_status", "updated_at"}}
         self.store.save_node_detail(job_id, node_id, str(enriched.get("status") or enriched.get("node_status") or "PENDING"), stored)
@@ -243,6 +248,55 @@ class ResearchEngine:
         }
         if not self.llm.available:
             return fallback, {"role": "LLM-7 Synthesis Interpreter", "status": "FALLBACK_NO_KEY"}
+        direct_editor_system = """
+你是 MacroTrace 的最终直答编辑。你的唯一任务是把确定性证据重新写成直接回应用户原问题的自然中文结论，不得把“劳动力市场偏强”等中间结构化标签单独当成标题。
+
+原问题是最高锚点。headline 必须明确复述或点名原问题的对象，并回答“是否成立、上涨还是下跌、走弱还是加速”等原问题所问方向。direct_answer 先回答，再解释证据与限制；abstract 综合方向、主要分歧和置信度；key_points 只列支持最终回答的关键证据。
+
+direction_lock 是不可改变的确定性方向边界。只能使用 supplied_evidence 和 model_results，不得添加新事实、新模型、因果关系、概率、价格、目标价、收益率或任何输入中没有的数字。不能把识别限制写成标题，也不能使用主命题、注册命题、序数信号、系统平衡分、等泳道、Registry、claim_id、lane_id 等工程词。
+
+只输出一个 JSON 对象，且只能有 headline、direct_answer、abstract、key_points 四个键。key_points 必须是字符串数组。
+""".strip()
+        direct_payload = {
+            "original_question": question,
+            "structured_query": plan["query"],
+            "direction_lock": {
+                "headline": report_fallback["direct_answer"]["headline"],
+                "direct_answer": report_fallback["direct_answer"]["text"],
+                "stance": aggregation.get("stance"),
+                "primary_score": aggregation.get("primary_score"),
+                "answerability": aggregation.get("answerability"),
+                "evidence_state": aggregation.get("evidence_state"),
+                "conflicts_retained": aggregation.get("conflicts_retained"),
+            },
+            "supplied_evidence": {
+                "primary_findings": aggregation.get("primary_findings", []),
+                "context_findings": aggregation.get("context_findings", []),
+                "limitations": limitations,
+            },
+            "model_results": [
+                {
+                    key: item.get(key)
+                    for key in ("node_id", "title", "question_addressed", "finding", "implication", "data_and_sample", "diagnostics")
+                }
+                for item in report_fallback["empirical_evidence"][:8]
+            ],
+        }
+        direct_edit_error = None
+        try:
+            direct_output = self.llm.json_completion(
+                direct_editor_system,
+                json.dumps(direct_payload, ensure_ascii=False),
+                max_tokens=1600,
+            )
+            if not isinstance(direct_output, dict):
+                raise ValueError("direct editor output must be an object")
+            report_fallback = merge_llm_direct_answer(report_fallback, direct_output)
+            fallback["headline"] = report_fallback["direct_answer"]["headline"]
+            fallback["answer"] = report_fallback["abstract"]["text"]
+            fallback["report"] = report_fallback
+        except Exception as exc:
+            direct_edit_error = type(exc).__name__
         system = """
 You are LLM-7, the evidence-bound research-report editor in MacroTrace. Rewrite only the prose fields in the supplied deterministic report. Do not calculate, change any number, weight, method, variable, sample, diagnostic, source link, limitation, or falsifier. Do not add facts, models, causality, probabilities, point forecasts, or price targets.
 
@@ -283,7 +337,11 @@ The direct answer should be 2-4 sentences and must begin with the stance on the 
                     "source_node_ids": fallback["source_node_ids"],
                     "report": report,
                 }
-                return interpretation, {"role": "LLM-7 Synthesis Interpreter", "status": "SUCCESS" if attempt == 0 else "REPAIRED", "model": self.llm.model}
+                trace = {"role": "LLM-7 Synthesis Interpreter", "status": "SUCCESS" if attempt == 0 else "REPAIRED", "model": self.llm.model}
+                trace["direct_answer_editor"] = "FALLBACK" if direct_edit_error else "SUCCESS"
+                if direct_edit_error:
+                    trace["direct_answer_editor_error"] = direct_edit_error
+                return interpretation, trace
             except Exception as exc:
                 errors.append(type(exc).__name__)
                 payload["repair"] = (
@@ -347,6 +405,7 @@ The direct answer should be 2-4 sentences and must begin with the stance on the 
                 result["factor_ids"] = decision.factor_ids
                 result["parameters"] = decision.parameters.model_dump(mode="json")
                 result["provenance"] = self._provenance(decision.node_id, decision.model_recipe_id, decision.factor_ids, as_of_date)
+                result["research_question"] = question
                 result = ensure_fixed_explanation(result, self.registry)
                 artifacts = self.artifacts.save_model_result(job_id, model_run_id, result)
                 for artifact in artifacts:
@@ -371,6 +430,7 @@ The direct answer should be 2-4 sentences and must begin with the stance on the 
                     "diagnostics": [],
                     "charts": [],
                     "artifacts": [],
+                    "research_question": question,
                 }
                 graph.attach_failure(model_run_id, type(exc).__name__)
                 execution_trace.append({"node_id": model_run_id, "status": "FAILED", "duration_ms": round((perf_counter() - started) * 1000), "model_recipe_id": decision.model_recipe_id, "error_type": type(exc).__name__})

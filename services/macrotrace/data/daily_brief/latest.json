@@ -1,0 +1,181 @@
+{
+  "schema_version": "0.5.0",
+  "generated_at": "2026-08-05T15:34:43.861767+00:00",
+  "as_of_label": "最近可获取的官方发布",
+  "headline": "美加能源贸易额微升，AI影响劳动力，美联储批准多项申请",
+  "summary": "本期日报涵盖能源、劳动力市场、美联储动态及经济指标。美加天然气和电力贸易额在2025年略有上升，尽管总能源贸易额下降。纽约联储探讨AI对劳动力市场的影响。美联储批准多家银行控股公司的申请。美国劳工统计局公布多项经济指标，包括CPI下降、失业率4.2%等。纽约联储分析债券投资者对r-star的不确定性。ERCOT创下电力峰值负荷新纪录。",
+  "source_states": [
+    {
+      "source_id": "BLS",
+      "name": "美国劳工统计局",
+      "status": "成功",
+      "items": "1"
+    },
+    {
+      "source_id": "EIA",
+      "name": "美国能源信息署",
+      "status": "成功",
+      "items": "2"
+    },
+    {
+      "source_id": "FED",
+      "name": "美联储",
+      "status": "成功",
+      "items": "3"
+    },
+    {
+      "source_id": "NYFED",
+      "name": "纽约联储自由街经济学",
+      "status": "成功",
+      "items": "2"
+    },
+    {
+      "source_id": "SEC",
+      "name": "美国证券交易委员会",
+      "status": "成功",
+      "items": "0"
+    }
+  ],
+  "items": [
+    {
+      "item_id": "7a2c19d63ea3e331",
+      "source_id": "EIA",
+      "source_name": "美国能源信息署",
+      "source_home": "https://www.eia.gov/todayinenergy/",
+      "title": "The U.S.-Canada natural gas and electricity trade value rose in 2025",
+      "source_summary": "Although the total value of energy trade between the United States and Canada fell by 11% in 2025 to an estimated $137 billion, according to data from the U.S. Census Bureau, the trade value of natural gas and electricity between the two countries increased slightly primarily because of increased natural gas prices and trade volume.",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=",
+      "published_at": "2026-08-05T14:00:00+00:00",
+      "domain": "能源与商品",
+      "recency_score": 0.9906,
+      "headline": "2025年美加天然气和电力贸易额上升",
+      "summary": "美国能源信息署引用人口普查局数据称，2025年美加能源贸易总额下降11%至约1370亿美元，但天然气和电力贸易额因价格上涨和贸易量增加而略有上升。",
+      "significance": "该数据反映美加能源贸易结构变化，天然气和电力贸易的相对增长可能影响区域能源市场格局。",
+      "empirical_question": "在2025年至2026年间，美国从加拿大进口的天然气月度贸易额是否与亨利港天然气价格呈正相关？",
+      "generation_mode": "来源约束的模型摘要"
+    },
+    {
+      "item_id": "917d425c01811973",
+      "source_id": "NYFED",
+      "source_name": "纽约联储自由街经济学",
+      "source_home": "https://libertystreeteconomics.newyorkfed.org/",
+      "title": "AI’s Impact on Labor and Hiring",
+      "source_summary": "Welcome to Street Level , my new series on Liberty Street Economics . As research director, I try to keep track of the wide range of work that the economists at the New York Fed produce. My goal for this series is to periodically offer some thematic discussion of that work, highlighting recent analysis by Research staff and adding my own observations on the issue at hand. In this inaugural post, I’ll focus on perhaps the hottest topic going: How artificial intelligence is changing the labor market and hiring behaviors.",
+      "url": "https://libertystreeteconomics.newyorkfed.org/2026/08/ais-impact-on-labor-and-hiring/",
+      "published_at": "2026-08-05T11:00:00+00:00",
+      "domain": "股票市场",
+      "recency_score": 0.9728,
+      "headline": "纽约联储新系列探讨AI对劳动力市场的影响",
+      "summary": "纽约联储研究主任推出新系列文章，首篇聚焦人工智能如何改变劳动力市场和招聘行为，并计划定期讨论相关研究。",
+      "significance": "AI对就业的影响是当前热点，纽约联储的研究可能为政策制定提供参考。",
+      "empirical_question": "在2024年至2026年间，美国各行业AI采用率每增加10个百分点，其季度招聘率是否下降超过5%？",
+      "generation_mode": "来源约束的模型摘要"
+    },
+    {
+      "item_id": "2f5f1db50066e8cd",
+      "source_id": "FED",
+      "source_name": "美联储",
+      "source_home": "https://www.federalreserve.gov/newsevents.htm",
+      "title": "Federal Reserve Board announces approval of the application by Coastal Bend Bancshares, Inc.",
+      "source_summary": "Federal Reserve Board announces approval of the application by Coastal Bend Bancshares, Inc.",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804c.htm",
+      "published_at": "2026-08-04T20:30:00+00:00",
+      "domain": "综合市场",
+      "recency_score": 0.8864,
+      "headline": "美联储批准Coastal Bend Bancshares申请",
+      "summary": "美联储理事会宣布批准Coastal Bend Bancshares, Inc.的申请。",
+      "significance": "该批准可能影响区域银行市场结构，值得关注其后续整合。",
+      "empirical_question": "美联储批准银行控股公司申请后，该银行未来12个月的股价是否跑赢标普500指数？",
+      "generation_mode": "来源约束的模型摘要"
+    },
+    {
+      "item_id": "44999fcfd11a9292",
+      "source_id": "FED",
+      "source_name": "美联储",
+      "source_home": "https://www.federalreserve.gov/newsevents.htm",
+      "title": "Federal Reserve Board announces approval of the application by FS Bancorp, Inc.",
+      "source_summary": "Federal Reserve Board announces approval of the application by FS Bancorp, Inc.",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804b.htm",
+      "published_at": "2026-08-04T20:30:00+00:00",
+      "domain": "综合市场",
+      "recency_score": 0.8864,
+      "headline": "美联储批准FS Bancorp申请",
+      "summary": "美联储理事会宣布批准FS Bancorp, Inc.的申请。",
+      "significance": "该批准可能影响相关银行运营，需跟踪其后续发展。",
+      "empirical_question": "美联储批准FS Bancorp申请后，其未来6个月的贷款增长率是否高于行业平均水平？",
+      "generation_mode": "来源约束的模型摘要"
+    },
+    {
+      "item_id": "1fa329fd83c39b7c",
+      "source_id": "FED",
+      "source_name": "美联储",
+      "source_home": "https://www.federalreserve.gov/newsevents.htm",
+      "title": "Federal Reserve Board announces approval of the application by Banco Santander, S.A. and Santander Holdings USA, Inc.",
+      "source_summary": "Federal Reserve Board announces approval of the application by Banco Santander, S.A. and Santander Holdings USA, Inc.",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804a.htm",
+      "published_at": "2026-08-04T20:30:00+00:00",
+      "domain": "综合市场",
+      "recency_score": 0.8864,
+      "headline": "美联储批准桑坦德银行相关申请",
+      "summary": "美联储理事会宣布批准Banco Santander, S.A.和Santander Holdings USA, Inc.的申请。",
+      "significance": "桑坦德银行作为大型国际银行，其申请获批可能影响美国银行业竞争格局。",
+      "empirical_question": "美联储批准桑坦德银行申请后，其美国子公司未来12个月的资产规模是否增长超过5%？",
+      "generation_mode": "来源约束的模型摘要"
+    },
+    {
+      "item_id": "3e9610c3727b77bc",
+      "source_id": "BLS",
+      "source_name": "美国劳工统计局",
+      "source_home": "https://www.bls.gov/bls/newsrels.htm",
+      "title": "Major Economic Indicators Latest Numbers",
+      "source_summary": "Consumer Price Index (CPI): -0.4% in Jun 2026 News Release Historical Data Unemployment Rate: 4.2% in Jun 2026 News Release Historical Data Payroll Employment: +57,000(p) in Jun 2026 News Release Historical Data Average Hourly Earnings: +$0.13(p) in Jun 2026 News Release Historical Data Producer Price Index - Final Demand: -0.3%(p) in Jun 2026 News Release Historical Data Employment Cost Index (ECI): +0.9% in 2nd Qtr of 2026 News Release Historical Data Productivity: +0.3%(r) in 1st Qtr of 2026 News Release Historical Data U.S. Import Price Index: +0.3% in Jun 2026 News Release Historical Data U.S. Export Price Index: -0.6% in Jun 2026 News Release Historical Data p - preliminary",
+      "url": "https://www.bls.gov/bls/",
+      "published_at": "2026-08-04T14:00:16+00:00",
+      "domain": "宏观经济",
+      "recency_score": 0.8478,
+      "headline": "美国6月CPI环比下降0.4%，失业率4.2%",
+      "summary": "美国劳工统计局公布最新数据：6月CPI环比下降0.4%，失业率4.2%，非农就业增加5.7万人，平均时薪上涨0.13美元，PPI下降0.3%，ECI上升0.9%等。",
+      "significance": "这些指标反映美国通胀和就业状况，可能影响美联储货币政策走向。",
+      "empirical_question": "美国2026年6月CPI环比下降0.4%后，未来3个月的核心PCE通胀率是否低于2%？",
+      "generation_mode": "来源约束的模型摘要"
+    },
+    {
+      "item_id": "dc11bae2879ec6e3",
+      "source_id": "NYFED",
+      "source_name": "纽约联储自由街经济学",
+      "source_home": "https://libertystreeteconomics.newyorkfed.org/",
+      "title": "A Window into Bond Investors’ Uncertainty About R‑Star",
+      "source_summary": "Monetary policymakers closely monitor the term structure of sovereign bond yields to uncover market participants’ beliefs about the future monetary policy stance, inflation, and activity. A particular object of interest is the natural real rate of return, or “r-star,” which acts as a guide for monetary policy decisions. Numerous papers have questioned how much information investors possess, and how precisely they know r-star. In this post based on a recent Staff Report , we explore what the term structure of interest rates can teach us about r-star and its perception by investors.",
+      "url": "https://libertystreeteconomics.newyorkfed.org/2026/08/a-window-into-bond-investors-uncertainty-about-r-star/",
+      "published_at": "2026-08-04T11:00:00+00:00",
+      "domain": "债券与利率",
+      "recency_score": 0.8299,
+      "headline": "债券投资者对r-star的不确定性分析",
+      "summary": "纽约联储基于员工报告，探讨收益率曲线如何揭示投资者对自然实际利率（r-star）的认知和不确定性。",
+      "significance": "r-star是货币政策的重要参考，投资者对其认知的变化可能影响市场预期。",
+      "empirical_question": "基于美国国债收益率曲线，未来12个月市场隐含的r-star预期是否与纽约联储的估计值偏差超过50个基点？",
+      "generation_mode": "来源约束的模型摘要"
+    },
+    {
+      "item_id": "b95659e19b04b0d6",
+      "source_id": "EIA",
+      "source_name": "美国能源信息署",
+      "source_home": "https://www.eia.gov/todayinenergy/",
+      "title": "Hourly peak load in ERCOT set a new record, exceeding 91 GW on July 22",
+      "source_summary": "Hourly peak load in the Electric Reliability Council of Texas (ERCOT), the regional transmission organization serving most of Texas, reached a record 91.1 gigawatts (GW) on July 22, 2026, according to data reported to us for our Hourly Electric Grid Monitor.",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=67906",
+      "published_at": "2026-08-03T14:00:00+00:00",
+      "domain": "综合市场",
+      "recency_score": 0.7049,
+      "headline": "ERCOT 7月22日峰值负荷创纪录超91吉瓦",
+      "summary": "美国能源信息署报告，德州电力可靠性委员会（ERCOT）7月22日小时峰值负荷达到91.1吉瓦，创历史新高。",
+      "significance": "创纪录的电力需求可能考验电网可靠性，并影响电价和能源政策。",
+      "empirical_question": "在2026年夏季，ERCOT的日峰值负荷每增加1吉瓦，其日前电价是否上涨超过10美元/兆瓦时？",
+      "generation_mode": "来源约束的模型摘要"
+    }
+  ],
+  "limitations": [
+    "只收录本轮成功读取且保留原文链接的条目。",
+    "来源发布时间缺失的条目可能不是当天发布。"
+  ]
+}

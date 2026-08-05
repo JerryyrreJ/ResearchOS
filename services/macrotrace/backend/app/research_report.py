@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import re
 from copy import deepcopy
 from typing import Any
 
@@ -63,17 +65,39 @@ DOMAIN_LABELS = {
 def _directional_headline(question: str, plan: dict[str, Any], aggregation: dict[str, Any], primary: list[str]) -> str:
     query = plan.get("query") or {}
     domain = str(query.get("domain") or "MACRO")
-    if domain == "MACRO" and primary:
-        return "；".join(primary[:2])
     score = aggregation.get("primary_score")
     if not isinstance(score, (int, float)):
         score = aggregation.get("ordinal_score")
+    stem = _question_stem(question, 68)
+    if domain == "MACRO" and primary:
+        evidence = "；".join(primary[:2])
+        if re.search(r"是否|是不是|能否|会不会|有没有", question):
+            if isinstance(score, (int, float)) and score < 0:
+                verdict = "较不支持该观点成立"
+            elif isinstance(score, (int, float)) and score > 0:
+                verdict = "较支持该观点成立"
+            else:
+                stance = str(aggregation.get("stance") or "")
+                verdict = "较不支持该观点成立" if "DOWNSIDE" in stance or "NEGATIVE" in stance else "较支持该观点成立" if "UPSIDE" in stance or "POSITIVE" in stance else "尚不足以确认该观点成立"
+            return f"对“{stem}”，当前证据{verdict}：{evidence}"
+        return f"对“{stem}”，当前证据更支持：{evidence}"
     if isinstance(score, (int, float)):
-        direction = "偏上行" if score > 0.08 else "偏下行" if score < -0.08 else "接近中性"
+        # Binary market questions need a usable side even when the registered
+        # edge is small. Preserve the weak-evidence distinction in the wording
+        # instead of collapsing every modest score into a neutral headline.
+        if score >= 0.08:
+            direction = "偏向上涨"
+        elif score > 0:
+            direction = "边际偏向上涨，但方向优势较弱"
+        elif score <= -0.08:
+            direction = "偏向下跌"
+        elif score < 0:
+            direction = "边际偏向下跌，但方向优势较弱"
+        else:
+            direction = "暂时没有可辨认的方向优势"
     else:
         stance = str(aggregation.get("stance") or "")
         direction = "偏上行" if "UPSIDE" in stance or "POSITIVE" in stance else "偏下行" if "DOWNSIDE" in stance or "NEGATIVE" in stance else "接近中性"
-    stem = _question_stem(question, 68)
     return f"对“{stem}”，当前可执行证据给出的方向判断为{direction}"
 
 
@@ -196,7 +220,7 @@ def build_research_report(
     domain_label = DOMAIN_LABELS.get(domain, "综合研究")
     if primary:
         headline = _directional_headline(question, plan, aggregation, primary)
-        direct_text = f"现有可执行证据整体更支持：{headline}。"
+        direct_text = f"{headline}。"
         if aggregation.get("conflicts_retained"):
             direct_text += "不同证据之间仍有分歧，因此这是一项有条件的方向判断，而不是确定性预测。"
         if evidence_state == "ASSOCIATIONAL_ONLY":
@@ -403,4 +427,38 @@ def merge_llm_report_language(fallback: dict[str, Any], output: dict[str, Any]) 
         target["question_addressed"] = str(item["question_addressed"]).strip()[:700]
         target["finding"] = str(item["finding"]).strip()[:900]
         target["implication"] = str(item["implication"]).strip()[:700]
+    return report
+
+
+def merge_llm_direct_answer(fallback: dict[str, Any], output: dict[str, Any]) -> dict[str, Any]:
+    """Merge a question-anchored second-pass answer without changing evidence or methods."""
+    if set(output) != {"headline", "direct_answer", "abstract", "key_points"}:
+        raise ValueError("direct-answer editor has an invalid contract")
+    if not isinstance(output["key_points"], list) or not all(isinstance(item, str) for item in output["key_points"]):
+        raise ValueError("direct-answer key_points must be a string array")
+    headline = str(output["headline"]).strip()
+    direct_answer = str(output["direct_answer"]).strip()
+    abstract = str(output["abstract"]).strip()
+    key_points = [str(item).strip() for item in output["key_points"] if str(item).strip()]
+    public_text = " ".join([headline, direct_answer, abstract, *key_points])
+    if any(term.lower() in public_text.lower() for term in FORBIDDEN_PUBLIC_TERMS):
+        raise ValueError("engineering jargon leaked into the direct answer")
+    if len(headline) < 12 or len(direct_answer) < 30 or len(abstract) < 30 or not key_points:
+        raise ValueError("direct-answer editor output is too shallow")
+    question_value = " ".join(str(fallback.get("question") or "").strip().split()).rstrip("？?")
+    question_anchor = question_value[: min(24, len(question_value))]
+    if question_anchor and question_anchor not in headline:
+        raise ValueError("direct-answer headline lost the original question anchor")
+    evidence_text = json.dumps(fallback, ensure_ascii=False)
+    for number in re.findall(r"(?<![A-Za-z])[-+]?\d+(?:\.\d+)?%?", public_text):
+        if number not in evidence_text:
+            raise ValueError("direct-answer editor invented a number")
+    if any(term in public_text for term in ("目标价", "保证收益", "必然导致", "确定会涨", "确定会跌")):
+        raise ValueError("direct-answer editor added an unsupported claim")
+    report = deepcopy(fallback)
+    report["direct_answer"]["headline"] = headline[:260]
+    report["direct_answer"]["text"] = direct_answer[:1200]
+    report["abstract"]["text"] = abstract[:2400]
+    report["abstract"]["key_points"] = [item[:300] for item in key_points[:6]]
+    report["conclusion"]["text"] = direct_answer[:1200] + " " + report["conclusion"]["text"]
     return report

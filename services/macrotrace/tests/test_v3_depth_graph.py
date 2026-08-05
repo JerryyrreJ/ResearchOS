@@ -116,7 +116,8 @@ def test_ai_causal_question_is_deep_but_causally_unsupported() -> None:
 
 def test_graph_contains_full_lane_universe_and_white_box_details() -> None:
     store = registry()
-    plan = compiler().compile("Has AI significantly increased US unemployment?", date(2026, 7, 14))
+    question = "Has AI significantly increased US unemployment?"
+    plan = compiler().compile(question, date(2026, 7, 14))
     graph = GraphBuilder("JOB_V3_GRAPH", store)
     graph.from_plan(plan)
     payload = graph.export()
@@ -133,12 +134,19 @@ def test_graph_contains_full_lane_universe_and_white_box_details() -> None:
     required_explanation = {"purpose", "why_it_exists", "mechanism", "data_summary", "output_summary", "plain_summary"}
     assert all(required_explanation.issubset(detail["explanation"]) for detail in details.values())
     assert all(all(detail["explanation"][key] for key in required_explanation) for detail in details.values())
+    assert all(detail["research_question"] == question for detail in details.values())
+    assert all(detail["overview"]["research_question"] == question for detail in details.values())
+    model_specification = next(detail for detail in details.values() if detail["node_type"] == "MODEL_SPECIFICATION")
+    assert question in model_specification["explanation"]["research_intent"]
+    assert model_specification["title"] in model_specification["explanation"]["research_intent"]
 
 
 def test_executed_model_explanation_names_real_data_and_sample() -> None:
+    question = "美国经济未来三个月会继续走弱，还是重新加速？"
     detail = {
         "status": "SUCCESS",
         "node_id": "MR::01::N.ACTIVITY.PRODUCTION::M.UNIVARIATE_AR.V1",
+        "research_question": question,
         "model_recipe_id": "M.UNIVARIATE_AR.V1",
         "method": "Registered univariate autoregressive benchmark",
         "research_node_id": "N.ACTIVITY.PRODUCTION",
@@ -147,16 +155,73 @@ def test_executed_model_explanation_names_real_data_and_sample() -> None:
         "specification": {
             "formula": "y_{t+3}=alpha+phi(L)y_t+epsilon_t",
             "estimand": "3-month-ahead transformed value",
+            "dependent_variable": "F.ACTIVITY.INDPRO",
+            "independent_variables": ["F.ACTIVITY.INDPRO"],
             "causal_interpretation_allowed": False,
         },
         "variables": [{"factor_id": "F.ACTIVITY.INDPRO", "definition": "Industrial production index"}],
         "sample": {"start": "2016-03-01", "end": "2026-02-01", "observations": 120, "frequency": "monthly"},
+        "table": {
+            "coefficients": {
+                "(1)": [
+                    {"label": "INDPRO 一阶滞后", "coefficient": 0.42, "p_value": 0.01},
+                    {"label": "INDPRO 二阶滞后", "coefficient": 0.08, "p_value": 0.31},
+                ]
+            }
+        },
     }
     explained = ensure_fixed_explanation(detail, registry())
-    data_summary = explained["explanation"]["data_summary"]
+    explanation = explained["explanation"]
+    data_summary = explanation["data_summary"]
     assert "F.ACTIVITY.INDPRO" in data_summary
     assert "2016-03-01" in data_summary
     assert "120" in data_summary
+    assert question in explanation["research_intent"]
+    assert "Registered univariate autoregressive benchmark" in explanation["research_intent"]
+    assert "3-month-ahead transformed value" in explanation["research_intent"]
+    assert "F.ACTIVITY.INDPRO" in explanation["variable_roles"]["dependent_variable"]
+    assert "INDPRO 一阶滞后" in explanation["result_interpretation"]
+    assert "INDPRO 二阶滞后" in explanation["result_interpretation"]
+    assert "不等于证明变量没有作用" in explanation["interpretation_boundary"]
+    assert "未允许因果解释" in explanation["interpretation_boundary"]
+    assert question in explanation["plain_summary"]
+
+
+def test_model_intention_has_deterministic_fallback_without_llm_key() -> None:
+    question = "如果金融条件继续收紧，未来一个季度的美国增长下尾风险是否上升？"
+    detail = ensure_fixed_explanation(
+        {
+            "status": "PLANNED",
+            "node_id": "MODEL_SPEC::MS.ACT.TAIL_RISK.GAR.V1",
+            "node_type": "MODEL_SPECIFICATION",
+            "title": "Quantile Growth-at-Risk",
+            "research_question": question,
+            "provenance": {
+                "registry_metadata": {
+                    "node_id": "N.ACTIVITY.TAIL_RISK",
+                    "model_recipe_id": "M.GROWTH_AT_RISK.V1",
+                    "method": "Quantile Growth-at-Risk",
+                    "factor_ids": ["F.ACTIVITY.REAL_GDP", "F.MONETARY.NFCI"],
+                }
+            },
+            "specification": {
+                "estimand": "未来一季度实际 GDP 增长的条件下分位数",
+                "dependent_variable": "F.ACTIVITY.REAL_GDP",
+                "independent_variables": ["F.MONETARY.NFCI"],
+                "causal_interpretation_allowed": False,
+            },
+        },
+        registry(),
+    )
+    explained = add_llm_explanation(detail, DeepSeekClient("", "deepseek-chat", "https://api.deepseek.com"))
+    fallback = explained["explanation"]["llm"]
+    assert fallback["status"] == "FALLBACK_NO_KEY"
+    assert question in fallback["narrative_summary"]
+    assert "Quantile Growth-at-Risk" in fallback["narrative_summary"]
+    assert "F.ACTIVITY.REAL_GDP" in fallback["narrative_summary"]
+    assert "F.MONETARY.NFCI" in fallback["narrative_summary"]
+    assert "未来一季度实际 GDP 增长的条件下分位数" in fallback["narrative_summary"]
+    assert "不得升级为因果效应" in fallback["narrative_summary"]
 
 
 def test_node_explanation_has_deterministic_fallback_without_llm_key() -> None:

@@ -106,23 +106,24 @@ class SyncService:
             except Exception as exc:  # noqa: BLE001
                 errors.append({"source": "BLS", "series_id": "BLS_CORE_BATCH", "error": type(exc).__name__})
 
-            announce("Fetching EIA WTI observations")
-            try:
-                spec = EIA_SERIES[0]
-                frame, payload = EiaConnector(
-                    self._key("EIA", self.settings.eia_api_key)
-                ).fetch_wti(spec, snapshot_id)
-                counts["EIA"] = self.store.save_observations(frame)
-                save_raw_artifact(
-                    self.settings.raw_dir,
-                    "EIA",
-                    spec.series_id,
-                    snapshot_id,
-                    {"series_id": spec.series_id, "frequency": "weekly", "start": spec.start},
-                    payload,
-                )
-            except Exception as exc:  # noqa: BLE001
-                errors.append({"source": "EIA", "series_id": "RWTC", "error": type(exc).__name__})
+            announce(f"Fetching {len(EIA_SERIES)} EIA petroleum series")
+            eia_count = 0
+            eia = EiaConnector(self._key("EIA", self.settings.eia_api_key))
+            for spec in EIA_SERIES:
+                try:
+                    frame, payload = eia.fetch(spec, snapshot_id)
+                    eia_count += self.store.save_observations(frame)
+                    save_raw_artifact(
+                        self.settings.raw_dir,
+                        "EIA",
+                        spec.series_id,
+                        snapshot_id,
+                        {"series_id": spec.series_id, "frequency": spec.frequency, "start": spec.start},
+                        payload,
+                    )
+                except Exception as exc:  # noqa: BLE001
+                    errors.append({"source": "EIA", "series_id": spec.series_id, "error": type(exc).__name__})
+            counts["EIA"] = eia_count
 
             announce("Fetching Treasury debt history")
             try:

@@ -25,11 +25,21 @@ def test_daily_brief_is_the_first_product_stage_and_can_route_to_research() -> N
     javascript = _read("app.js")
 
     assert html.index('id="dailyBrief"') < html.index('id="researchForm"')
-    assert "01 每日日报" in html
+    assert "01 研究报告" in html
     assert "02 研究工作台" in html
     assert "selectionResearchButton" in html
     assert "compileSelectedExcerpt" in javascript
     assert '$("#selectionResearchButton").addEventListener' in javascript
+
+
+def test_daily_source_picker_prefers_backend_chinese_names() -> None:
+    javascript = _read("app.js")
+
+    assert "source.name_zh || source.display_name || source.name || localDisplayName" in javascript
+    assert 'source_id: "STLFED"' in javascript
+    assert 'source_id: "ATL_GDPNOW"' in javascript
+    assert 'source_id: "CFTC"' in javascript
+    assert 'source_id: "CENSUS"' in javascript
 
 
 def test_frontend_prefers_structured_report_and_links_evidence_nodes() -> None:

@@ -131,8 +131,15 @@ def _concepts(question: str) -> list[str]:
         "industry": ("industry", "sector", "景气度", "行业", "板块"),
         "commodity": ("commodity", "futures", "gold", "copper", "silver", "corn", "wheat", "商品", "期货", "黄金", "白银", "铜价", "农产品"),
     }
-    padded = f" {text} "
-    return [name for name, terms in groups.items() if any(term in padded for term in terms)]
+    def contains(term: str) -> bool:
+        # Short ASCII symbols such as AI, CPI, PCE and Fed must match tokens,
+        # not substrings. Without this guard, for example, "Shanghai" was
+        # incorrectly classified as an AI question.
+        if term.isascii() and re.fullmatch(r"[a-z0-9]+", term):
+            return re.search(rf"\b{re.escape(term)}\b", text) is not None
+        return term in text
+
+    return [name for name, terms in groups.items() if any(contains(term) for term in terms)]
 
 
 def _question_form(question: str, concepts: list[str]) -> str:
@@ -154,7 +161,12 @@ def _question_form(question: str, concepts: list[str]) -> str:
 
 def _research_context(question: str, concepts: list[str]) -> tuple[str, str]:
     text = question.lower()
-    jurisdiction = "US"
+    non_us_terms = (
+        "china", "chinese market", "shanghai", "shenzhen", "hong kong",
+        "csi 300", "a-share", "a share", "中国", "上证", "深证", "沪深",
+        "A股", "人民币", "中债", "恒生", "港股",
+    )
+    jurisdiction = "OTHER" if any(term.lower() in text for term in non_us_terms) else "US"
     asset_concepts = {"equity", "bond", "commodity", "energy"}.intersection(concepts)
     if len(asset_concepts) >= 2:
         domain = "CROSS_ASSET"
@@ -758,10 +770,7 @@ class ResearchCompiler:
         ]
 
         unsupported = []
-        if any(
-            term in question.lower()
-            for term in ("中国", "上证", "沪深", "a股", "人民币", "中债", "恒生", "港股")
-        ):
+        if jurisdiction != "US":
             unsupported.append("MacroTrace 当前版本只覆盖美国市场；非美国市场问题不会被美国数据代理替代。")
         repair_failures = [entry["role"] for entry in self.trace if entry["status"] == "FALLBACK_AFTER_REPAIR"]
         if repair_failures:
@@ -846,8 +855,21 @@ class ResearchCompiler:
             if research_depth["status"] == "FAIL":
                 unsupported.append("The registered empirical completeness budget is not met; FULL coverage is prohibited.")
 
+        if jurisdiction != "US":
+            # Fail closed: retain the registered universe for a grey graph, but
+            # do not execute a US workflow as a proxy for another jurisdiction.
+            lanes = []
+            mechanisms = []
+            node_decisions = []
+            factors = []
+            model_specifications = []
+            models = []
+
         coverage_score = 1.0 if not unsupported else max(0.35, 1 - 0.15 * len(unsupported))
         coverage = Coverage.FULL if not unsupported else Coverage.PARTIAL
+        if jurisdiction != "US":
+            coverage = Coverage.UNSUPPORTED
+            coverage_score = 0
         if (
             complexity_class == "CAUSAL_ATTRIBUTION"
             and research_depth.get("identification_required")

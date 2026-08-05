@@ -1,0 +1,456 @@
+{
+  "schema_version": "0.6.0",
+  "report_mode": "investment_views",
+  "market": "US",
+  "market_label": "美国市场",
+  "report_type": "daily",
+  "report_label": "美国市场日报",
+  "report_object": "美国市场过去三个自然日的新信息及其跨资产含义",
+  "lookback_hours": 72,
+  "item_limit": 12,
+  "preferred_domains": [
+    "宏观经济",
+    "债券与利率",
+    "股票市场",
+    "能源与商品",
+    "行业与产业"
+  ],
+  "preferred_source_ids": [
+    "FED",
+    "BLS",
+    "NYFED",
+    "SEC",
+    "EIA"
+  ],
+  "generated_at": "2026-08-05T18:19:17.501813+00:00",
+  "as_of_label": "最近可获取的市场信息",
+  "headline": "美国市场日报｜投资观点",
+  "summary": "本期从 5 个可用来源的 8 条事实证据中，按领域综合出 5 条投资观点。当前为低置信度筛选级结果：保持明确的防守倾向，并以催化剂和反证条件决定是否升级。",
+  "action_posture": "筛选级防守",
+  "source_states": [
+    {
+      "source_id": "BLS",
+      "name": "美国劳工统计局",
+      "status": "成功",
+      "items": "1"
+    },
+    {
+      "source_id": "EIA",
+      "name": "美国能源信息署",
+      "status": "成功",
+      "items": "2"
+    },
+    {
+      "source_id": "FED",
+      "name": "美联储",
+      "status": "成功",
+      "items": "3"
+    },
+    {
+      "source_id": "NYFED",
+      "name": "纽约联储自由街经济学",
+      "status": "成功",
+      "items": "2"
+    },
+    {
+      "source_id": "SEC",
+      "name": "美国证券交易委员会",
+      "status": "成功",
+      "items": "0"
+    }
+  ],
+  "evidence_catalog": [
+    {
+      "item_id": "917d425c01811973",
+      "source_id": "NYFED",
+      "source_name": "纽约联储自由街经济学",
+      "source_home": "https://libertystreeteconomics.newyorkfed.org/",
+      "title": "AI’s Impact on Labor and Hiring",
+      "source_summary": "Welcome to Street Level , my new series on Liberty Street Economics . As research director, I try to keep track of the wide range of work that the economists at the New York Fed produce. My goal for this series is to periodically offer some thematic discussion of that work, highlighting recent analysis by Research staff and adding my own observations on the issue at hand. In this inaugural post, I’ll focus on perhaps the hottest topic going: How artificial intelligence is changing the labor market and hiring behaviors.",
+      "url": "https://libertystreeteconomics.newyorkfed.org/2026/08/ais-impact-on-labor-and-hiring/",
+      "published_at": "2026-08-05T11:00:00+00:00",
+      "domain": "股票市场",
+      "recency_score": 0.9564
+    },
+    {
+      "item_id": "3e9610c3727b77bc",
+      "source_id": "BLS",
+      "source_name": "美国劳工统计局",
+      "source_home": "https://www.bls.gov/bls/newsrels.htm",
+      "title": "Major Economic Indicators Latest Numbers",
+      "source_summary": "Consumer Price Index (CPI): -0.4% in Jun 2026 News Release Historical Data Unemployment Rate: 4.2% in Jun 2026 News Release Historical Data Payroll Employment: +57,000(p) in Jun 2026 News Release Historical Data Average Hourly Earnings: +$0.13(p) in Jun 2026 News Release Historical Data Producer Price Index - Final Demand: -0.3%(p) in Jun 2026 News Release Historical Data Employment Cost Index (ECI): +0.9% in 2nd Qtr of 2026 News Release Historical Data Productivity: +0.3%(r) in 1st Qtr of 2026 News Release Historical Data U.S. Import Price Index: +0.3% in Jun 2026 News Release Historical Data U.S. Export Price Index: -0.6% in Jun 2026 News Release Historical Data p - preliminary",
+      "url": "https://www.bls.gov/bls/",
+      "published_at": "2026-08-04T14:00:16+00:00",
+      "domain": "宏观经济",
+      "recency_score": 0.8315
+    },
+    {
+      "item_id": "7a2c19d63ea3e331",
+      "source_id": "EIA",
+      "source_name": "美国能源信息署",
+      "source_home": "https://www.eia.gov/todayinenergy/",
+      "title": "The U.S.-Canada natural gas and electricity trade value rose in 2025",
+      "source_summary": "Although the total value of energy trade between the United States and Canada fell by 11% in 2025 to an estimated $137 billion, according to data from the U.S. Census Bureau, the trade value of natural gas and electricity between the two countries increased slightly primarily because of increased natural gas prices and trade volume.",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=",
+      "published_at": "2026-08-05T14:00:00+00:00",
+      "domain": "能源与商品",
+      "recency_score": 0.9743
+    },
+    {
+      "item_id": "dc11bae2879ec6e3",
+      "source_id": "NYFED",
+      "source_name": "纽约联储自由街经济学",
+      "source_home": "https://libertystreeteconomics.newyorkfed.org/",
+      "title": "A Window into Bond Investors’ Uncertainty About R‑Star",
+      "source_summary": "Monetary policymakers closely monitor the term structure of sovereign bond yields to uncover market participants’ beliefs about the future monetary policy stance, inflation, and activity. A particular object of interest is the natural real rate of return, or “r-star,” which acts as a guide for monetary policy decisions. Numerous papers have questioned how much information investors possess, and how precisely they know r-star. In this post based on a recent Staff Report , we explore what the term structure of interest rates can teach us about r-star and its perception by investors.",
+      "url": "https://libertystreeteconomics.newyorkfed.org/2026/08/a-window-into-bond-investors-uncertainty-about-r-star/",
+      "published_at": "2026-08-04T11:00:00+00:00",
+      "domain": "债券与利率",
+      "recency_score": 0.8136
+    },
+    {
+      "item_id": "2f5f1db50066e8cd",
+      "source_id": "FED",
+      "source_name": "美联储",
+      "source_home": "https://www.federalreserve.gov/newsevents.htm",
+      "title": "Federal Reserve Board announces approval of the application by Coastal Bend Bancshares, Inc.",
+      "source_summary": "Federal Reserve Board announces approval of the application by Coastal Bend Bancshares, Inc.",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804c.htm",
+      "published_at": "2026-08-04T20:30:00+00:00",
+      "domain": "综合市场",
+      "recency_score": 0.8701
+    },
+    {
+      "item_id": "44999fcfd11a9292",
+      "source_id": "FED",
+      "source_name": "美联储",
+      "source_home": "https://www.federalreserve.gov/newsevents.htm",
+      "title": "Federal Reserve Board announces approval of the application by FS Bancorp, Inc.",
+      "source_summary": "Federal Reserve Board announces approval of the application by FS Bancorp, Inc.",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804b.htm",
+      "published_at": "2026-08-04T20:30:00+00:00",
+      "domain": "综合市场",
+      "recency_score": 0.8701
+    },
+    {
+      "item_id": "1fa329fd83c39b7c",
+      "source_id": "FED",
+      "source_name": "美联储",
+      "source_home": "https://www.federalreserve.gov/newsevents.htm",
+      "title": "Federal Reserve Board announces approval of the application by Banco Santander, S.A. and Santander Holdings USA, Inc.",
+      "source_summary": "Federal Reserve Board announces approval of the application by Banco Santander, S.A. and Santander Holdings USA, Inc.",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804a.htm",
+      "published_at": "2026-08-04T20:30:00+00:00",
+      "domain": "综合市场",
+      "recency_score": 0.8701
+    },
+    {
+      "item_id": "b95659e19b04b0d6",
+      "source_id": "EIA",
+      "source_name": "美国能源信息署",
+      "source_home": "https://www.eia.gov/todayinenergy/",
+      "title": "Hourly peak load in ERCOT set a new record, exceeding 91 GW on July 22",
+      "source_summary": "Hourly peak load in the Electric Reliability Council of Texas (ERCOT), the regional transmission organization serving most of Texas, reached a record 91.1 gigawatts (GW) on July 22, 2026, according to data reported to us for our Hourly Electric Grid Monitor.",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=67906",
+      "published_at": "2026-08-03T14:00:00+00:00",
+      "domain": "综合市场",
+      "recency_score": 0.6886
+    }
+  ],
+  "items": [
+    {
+      "item_id": "799d8de8493d6b6f",
+      "view_type": "investment_view",
+      "domain": "宏观经济",
+      "headline": "条件性偏多：美国中长期国债ETF或等方向的利率多头工具",
+      "summary": "现有宏观经济来源事实尚未经过可靠的方向语义综合，因此先采取条件性偏多而不是追逐单条消息；只有当增长、通胀或政策证据共同支持利率下行方向时，才把该筛选观点升级为执行级观点。",
+      "significance": "投资表达为美国中长期国债ETF或等方向的利率多头工具，观察期限为下一交易日至未来三个交易日；证据转向或持续分歧时退出。",
+      "stance": "条件性偏多",
+      "asset_expression": "美国中长期国债ETF或等方向的利率多头工具",
+      "time_horizon": "下一交易日至未来三个交易日",
+      "core_thesis": "现有宏观经济来源事实尚未经过可靠的方向语义综合，因此先采取条件性偏多而不是追逐单条消息；只有当增长、通胀或政策证据共同支持利率下行方向时，才把该筛选观点升级为执行级观点。",
+      "catalysts": [
+        "后续宏观经济官方更新与当前条件形成方向一致的确认",
+        "至少两个独立来源给出同方向证据"
+      ],
+      "falsifiers": [
+        "同一来源的后续数据或表述与当前条件相反",
+        "跨来源信号持续分歧，无法支持同一传导方向"
+      ],
+      "exit_conditions": [
+        "任一反证条件触发时退出该条件性表达",
+        "在证据没有形成一致方向前不把筛选观点升级为执行级仓位"
+      ],
+      "confidence": "低",
+      "confidence_basis": "仅完成来源级聚合，未完成可靠的中文语义和方向交叉验证。",
+      "support_level": "筛选级观点",
+      "evidence_refs": [
+        "3e9610c3727b77bc"
+      ],
+      "source_refs": [
+        "BLS"
+      ],
+      "empirical_question": "检验“条件性偏多、通过美国中长期国债ETF或等方向的利率多头工具表达”的观点在下一交易日至未来三个交易日是否成立：评估所列证据的方向、传导机制、表现幅度、持续性、异质性以及触发退出的反证条件。",
+      "source_id": "BLS",
+      "source_name": "美国劳工统计局",
+      "source_home": "https://www.bls.gov/bls/newsrels.htm",
+      "title": "Major Economic Indicators Latest Numbers",
+      "source_summary": "Consumer Price Index (CPI): -0.4% in Jun 2026 News Release Historical Data Unemployment Rate: 4.2% in Jun 2026 News Release Historical Data Payroll Employment: +57,000(p) in Jun 2026 News Release Historical Data Average Hourly Earnings: +$0.13(p) in Jun 2026 News Release Historical Data Producer Price Index - Final Demand: -0.3%(p) in Jun 2026 News Release Historical Data Employment Cost Index (ECI): +0.9% in 2nd Qtr of 2026 News Release Historical Data Productivity: +0.3%(r) in 1st Qtr of 2026 News Release Historical Data U.S. Import Price Index: +0.3% in Jun 2026 News Release Historical Data U.S. Export Price Index: -0.6% in Jun 2026 News Release Historical Data p - preliminary",
+      "url": "https://www.bls.gov/bls/",
+      "published_at": "2026-08-04T14:00:16+00:00",
+      "generation_mode": "跨来源条件性观点回退",
+      "evidence": [
+        {
+          "item_id": "3e9610c3727b77bc",
+          "source_id": "BLS",
+          "source_name": "美国劳工统计局",
+          "title": "Major Economic Indicators Latest Numbers",
+          "url": "https://www.bls.gov/bls/",
+          "published_at": "2026-08-04T14:00:16+00:00"
+        }
+      ]
+    },
+    {
+      "item_id": "6a711c83c6a357b4",
+      "view_type": "investment_view",
+      "domain": "债券与利率",
+      "headline": "条件性偏多：美国中长期国债ETF或等方向的利率多头工具",
+      "summary": "现有债券与利率来源事实尚未经过可靠的方向语义综合，因此先采取条件性偏多而不是追逐单条消息；只有当增长、通胀或政策证据共同支持利率下行方向时，才把该筛选观点升级为执行级观点。",
+      "significance": "投资表达为美国中长期国债ETF或等方向的利率多头工具，观察期限为下一交易日至未来三个交易日；证据转向或持续分歧时退出。",
+      "stance": "条件性偏多",
+      "asset_expression": "美国中长期国债ETF或等方向的利率多头工具",
+      "time_horizon": "下一交易日至未来三个交易日",
+      "core_thesis": "现有债券与利率来源事实尚未经过可靠的方向语义综合，因此先采取条件性偏多而不是追逐单条消息；只有当增长、通胀或政策证据共同支持利率下行方向时，才把该筛选观点升级为执行级观点。",
+      "catalysts": [
+        "后续债券与利率官方更新与当前条件形成方向一致的确认",
+        "至少两个独立来源给出同方向证据"
+      ],
+      "falsifiers": [
+        "同一来源的后续数据或表述与当前条件相反",
+        "跨来源信号持续分歧，无法支持同一传导方向"
+      ],
+      "exit_conditions": [
+        "任一反证条件触发时退出该条件性表达",
+        "在证据没有形成一致方向前不把筛选观点升级为执行级仓位"
+      ],
+      "confidence": "低",
+      "confidence_basis": "仅完成来源级聚合，未完成可靠的中文语义和方向交叉验证。",
+      "support_level": "筛选级观点",
+      "evidence_refs": [
+        "dc11bae2879ec6e3"
+      ],
+      "source_refs": [
+        "NYFED"
+      ],
+      "empirical_question": "检验“条件性偏多、通过美国中长期国债ETF或等方向的利率多头工具表达”的观点在下一交易日至未来三个交易日是否成立：评估所列证据的方向、传导机制、表现幅度、持续性、异质性以及触发退出的反证条件。",
+      "source_id": "NYFED",
+      "source_name": "纽约联储自由街经济学",
+      "source_home": "https://libertystreeteconomics.newyorkfed.org/",
+      "title": "A Window into Bond Investors’ Uncertainty About R‑Star",
+      "source_summary": "Monetary policymakers closely monitor the term structure of sovereign bond yields to uncover market participants’ beliefs about the future monetary policy stance, inflation, and activity. A particular object of interest is the natural real rate of return, or “r-star,” which acts as a guide for monetary policy decisions. Numerous papers have questioned how much information investors possess, and how precisely they know r-star. In this post based on a recent Staff Report , we explore what the term structure of interest rates can teach us about r-star and its perception by investors.",
+      "url": "https://libertystreeteconomics.newyorkfed.org/2026/08/a-window-into-bond-investors-uncertainty-about-r-star/",
+      "published_at": "2026-08-04T11:00:00+00:00",
+      "generation_mode": "跨来源条件性观点回退",
+      "evidence": [
+        {
+          "item_id": "dc11bae2879ec6e3",
+          "source_id": "NYFED",
+          "source_name": "纽约联储自由街经济学",
+          "title": "A Window into Bond Investors’ Uncertainty About R‑Star",
+          "url": "https://libertystreeteconomics.newyorkfed.org/2026/08/a-window-into-bond-investors-uncertainty-about-r-star/",
+          "published_at": "2026-08-04T11:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "item_id": "b42bf56745afbaf1",
+      "view_type": "investment_view",
+      "domain": "股票市场",
+      "headline": "防守性低配：降低高波动美国股票指数或行业ETF敞口，增配现金类及美国短期国债工具",
+      "summary": "现有股票市场来源事实尚未经过可靠的方向语义综合，因此先采取防守性低配而不是追逐单条消息；只有当盈利、流动性和风险偏好证据至少有两项转为同向改善时，才把该筛选观点升级为执行级观点。",
+      "significance": "投资表达为降低高波动美国股票指数或行业ETF敞口，增配现金类及美国短期国债工具，观察期限为下一交易日至未来三个交易日；证据转向或持续分歧时退出。",
+      "stance": "防守性低配",
+      "asset_expression": "降低高波动美国股票指数或行业ETF敞口，增配现金类及美国短期国债工具",
+      "time_horizon": "下一交易日至未来三个交易日",
+      "core_thesis": "现有股票市场来源事实尚未经过可靠的方向语义综合，因此先采取防守性低配而不是追逐单条消息；只有当盈利、流动性和风险偏好证据至少有两项转为同向改善时，才把该筛选观点升级为执行级观点。",
+      "catalysts": [
+        "后续股票市场官方更新与当前条件形成方向一致的确认",
+        "至少两个独立来源给出同方向证据"
+      ],
+      "falsifiers": [
+        "同一来源的后续数据或表述与当前条件相反",
+        "跨来源信号持续分歧，无法支持同一传导方向"
+      ],
+      "exit_conditions": [
+        "任一反证条件触发时退出该条件性表达",
+        "在证据没有形成一致方向前不把筛选观点升级为执行级仓位"
+      ],
+      "confidence": "低",
+      "confidence_basis": "仅完成来源级聚合，未完成可靠的中文语义和方向交叉验证。",
+      "support_level": "筛选级观点",
+      "evidence_refs": [
+        "917d425c01811973"
+      ],
+      "source_refs": [
+        "NYFED"
+      ],
+      "empirical_question": "检验“防守性低配、通过降低高波动美国股票指数或行业ETF敞口，增配现金类及美国短期国债工具表达”的观点在下一交易日至未来三个交易日是否成立：评估所列证据的方向、传导机制、表现幅度、持续性、异质性以及触发退出的反证条件。",
+      "source_id": "NYFED",
+      "source_name": "纽约联储自由街经济学",
+      "source_home": "https://libertystreeteconomics.newyorkfed.org/",
+      "title": "AI’s Impact on Labor and Hiring",
+      "source_summary": "Welcome to Street Level , my new series on Liberty Street Economics . As research director, I try to keep track of the wide range of work that the economists at the New York Fed produce. My goal for this series is to periodically offer some thematic discussion of that work, highlighting recent analysis by Research staff and adding my own observations on the issue at hand. In this inaugural post, I’ll focus on perhaps the hottest topic going: How artificial intelligence is changing the labor market and hiring behaviors.",
+      "url": "https://libertystreeteconomics.newyorkfed.org/2026/08/ais-impact-on-labor-and-hiring/",
+      "published_at": "2026-08-05T11:00:00+00:00",
+      "generation_mode": "跨来源条件性观点回退",
+      "evidence": [
+        {
+          "item_id": "917d425c01811973",
+          "source_id": "NYFED",
+          "source_name": "纽约联储自由街经济学",
+          "title": "AI’s Impact on Labor and Hiring",
+          "url": "https://libertystreeteconomics.newyorkfed.org/2026/08/ais-impact-on-labor-and-hiring/",
+          "published_at": "2026-08-05T11:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "item_id": "0a848f565d4c7abb",
+      "view_type": "investment_view",
+      "domain": "能源与商品",
+      "headline": "防守性减仓：降低原油及能源商品期货的单边方向敞口，增配现金类工具",
+      "summary": "现有能源与商品来源事实尚未经过可靠的方向语义综合，因此先采取防守性减仓而不是追逐单条消息；只有当供需、库存和宏观定价证据形成同向确认时，才把该筛选观点升级为执行级观点。",
+      "significance": "投资表达为降低原油及能源商品期货的单边方向敞口，增配现金类工具，观察期限为下一交易日至未来三个交易日；证据转向或持续分歧时退出。",
+      "stance": "防守性减仓",
+      "asset_expression": "降低原油及能源商品期货的单边方向敞口，增配现金类工具",
+      "time_horizon": "下一交易日至未来三个交易日",
+      "core_thesis": "现有能源与商品来源事实尚未经过可靠的方向语义综合，因此先采取防守性减仓而不是追逐单条消息；只有当供需、库存和宏观定价证据形成同向确认时，才把该筛选观点升级为执行级观点。",
+      "catalysts": [
+        "后续能源与商品官方更新与当前条件形成方向一致的确认",
+        "至少两个独立来源给出同方向证据"
+      ],
+      "falsifiers": [
+        "同一来源的后续数据或表述与当前条件相反",
+        "跨来源信号持续分歧，无法支持同一传导方向"
+      ],
+      "exit_conditions": [
+        "任一反证条件触发时退出该条件性表达",
+        "在证据没有形成一致方向前不把筛选观点升级为执行级仓位"
+      ],
+      "confidence": "低",
+      "confidence_basis": "仅完成来源级聚合，未完成可靠的中文语义和方向交叉验证。",
+      "support_level": "筛选级观点",
+      "evidence_refs": [
+        "7a2c19d63ea3e331"
+      ],
+      "source_refs": [
+        "EIA"
+      ],
+      "empirical_question": "检验“防守性减仓、通过降低原油及能源商品期货的单边方向敞口，增配现金类工具表达”的观点在下一交易日至未来三个交易日是否成立：评估所列证据的方向、传导机制、表现幅度、持续性、异质性以及触发退出的反证条件。",
+      "source_id": "EIA",
+      "source_name": "美国能源信息署",
+      "source_home": "https://www.eia.gov/todayinenergy/",
+      "title": "The U.S.-Canada natural gas and electricity trade value rose in 2025",
+      "source_summary": "Although the total value of energy trade between the United States and Canada fell by 11% in 2025 to an estimated $137 billion, according to data from the U.S. Census Bureau, the trade value of natural gas and electricity between the two countries increased slightly primarily because of increased natural gas prices and trade volume.",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=",
+      "published_at": "2026-08-05T14:00:00+00:00",
+      "generation_mode": "跨来源条件性观点回退",
+      "evidence": [
+        {
+          "item_id": "7a2c19d63ea3e331",
+          "source_id": "EIA",
+          "source_name": "美国能源信息署",
+          "title": "The U.S.-Canada natural gas and electricity trade value rose in 2025",
+          "url": "https://www.eia.gov/todayinenergy/detail.php?id=",
+          "published_at": "2026-08-05T14:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "item_id": "2b2fa4fbeaf1b5f6",
+      "view_type": "investment_view",
+      "domain": "综合市场",
+      "headline": "防守性偏多现金：现金类及美国短期国债工具，同时降低高波动风险资产敞口",
+      "summary": "现有综合市场来源事实尚未经过可靠的方向语义综合，因此先采取防守性偏多现金而不是追逐单条消息；只有当跨来源证据对增长、流动性和风险偏好形成一致方向时，才把该筛选观点升级为执行级观点。",
+      "significance": "投资表达为现金类及美国短期国债工具，同时降低高波动风险资产敞口，观察期限为下一交易日至未来三个交易日；证据转向或持续分歧时退出。",
+      "stance": "防守性偏多现金",
+      "asset_expression": "现金类及美国短期国债工具，同时降低高波动风险资产敞口",
+      "time_horizon": "下一交易日至未来三个交易日",
+      "core_thesis": "现有综合市场来源事实尚未经过可靠的方向语义综合，因此先采取防守性偏多现金而不是追逐单条消息；只有当跨来源证据对增长、流动性和风险偏好形成一致方向时，才把该筛选观点升级为执行级观点。",
+      "catalysts": [
+        "后续综合市场官方更新与当前条件形成方向一致的确认",
+        "至少两个独立来源给出同方向证据"
+      ],
+      "falsifiers": [
+        "同一来源的后续数据或表述与当前条件相反",
+        "跨来源信号持续分歧，无法支持同一传导方向"
+      ],
+      "exit_conditions": [
+        "任一反证条件触发时退出该条件性表达",
+        "在证据没有形成一致方向前不把筛选观点升级为执行级仓位"
+      ],
+      "confidence": "低",
+      "confidence_basis": "仅完成来源级聚合，未完成可靠的中文语义和方向交叉验证。",
+      "support_level": "筛选级观点",
+      "evidence_refs": [
+        "2f5f1db50066e8cd",
+        "44999fcfd11a9292",
+        "1fa329fd83c39b7c",
+        "b95659e19b04b0d6"
+      ],
+      "source_refs": [
+        "FED",
+        "EIA"
+      ],
+      "empirical_question": "检验“防守性偏多现金、通过现金类及美国短期国债工具，同时降低高波动风险资产敞口表达”的观点在下一交易日至未来三个交易日是否成立：评估所列证据的方向、传导机制、表现幅度、持续性、异质性以及触发退出的反证条件。",
+      "source_id": "FED",
+      "source_name": "美联储",
+      "source_home": "https://www.federalreserve.gov/newsevents.htm",
+      "title": "Federal Reserve Board announces approval of the application by Coastal Bend Bancshares, Inc.",
+      "source_summary": "Federal Reserve Board announces approval of the application by Coastal Bend Bancshares, Inc.",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804c.htm",
+      "published_at": "2026-08-04T20:30:00+00:00",
+      "generation_mode": "跨来源条件性观点回退",
+      "evidence": [
+        {
+          "item_id": "2f5f1db50066e8cd",
+          "source_id": "FED",
+          "source_name": "美联储",
+          "title": "Federal Reserve Board announces approval of the application by Coastal Bend Bancshares, Inc.",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804c.htm",
+          "published_at": "2026-08-04T20:30:00+00:00"
+        },
+        {
+          "item_id": "44999fcfd11a9292",
+          "source_id": "FED",
+          "source_name": "美联储",
+          "title": "Federal Reserve Board announces approval of the application by FS Bancorp, Inc.",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804b.htm",
+          "published_at": "2026-08-04T20:30:00+00:00"
+        },
+        {
+          "item_id": "1fa329fd83c39b7c",
+          "source_id": "FED",
+          "source_name": "美联储",
+          "title": "Federal Reserve Board announces approval of the application by Banco Santander, S.A. and Santander Holdings USA, Inc.",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20260804a.htm",
+          "published_at": "2026-08-04T20:30:00+00:00"
+        },
+        {
+          "item_id": "b95659e19b04b0d6",
+          "source_id": "EIA",
+          "source_name": "美国能源信息署",
+          "title": "Hourly peak load in ERCOT set a new record, exceeding 91 GW on July 22",
+          "url": "https://www.eia.gov/todayinenergy/detail.php?id=67906",
+          "published_at": "2026-08-03T14:00:00+00:00"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "事实只作为观点证据，不把逐条来源摘要当作投资结论。",
+    "语言模型不可用时仅给出低置信度、条件性的筛选观点，不生成未经来源支持的价格、技术突破或精确收益判断。",
+    "来源发布时间缺失的证据可能不是当天发布。",
+    "语言模型投资观点未通过结构校验，本轮已回退到按领域聚合的条件性观点。"
+  ]
+}

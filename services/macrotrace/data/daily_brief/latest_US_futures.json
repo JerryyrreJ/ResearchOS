@@ -1,0 +1,142 @@
+{
+  "schema_version": "0.5.0",
+  "market": "US",
+  "market_label": "美国市场",
+  "report_type": "futures",
+  "report_label": "美国期货市场报告",
+  "report_object": "美国相关期货市场的供需、库存、期限结构、美元与利率驱动",
+  "lookback_hours": 336,
+  "item_limit": 18,
+  "preferred_domains": [
+    "能源与商品",
+    "宏观经济",
+    "债券与利率",
+    "行业与产业"
+  ],
+  "preferred_source_ids": [
+    "EIA",
+    "FED",
+    "BLS",
+    "NYFED"
+  ],
+  "generated_at": "2026-08-05T18:03:05.221205+00:00",
+  "as_of_label": "最近可获取的市场信息",
+  "headline": "美国期货市场报告：能源供需、库存与美元利率驱动下的实证研究框架",
+  "summary": "本期报告聚焦美国相关期货市场，基于美国能源信息署（EIA）最新数据，梳理能源与商品领域的供需、库存、期限结构及美元与利率驱动因素。报告指出，美加能源贸易额下降但天然气与电力贸易逆势增长，反映价格与贸易量分化；ERCOT电力峰值负荷创新高，凸显电力需求与供给压力；中国原油进口下降缓和了霍尔木兹海峡供应中断对油价的推升，影响全球及美国原油平衡；墨西哥LNG出口能力提升，改变北美天然气出口格局；美国汽车电动化结构变化影响汽油需求。这些因素共同作用于美国能源期货价格，需结合美元与利率环境进行实证检验。",
+  "source_states": [
+    {
+      "source_id": "EIA",
+      "name": "美国能源信息署",
+      "status": "成功",
+      "items": "6"
+    }
+  ],
+  "items": [
+    {
+      "item_id": "7a2c19d63ea3e331",
+      "source_id": "EIA",
+      "source_name": "美国能源信息署",
+      "source_home": "https://www.eia.gov/todayinenergy/",
+      "title": "The U.S.-Canada natural gas and electricity trade value rose in 2025",
+      "source_summary": "Although the total value of energy trade between the United States and Canada fell by 11% in 2025 to an estimated $137 billion, according to data from the U.S. Census Bureau, the trade value of natural gas and electricity between the two countries increased slightly primarily because of increased natural gas prices and trade volume.",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=",
+      "published_at": "2026-08-05T14:00:00+00:00",
+      "domain": "能源与商品",
+      "recency_score": 0.9759,
+      "headline": "美加天然气与电力贸易额逆势增长，价格与贸易量齐升",
+      "summary": "EIA数据显示，2025年美加能源贸易总额下降11%至约1370亿美元，但天然气和电力贸易额因价格上涨和贸易量增加而小幅上升。",
+      "significance": "天然气贸易额增长反映美国天然气出口需求强劲，可能影响美国天然气期货（如Henry Hub）的供需平衡与价格预期。",
+      "empirical_question": "美加天然气贸易额增长是否主要由价格驱动而非贸易量？其增长对美国天然气库存变化和期货期限结构有何影响？在美元升值和利率上升环境下，该贸易增长能否持续？",
+      "generation_mode": "来源约束的模型摘要"
+    },
+    {
+      "item_id": "b95659e19b04b0d6",
+      "source_id": "EIA",
+      "source_name": "美国能源信息署",
+      "source_home": "https://www.eia.gov/todayinenergy/",
+      "title": "Hourly peak load in ERCOT set a new record, exceeding 91 GW on July 22",
+      "source_summary": "Hourly peak load in the Electric Reliability Council of Texas (ERCOT), the regional transmission organization serving most of Texas, reached a record 91.1 gigawatts (GW) on July 22, 2026, according to data reported to us for our Hourly Electric Grid Monitor.",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=67906",
+      "published_at": "2026-08-03T14:00:00+00:00",
+      "domain": "综合市场",
+      "recency_score": 0.6902,
+      "headline": "美国能源信息署发布综合市场最新信息",
+      "summary": "该官方来源发布了一项与综合市场相关的更新。自动中文译写未通过时，系统不会把未经核对的英文摘要伪装成中文结论；可打开原文查看完整口径。",
+      "significance": "这项信息可能改变对综合市场最新状态的判断，适合进一步连接真实数据与注册模型进行检验。",
+      "empirical_question": "围绕这项更新，系统评估其对美国增长、政策、流动性以及股票、债券和期货的跨资产影响。",
+      "generation_mode": "中文安全回退"
+    },
+    {
+      "item_id": "29ddeae0a208693f",
+      "source_id": "EIA",
+      "source_name": "美国能源信息署",
+      "source_home": "https://www.eia.gov/todayinenergy/",
+      "title": "China's crude oil imports fell in the second quarter",
+      "source_summary": "China, the world's largest importer of crude oil, imported less crude oil in the second quarter of 2026 (2Q26) following higher crude oil prices that resulted from disrupted flows through the Strait of Hormuz. China's lower imports reduced global demand, softening the upward price effects from the disrupted supply through the strait.",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=67905",
+      "published_at": "2026-07-31T14:00:00+00:00",
+      "domain": "能源与商品",
+      "recency_score": 0.2616,
+      "headline": "美国能源信息署发布能源与商品最新信息",
+      "summary": "该官方来源发布了一项与能源与商品相关的更新。自动中文译写未通过时，系统不会把未经核对的英文摘要伪装成中文结论；可打开原文查看完整口径。",
+      "significance": "这项信息可能改变对能源与商品最新状态的判断，适合进一步连接真实数据与注册模型进行检验。",
+      "empirical_question": "围绕这项更新，系统评估供需、库存、期限结构与美元如何影响美国能源、金属或农产品期货。",
+      "generation_mode": "中文安全回退"
+    },
+    {
+      "item_id": "4390e17e81929dcc",
+      "source_id": "EIA",
+      "source_name": "美国能源信息署",
+      "source_home": "https://www.eia.gov/todayinenergy/",
+      "title": "Lower crude oil prices reduced U.S.-Canada energy trade value in 2025",
+      "source_summary": "The value of energy trade between the United States and Canada fell by 11% in 2025 to an estimated $137 billion, according to data from the U.S. Census Bureau. Energy trade value is the total value of energy imports and exports between two countries and is driven by commodity volumes and prices. Most of the U.S.-Canada trade value is U.S. energy imports from Canada—$111 billion in 2025—rather than from U.S. energy exports to Canada, which totaled $26 billion last year. Crude oil accounts for the largest component of U.S.-Canada energy trade, making up 69% of the total value traded in 2025.",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=67904",
+      "published_at": "2026-07-29T14:00:00+00:00",
+      "domain": "能源与商品",
+      "recency_score": 0.0,
+      "headline": "美国能源信息署发布能源与商品最新信息",
+      "summary": "该官方来源发布了一项与能源与商品相关的更新。自动中文译写未通过时，系统不会把未经核对的英文摘要伪装成中文结论；可打开原文查看完整口径。",
+      "significance": "这项信息可能改变对能源与商品最新状态的判断，适合进一步连接真实数据与注册模型进行检验。",
+      "empirical_question": "围绕这项更新，系统评估供需、库存、期限结构与美元如何影响美国能源、金属或农产品期货。",
+      "generation_mode": "中文安全回退"
+    },
+    {
+      "item_id": "501043ea79b8c095",
+      "source_id": "EIA",
+      "source_name": "美国能源信息署",
+      "source_home": "https://www.eia.gov/todayinenergy/",
+      "title": "Energia Costa Azul, Mexico's second LNG terminal, shipped first cargo",
+      "source_summary": "Energia Costa Azul, the second liquefied natural gas (LNG) export facility in Mexico, shipped its initial cargo from Phase 1 of the terminal on July 8, according to the project developer. The completion of the project adds 0.4 billion cubic feet per day (Bcf/d) of nominal export capacity from a single train, tripling Mexico's LNG export capacity. The facility is the first terminal in Mexico and the second in North America, following LNG Canada, to be located on the Pacific Coast, boosting North American export capacity there to 2.2 Bcf/d. The Pacific Coast location allows for shorter shipping routes to importers in Asia.",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=67884",
+      "published_at": "2026-07-24T14:00:00+00:00",
+      "domain": "能源与商品",
+      "recency_score": 0.0,
+      "headline": "美国能源信息署发布能源与商品最新信息",
+      "summary": "该官方来源发布了一项与能源与商品相关的更新。自动中文译写未通过时，系统不会把未经核对的英文摘要伪装成中文结论；可打开原文查看完整口径。",
+      "significance": "这项信息可能改变对能源与商品最新状态的判断，适合进一步连接真实数据与注册模型进行检验。",
+      "empirical_question": "围绕这项更新，系统评估供需、库存、期限结构与美元如何影响美国能源、金属或农产品期货。",
+      "generation_mode": "中文安全回退"
+    },
+    {
+      "item_id": "c291ce926b44ca7f",
+      "source_id": "EIA",
+      "source_name": "美国能源信息署",
+      "source_home": "https://www.eia.gov/todayinenergy/",
+      "title": "Hybrid sales rise while battery electric sales remain lower after tax credit expiration",
+      "source_summary": "In the second quarter of 2026 (2Q26), 24% of new light-duty vehicles sold in the United States were hybrid electric, battery electric, or plug-in hybrid electric vehicles, up from 22% in 2Q25. Between 2Q25 and 2Q26, hybrid electric vehicles continued to gain market share, reaching a record 16% of light-duty vehicle sales. The market shares of battery electric and plug-in hybrid electric vehicles decreased, according to estimates from Omdia. In 2Q26, battery electric vehicle sales were 6% of new light-duty vehicles sold, down from 7% in 2Q25; plug-in hybrid electric vehicle sales fell from 1.9% to 1.4% over the same period.",
+      "url": "https://www.eia.gov/todayinenergy/detail.php?id=67885",
+      "published_at": "2026-07-27T14:00:00+00:00",
+      "domain": "股票市场",
+      "recency_score": 0.0,
+      "headline": "美国能源信息署发布股票市场最新信息",
+      "summary": "该官方来源发布了一项与股票市场相关的更新。自动中文译写未通过时，系统不会把未经核对的英文摘要伪装成中文结论；可打开原文查看完整口径。",
+      "significance": "这项信息可能改变对股票市场最新状态的判断，适合进一步连接真实数据与注册模型进行检验。",
+      "empirical_question": "围绕这项更新，系统评估其对美股方向、行业分化、盈利预期、风险偏好与未来定价的影响。",
+      "generation_mode": "中文安全回退"
+    }
+  ],
+  "limitations": [
+    "只收录本轮成功读取且保留原文链接的条目。",
+    "来源发布时间缺失的条目可能不是当天发布。"
+  ]
+}

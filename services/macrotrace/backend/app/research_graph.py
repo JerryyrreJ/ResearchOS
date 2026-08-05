@@ -172,6 +172,47 @@ class GraphBuilder:
             self.add_edge(research_id, claim_id, "ESTIMATES")
             for upstream in decision.depends_on:
                 self.add_edge(f"RN::{upstream}", research_id, "ROUTES_TO")
+
+        # Keep the complete registered research-node universe visible. Nodes
+        # selected for this question light up above; valid but unused nodes stay
+        # grey, while unavailable designs remain explicitly blocked. This is
+        # essential to the white-box contract: absence from the active route
+        # must not look like absence from the research system.
+        selected_research_node_ids = {decision.node_id for decision in plan.nodes}
+        for item in self.registry.all("nodes"):
+            if item["node_id"] in selected_research_node_ids:
+                continue
+            research_id = f"RN::{item['node_id']}"
+            node_status = "BLOCKED" if item.get("status") == "blocked" else "NOT_ROUTED"
+            self.add_node(
+                research_id,
+                "RESEARCH_NODE",
+                item["node_id"],
+                status=node_status,
+                lane_id=item["lane_id"],
+                role="NOT_ROUTED",
+                summary=item["purpose"],
+                metadata={**item, "intermediate_claim": item["intermediate_claim"], "routed": False},
+            )
+            mechanism_id = item.get("mechanism_id")
+            self.add_edge(
+                f"MECHANISM::{mechanism_id}" if mechanism_id else f"LANE::{item['lane_id']}",
+                research_id,
+                "DECOMPOSES_TO",
+            )
+            claim_id = f"CLAIM::{item['node_id']}"
+            self.add_node(
+                claim_id,
+                "CLAIM",
+                item["intermediate_claim"],
+                status=node_status,
+                lane_id=item["lane_id"],
+                role="NOT_ROUTED",
+                metadata={"research_node_id": item["node_id"], "routed": False},
+            )
+            self.add_edge(research_id, claim_id, "ESTIMATES")
+            for upstream in item.get("allowed_upstream", []):
+                self.add_edge(f"RN::{upstream}", research_id, "ROUTES_TO")
         for factor in plan.factors:
             item = self.registry.get("factors", factor.factor_id)
             factor_node_id = f"FACTOR::{factor.node_id}::{factor.factor_id}"
@@ -262,6 +303,7 @@ class GraphBuilder:
 
     def generic_details(self) -> dict[str, dict[str, Any]]:
         details: dict[str, dict[str, Any]] = {}
+        research_question = str(self.nodes.get("QUESTION", {}).get("label") or "").strip()
         for node_id, node in self.nodes.items():
             metadata = node.get("metadata", {})
             report_ids = metadata.get("report_ids", [])
@@ -279,10 +321,12 @@ class GraphBuilder:
                 "node_type": node["node_type"],
                 "title": node["label"],
                 "summary": node.get("summary"),
+                "research_question": research_question,
                 "overview": {
                     "lane_id": node.get("lane_id"),
                     "role": node.get("role"),
                     "status": node["status"],
+                    "research_question": research_question,
                     "upstream": [edge["source"] for edge in self.edges.values() if edge["target"] == node_id],
                     "downstream": [edge["target"] for edge in self.edges.values() if edge["source"] == node_id],
                 },
@@ -292,6 +336,11 @@ class GraphBuilder:
                     "method": metadata.get("method"),
                     "parameters": metadata.get("parameters", {}),
                     "factor_ids": metadata.get("factor_ids", []),
+                    "estimand": metadata.get("estimand"),
+                    "dependent_variable": metadata.get("dependent_variable"),
+                    "independent_variables": metadata.get("independent_variables", []),
+                    "controls": metadata.get("controls", []),
+                    "causal_interpretation_allowed": metadata.get("causal_interpretation_allowed", False),
                     "estimand_boundary": metadata.get("estimand_boundary"),
                 },
                 "variables": [metadata] if node["node_type"] == "FACTOR" else [],

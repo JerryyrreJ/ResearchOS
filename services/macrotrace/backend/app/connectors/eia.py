@@ -9,14 +9,20 @@ from ..catalog import SeriesSpec
 
 
 class EiaConnector:
-    endpoint = "https://api.eia.gov/v2/petroleum/pri/spt/data/"
+    endpoints = {
+        "RWTC": "https://api.eia.gov/v2/petroleum/pri/spt/data/",
+        "WCESTUS1": "https://api.eia.gov/v2/petroleum/stoc/wstk/data/",
+    }
 
     def __init__(self, api_key: str) -> None:
         if not api_key:
             raise ValueError("EIA_API_KEY is required")
         self.api_key = api_key
 
-    def fetch_wti(self, spec: SeriesSpec, snapshot_id: str) -> tuple[pd.DataFrame, dict]:
+    def fetch(self, spec: SeriesSpec, snapshot_id: str) -> tuple[pd.DataFrame, dict]:
+        endpoint = self.endpoints.get(spec.series_id)
+        if endpoint is None:
+            raise ValueError(f"unsupported EIA series: {spec.series_id}")
         params = {
             "api_key": self.api_key,
             "frequency": "weekly",
@@ -28,7 +34,7 @@ class EiaConnector:
             "length": 5000,
         }
         with httpx.Client(timeout=60) as client:
-            response = client.get(self.endpoint, params=params)
+            response = client.get(endpoint, params=params)
             response.raise_for_status()
             payload = response.json()
         fetched_at = datetime.now(UTC)
@@ -50,4 +56,8 @@ class EiaConnector:
             if item.get("value") not in (None, "")
         ]
         return pd.DataFrame(rows), payload
+
+    def fetch_wti(self, spec: SeriesSpec, snapshot_id: str) -> tuple[pd.DataFrame, dict]:
+        """Backward-compatible alias for the original single-series connector."""
+        return self.fetch(spec, snapshot_id)
 
