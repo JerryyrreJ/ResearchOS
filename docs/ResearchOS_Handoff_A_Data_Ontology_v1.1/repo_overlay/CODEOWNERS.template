@@ -1,0 +1,16 @@
+# Replace placeholders with real GitHub usernames.
+/apps/researchos_api/app/objects/              @ROLE_A
+/apps/researchos_api/app/canonicalizers/       @ROLE_A
+/apps/researchos_api/app/ontology/             @ROLE_A
+/apps/researchos_api/app/search/               @ROLE_A
+/apps/researchos_api/app/context_builder/      @ROLE_A
+/services/macrotrace/                          @ROLE_B
+/apps/researchos_api/app/thesis/               @ROLE_C
+/apps/researchos_api/app/orchestration/        @ROLE_C
+/apps/researchos_api/app/integrations/         @ROLE_C
+/apps/web/                                     @ROLE_D
+/infra/                                        @ROLE_D
+/tests/e2e/                                    @ROLE_D
+/contracts/                                   @ROLE_A @ROLE_B @ROLE_C @ROLE_D
+/fixtures/contracts/                          @ROLE_A @ROLE_B @ROLE_C @ROLE_D
+/AGENTS.md                                     @ROLE_A @ROLE_B @ROLE_C @ROLE_D

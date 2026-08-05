@@ -1,11 +1,14 @@
 # --- Claude Code dev workspace (LOCAL ONLY — never push) ---
 CLAUDE.md                  # Project-level instructions / memory paths
 .claude/                   # Project-scoped Claude state
-docs/                      # Covers ALL of the following:
-                           #   docs/CHANGELOG.md
-                           #   docs/tasks/<task-name>.md
-                           #   docs/mem/<slug>.md
-                           #   docs/agent-<task-slug>-job.md
+docs/CHANGELOG.md
+docs/tasks/
+docs/mem/
+docs/agent-*-job.md
+
+# --- Python ---
+__pycache__/
+*.pyc
 
 # --- IDE / OS noise ---
 .idea/
@@ -26,3 +29,9 @@ session/
 *.doc
 *.xlsx
 *.csv
+
+# --- Node / Frontend ---
+node_modules/
+.vinext/
+.vite/
+.wrangler/

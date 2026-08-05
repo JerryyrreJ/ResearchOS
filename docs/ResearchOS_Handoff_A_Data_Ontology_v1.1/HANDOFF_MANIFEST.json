@@ -1,0 +1,20 @@
+{
+  "handoff_version": "1.1",
+  "contract_version": "0.1.0-frozen",
+  "role": "A_Data_Ontology",
+  "display_name": "A Data Ontology",
+  "target_repository": "https://github.com/JerryyrreJ/AIY_Project",
+  "repository_inspected": false,
+  "repository_note": "GitHub connector returned 404 during planning; run repo preflight locally.",
+  "branch": "role/a-ontology",
+  "owned_areas": [
+    "objects",
+    "canonicalizers",
+    "ontology",
+    "search",
+    "context_builder"
+  ],
+  "codex_entry_prompt": "CODEX_ENTRY_PROMPT.txt",
+  "start_here": "00_START_HERE.md",
+  "shared_contract_manifest": "shared/contracts/v1/contract_manifest.json"
+}

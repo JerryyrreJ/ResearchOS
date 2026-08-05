@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://researchos.local/contracts/v1/compile_issue.schema.json",
+  "title": "CompileIssue",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "severity",
+    "blocking",
+    "message",
+    "related_refs",
+    "suggested_actions"
+  ],
+  "properties": {
+    "code": {
+      "type": "string",
+      "pattern": "^[A-Z_]+[0-9]{3}$"
+    },
+    "severity": {
+      "enum": [
+        "ERROR",
+        "WARNING",
+        "INFO"
+      ]
+    },
+    "blocking": {
+      "type": "boolean"
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "related_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "suggested_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

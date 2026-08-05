@@ -1,0 +1,30 @@
+{
+  "contract_version": "0.1.0-frozen",
+  "diff_id": "DIFF_DEMO_001",
+  "from_version_id": "THESIS_VER_001",
+  "to_version_id": "THESIS_VER_002",
+  "changed_objects": [
+    {
+      "ref": "THESIS_DEMO_001",
+      "change_type": "MODIFIED",
+      "fields": [
+        "language_level",
+        "normalized_claim"
+      ]
+    }
+  ],
+  "changed_relations": [],
+  "affected_model_runs": [
+    "RUN_FIXTURE_001"
+  ],
+  "affected_claims": [
+    "COMPILED_CLAIM_001"
+  ],
+  "reused_refs": [
+    "DATA_US_TREASURY_10Y"
+  ],
+  "summary": "The causal claim was downgraded after associational evidence was added.",
+  "metadata": {
+    "fixture_only": true
+  }
+}

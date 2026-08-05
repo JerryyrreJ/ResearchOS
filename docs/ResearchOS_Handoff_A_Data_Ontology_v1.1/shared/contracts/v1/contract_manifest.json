@@ -1,0 +1,61 @@
+{
+  "contract_version": "0.1.0-frozen",
+  "frozen_at": "2026-08-04T12:00:00Z",
+  "status": "FROZEN_FOR_PARALLEL_DEVELOPMENT",
+  "files": [
+    {
+      "file": "api_error.schema.json",
+      "sha256": "27d12ffee92bd0695d9bcf42ec6addc713905d4ccac8668cbe43561623eb1d5b"
+    },
+    {
+      "file": "compile_issue.schema.json",
+      "sha256": "7bc83f55c63df2dd0590fd95a2b79c35eab318f48aac1e75afcd144402e05000"
+    },
+    {
+      "file": "compile_result.schema.json",
+      "sha256": "d1b3865c2ec2975f452fc30f049e5b27994da824c92e19e7fc1dcfa031409348"
+    },
+    {
+      "file": "context_pack.schema.json",
+      "sha256": "cdc21e219f8191b7157959ca49419b6baa3fbde5d8c4031b834d2b661378b719"
+    },
+    {
+      "file": "data_object_ref.schema.json",
+      "sha256": "de279d5054edea5bef6ba4090a7543e2baedc6bb0b36b35670e8f0d7d57ca488"
+    },
+    {
+      "file": "data_resolve.schema.json",
+      "sha256": "77b0788b83a2fdb9006e8cc5e8d526480ba77c679375e9c5bb7bc23dfb0f90d3"
+    },
+    {
+      "file": "evidence_bundle.schema.json",
+      "sha256": "7430edb1fe32f035d56802864ae0e4126cbeb3c32f7b572dd6307a326dd9dfb7"
+    },
+    {
+      "file": "job_event.schema.json",
+      "sha256": "7bd69342f8d0d08d02d9cc4895b33f184e8074bc39f82c32fb405c4bbb8f0969"
+    },
+    {
+      "file": "ontology_relation.schema.json",
+      "sha256": "0499a28b9a6f505dd9ec337af13d5577d3a68e952cfc6f3e977f45bd4f471050"
+    },
+    {
+      "file": "thesis_build.schema.json",
+      "sha256": "136f9c0933c898b2683182ec67c03b562f0d974d3a4b7b51e2d14b666864a295"
+    },
+    {
+      "file": "tool_request.schema.json",
+      "sha256": "36c8c287f1f989c0c317eb5ddcb3e0d26c40a4ae4fc579590c434f4f5fca4120"
+    },
+    {
+      "file": "version_diff.schema.json",
+      "sha256": "5dea6302f825db1dfa752e48a2d3e2e39b75a0988ca01adb4d3c42ffb9ae72c2"
+    }
+  ],
+  "change_policy": {
+    "L0": "Local implementation only",
+    "L1": "Backward-compatible optional addition; ICR plus one consumer approval",
+    "L2": "Breaking change; A/B/C/D approval plus version bump",
+    "L3": "Architecture change; team decision, migration and rollback"
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://researchos.local/contracts/v1/data_object_ref.schema.json",
+  "title": "DataObjectRef",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "object_id",
+    "version_id",
+    "object_type",
+    "representation",
+    "schema_version",
+    "content_hash",
+    "license_policy",
+    "access_scope"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "0.1.0-frozen"
+    },
+    "object_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 160
+    },
+    "version_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 160
+    },
+    "object_type": {
+      "enum": [
+        "SOURCE_FILE",
+        "CANONICAL_REPRESENTATION",
+        "DATASET",
+        "REPORT_RECORD",
+        "MODEL_SPEC",
+        "MODEL_RUN",
+        "EVIDENCE_PACKAGE",
+        "CLAIM",
+        "ARTIFACT"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 300
+    },
+    "representation": {
+      "enum": [
+        "MARKDOWN",
+        "DOCUMENT_JSON",
+        "CSV",
+        "PARQUET",
+        "JSON",
+        "PDF",
+        "DOCX",
+        "XLSX",
+        "BINARY"
+      ]
+    },
+    "schema_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "content_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "license_policy": {
+      "enum": [
+        "PUBLIC",
+        "INTERNAL_ONLY",
+        "DERIVED_ONLY",
+        "NO_PERSIST"
+      ]
+    },
+    "access_scope": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "content_uri": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 1000
+    },
+    "as_of_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "data_schema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "time_key": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "entity_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "value_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "frequency": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "units": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "field_types": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "lineage_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}
