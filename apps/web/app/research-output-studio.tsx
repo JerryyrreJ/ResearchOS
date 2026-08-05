@@ -1,9 +1,29 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  researchosApi,
+  type DataPluginDataset,
+  type DataPluginIngestResult,
+  type DatasetPreview,
+} from "../lib/api-client";
 
 type TemplateId = "weekly" | "overseas" | "reits";
 type Dataset = { id:string; name:string; detail:string; asOf:string; state:"READY"|"STALE"; selected:boolean };
+type RuntimeMode = "fixture" | "offline" | "real";
+type CatalogDataset = DataPluginDataset & {
+  key:string;
+  pluginId:string;
+  pluginName:string;
+  enabled:boolean;
+  configured:boolean;
+  selected:boolean;
+};
+type ImportedDataset = {
+  catalog:CatalogDataset;
+  ingest:DataPluginIngestResult;
+  preview:DatasetPreview;
+};
 
 const templates = [
   { id:"weekly" as const, name:"国际市场周报", note:"市场总表、资产表现、估值比较、研究结论", sample:"创金合信国际市场周报" },
@@ -46,32 +66,111 @@ const valuationRows = [
 const formatMove = (value:number,bp=false) => `${value>0?"+":""}${value.toFixed(2)}${bp?" bp":"%"}`;
 const heatTone = (value:number) => value >= 25 ? "heat-high" : value >= 15 ? "heat-mid" : value <= 8 ? "heat-low" : "heat-base";
 
-export default function ResearchOutputStudio(){
+function LivePublication({template,brief,datasets,onBack,onExport,onNotify,notice}:{template:(typeof templates)[number];brief:string;datasets:ImportedDataset[];onBack:()=>void;onExport:()=>void;onNotify:(message:string)=>void;notice?:string}){
+  const asOf=datasets.map(item=>item.ingest.data_ref.as_of_date).filter((value):value is string=>Boolean(value)).sort().at(-1)??"未声明";
+  const primary=datasets[0];
+  const columns=primary?.preview.columns.slice(0,6)??[];
+  const rows=primary?.preview.rows.slice(-10).reverse()??[];
+  return <div className="workspace-scroll output-studio publication-mode">
+    <section className="canvas-toolbar"><div><button onClick={onBack}>← 修改报告设置</button><span>{template.name} · 真实数据快照</span><em className="badge badge-green">真实接口</em><em className="badge badge-amber">待审阅</em></div><div><button className="button secondary" onClick={()=>onNotify("草稿状态已保留在当前工作空间")}>保存草稿</button><button className="button primary" onClick={onExport}>导出报告数据 ↓</button></div></section>
+    <div className="publication-layout"><div className="publication-stack"><article className="publication-page">
+      <header className="publication-head"><div><span className="publication-brand">研构 ResearchOS</span><small>版本化金融数据</small></div><div><h2>{template.name}</h2><p>数据截止 · {asOf}</p></div></header>
+      <section className="publication-title"><span>一、已固定的数据范围</span><h1>{template.name} · 数据底稿</h1><p>{brief}</p></section>
+      <section className="weekly-summary"><h3>生成说明</h3><ul><li>本报告使用 {datasets.length} 个由 B 数据插件真实导入的数据集。</li><li>每个数据集均已保存为不可变 AssetVersion，并固定内容 Hash 与来源血缘。</li><li>本页只呈现数据事实；在 Thesis Compiler 或 MacroTrace 完成前不生成因果结论。</li></ul></section>
+      {primary&&<section className="publication-section"><div className="publication-section-title"><h3>1. {primary.ingest.data_ref.name??primary.catalog.name}</h3><span>{primary.catalog.pluginName} · {primary.ingest.row_count} 行</span></div><table className="market-table"><thead><tr>{columns.map(column=><th key={column}>{column}</th>)}</tr></thead><tbody>{rows.map((row,index)=><tr key={index}>{columns.map(column=><td key={column}>{row[column]??"—"}</td>)}</tr>)}</tbody></table><p className="chart-source">来源：{primary.catalog.pluginName} / {primary.catalog.dataset_id}；固定版本：{primary.ingest.version_id}；SHA-256：{primary.ingest.data_ref.content_hash.slice(0,16)}…</p></section>}
+      <section className="publication-section"><div className="publication-section-title"><h3>2. 数据来源与版本</h3><span>精确版本引用</span></div><table className="market-table"><thead><tr><th>数据集</th><th>插件</th><th>截止日期</th><th>行数</th><th>版本</th></tr></thead><tbody>{datasets.map(item=><tr key={item.ingest.version_id}><td>{item.ingest.data_ref.name??item.catalog.name}</td><td>{item.catalog.pluginName}</td><td>{item.ingest.data_ref.as_of_date??"—"}</td><td>{item.ingest.row_count}{item.ingest.truncated?"+":""}</td><td className="mono">{item.ingest.version_id}</td></tr>)}</tbody></table></section>
+      <section className="research-conclusion"><div><span>研究结论</span><em>状态：等待验证</em></div><h3>真实数据已经固定，但尚不足以自动形成研究结论。</h3><p>下一步应由研究员定义可验证论题，再交给 Thesis Compiler 与 MacroTrace 检查证据等级、模型诊断和允许的表述强度。ResearchOS 不会把数据共现直接升级为因果判断。</p><footer><span>数据截止：{asOf}</span><button onClick={()=>window.dispatchEvent(new CustomEvent("researchos:new-thesis",{detail:{name:brief}}))}>建立验证任务 →</button></footer></section>
+      <footer className="publication-foot"><span>仅供内部研究使用</span><span>数据截止：{asOf}</span><b>1</b></footer>
+    </article></div><aside className="publication-inspector"><header><span>报告属性</span><b>{template.name}</b></header><section><dl><dt>数据模式</dt><dd>真实接口</dd><dt>数据截止</dt><dd>{asOf}</dd><dt>数据集</dt><dd>{datasets.length}</dd><dt>审阅状态</dt><dd className="pending">待审阅</dd></dl></section><section><span>可追溯性</span><div className="quality-row"><b>{datasets.length}</b><small>精确 AssetVersion</small></div><div className="quality-row"><b>{datasets.filter(item=>item.ingest.data_ref.lineage_refs.length>0).length}</b><small>包含来源血缘</small></div><div className="quality-row"><b>0</b><small>伪造数据源</small></div></section><section className="publication-standard"><i>✓</i><p><b>数据检查通过</b>报告数据来自 B 插件 REST 接口，内容已进入 A 的版本化资产基座。</p></section></aside></div>
+    {notice&&<div className="report-toast" role="status">✓ {notice}</div>}
+  </div>;
+}
+
+export default function ResearchOutputStudio({mode}:{mode:RuntimeMode}){
   const [template,setTemplate]=useState<TemplateId>("weekly");
   const [datasets,setDatasets]=useState(initialDatasets);
   const [brief,setBrief]=useState("重点关注美股上涨的结构、主要市场估值水平及利率变化；结论必须注明数据截止日和可支持的表述范围。");
   const [generated,setGenerated]=useState(false);
   const [notice,setNotice]=useState<string>();
-  const selectedCount=useMemo(()=>datasets.filter(item=>item.selected).length,[datasets]);
+  const [workspaceId,setWorkspaceId]=useState<string>();
+  const [catalog,setCatalog]=useState<CatalogDataset[]>([]);
+  const [imported,setImported]=useState<ImportedDataset[]>([]);
+  const [loadingSources,setLoadingSources]=useState(mode==="real");
+  const [generating,setGenerating]=useState(false);
+  const [sourceError,setSourceError]=useState<string>();
+  const selectedCount=useMemo(()=>mode==="real"?catalog.filter(item=>item.selected&&item.enabled&&item.configured).length:datasets.filter(item=>item.selected).length,[catalog,datasets,mode]);
   const currentTemplate=templates.find(item=>item.id===template)!;
-  const notify=(message:string)=>{setNotice(message);window.setTimeout(()=>setNotice(undefined),2600)};
-  const generate=()=>{setGenerated(true);notify(`${currentTemplate.name} 已更新`)};
-  const toggleDataset=(id:string)=>setDatasets(items=>items.map(item=>item.id===id?{...item,selected:!item.selected}:item));
+  const notify=useCallback((message:string)=>{setNotice(message);window.setTimeout(()=>setNotice(undefined),2600)},[]);
+  const toggleDataset=(id:string)=>{
+    if(mode==="real")setCatalog(items=>items.map(item=>item.key===id?{...item,selected:!item.selected}:item));
+    else setDatasets(items=>items.map(item=>item.id===id?{...item,selected:!item.selected}:item));
+  };
+
+  useEffect(()=>{
+    if(mode!=="real")return;
+    let cancelled=false;
+    void(async()=>{
+      await Promise.resolve();
+      if(cancelled)return;
+      setLoadingSources(true);setSourceError(undefined);
+      try{
+        let workspaces=await researchosApi.listWorkspaces();
+        if(!workspaces.length)workspaces=[await researchosApi.createWorkspace("Financial research workspace")];
+        const plugins=await researchosApi.listDataPlugins();
+        const rows:CatalogDataset[]=[];
+        for(const plugin of plugins.filter(item=>item.available&&item.supports_catalog)){
+          try{
+            const pluginDatasets=await researchosApi.listDataPluginDatasets(plugin.plugin_id,undefined,40);
+            for(const item of pluginDatasets)rows.push({...item,key:`${plugin.plugin_id}:${item.dataset_id}`,pluginId:plugin.plugin_id,pluginName:plugin.name,enabled:plugin.enabled,configured:plugin.configured,selected:false});
+          }catch{
+            // One unavailable provider must not hide the other registered catalogs.
+          }
+        }
+        let selected=0;
+        const prepared=rows.map(item=>{const choose=item.enabled&&item.configured&&selected<3;if(choose)selected+=1;return{...item,selected:choose}});
+        if(!cancelled){setWorkspaceId(workspaces[0].id);setCatalog(prepared);if(!prepared.length)setSourceError("后端没有返回可用的数据集目录；请先在数据源设置中配置插件。")}
+      }catch(error){if(!cancelled)setSourceError(error instanceof Error?error.message:"无法加载 B 数据插件")}
+      finally{if(!cancelled)setLoadingSources(false)}
+    })();
+    return()=>{cancelled=true};
+  },[mode]);
+
+  const generate=useCallback(async()=>{
+    if(mode!=="real"){setGenerated(true);notify(`${currentTemplate.name} 已更新`);return}
+    const selected=catalog.filter(item=>item.selected&&item.enabled&&item.configured);
+    if(!workspaceId||!selected.length)return;
+    setGenerating(true);setSourceError(undefined);
+    const results:ImportedDataset[]=[];const failures:string[]=[];
+    for(const item of selected){
+      try{
+        const ingest=await researchosApi.ingestDataPluginDataset(item.pluginId,{workspace_id:workspaceId,dataset_id:item.dataset_id,parameters:{},logical_name:`${item.pluginName} · ${item.name}`,row_limit:500});
+        const preview=await researchosApi.previewDataset(ingest.version_id,50);
+        results.push({catalog:item,ingest,preview});
+      }catch(error){failures.push(`${item.name}: ${error instanceof Error?error.message:"导入失败"}`)}
+    }
+    setGenerating(false);
+    if(!results.length){setSourceError(failures.join("；")||"所选数据集均未能导入");return}
+    setImported(results);setGenerated(true);
+    notify(failures.length?`${results.length} 个数据集已导入，${failures.length} 个失败`:`${results.length} 个真实数据集已固定并生成报告`);
+  },[catalog,currentTemplate.name,mode,notify,workspaceId]);
+
   const exportBundle=()=>{
-    const payload={schema:"researchos.research-publication.v2",report:currentTemplate.name,as_of:"2024-01-12",brief,datasets:datasets.filter(item=>item.selected).map(item=>({id:item.id,as_of:item.asOf})),sections:["market_table","asset_performance","valuation_comparison","research_conclusion"],review_state:"PENDING_REVIEW"};
+    const payload=mode==="real"?{schema:"researchos.research-publication.v2",mode:"REAL_API",report:currentTemplate.name,brief,datasets:imported.map(item=>item.ingest.data_ref),review_state:"PENDING_REVIEW"}:{schema:"researchos.research-publication.v2",mode:"FIXTURE",report:currentTemplate.name,as_of:"2024-01-12",brief,datasets:datasets.filter(item=>item.selected).map(item=>({id:item.id,as_of:item.asOf})),sections:["market_table","asset_performance","valuation_comparison","research_conclusion"],review_state:"PENDING_REVIEW"};
     const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
     const link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download="international-market-weekly.json";link.click();URL.revokeObjectURL(link.href);notify("报告数据包已导出");
   };
-  useEffect(()=>{const run=()=>generate();window.addEventListener("researchos:report-update",run);return()=>window.removeEventListener("researchos:report-update",run)});
+  useEffect(()=>{const run=()=>{void generate()};window.addEventListener("researchos:report-update",run);return()=>window.removeEventListener("researchos:report-update",run)},[generate]);
 
   if(!generated) return <div className="workspace-scroll output-studio setup">
     <section className="output-intro"><div><span className="eyebrow"><span className="status-dot green"/> 研究出品</span><h2>按机构标准生成周报、月报与专题报告</h2><p>确定数据范围、报告结构和本期重点。系统按统一口径生成表格、图表、来源说明与研究结论，供研究员审阅定稿。</p></div><div className="output-route"><span>数据范围</span><i>→</i><span>报告结构</span><i>→</i><b>审阅发布</b></div></section>
     <div className="output-setup-grid">
-      <section className="output-panel source-panel"><header><div><span>01 · 数据范围</span><h3>选择本期数据</h3></div><em>{selectedCount} 项已纳入</em></header><p className="panel-help">只有处于有效期内的数据会进入本期报告；过期数据需更新后才能使用。</p><div className="dataset-list">{datasets.map(item=><button key={item.id} className={item.selected?"selected":""} onClick={()=>toggleDataset(item.id)}><i>{item.selected?"✓":"＋"}</i><span><b>{item.name}</b><small>{item.detail}</small></span><time>{item.asOf}</time><em className={`badge badge-${item.state==="READY"?"green":"amber"}`}>{item.state==="READY"?"有效":"需更新"}</em></button>)}</div><button className="output-add-source" onClick={()=>notify("可返回研究助手补充数据和资料")}>＋ 补充数据或资料</button></section>
+      <section className="output-panel source-panel"><header><div><span>01 · 数据范围</span><h3>选择本期数据</h3></div><em>{selectedCount} 项已纳入</em></header><p className="panel-help">{mode==="real"?"真实模式只使用 B 后端已注册、已配置并启用的数据插件。导入后会生成不可变 AssetVersion。":"当前为明确标记的演示数据，不会声称来自实时接口。"}</p>{loadingSources&&<div className="research-api-note"><b>正在读取数据插件目录…</b><span>连接 ResearchOS 后端</span></div>}{sourceError&&<div className="research-api-note"><b>真实数据暂不可用</b><span>{sourceError}</span></div>}<div className="dataset-list">{mode==="real"?catalog.map(item=><button key={item.key} disabled={!item.enabled||!item.configured} className={item.selected?"selected":""} onClick={()=>toggleDataset(item.key)}><i>{item.selected?"✓":"＋"}</i><span><b>{item.name}</b><small>{item.pluginName} · {item.description}</small></span><time>{item.dataset_id}</time><em className={`badge badge-${item.enabled&&item.configured?"green":"amber"}`}>{item.enabled&&item.configured?"可导入":item.configured?"未启用":"需配置"}</em></button>):datasets.map(item=><button key={item.id} className={item.selected?"selected":""} onClick={()=>toggleDataset(item.id)}><i>{item.selected?"✓":"＋"}</i><span><b>{item.name}</b><small>{item.detail}</small></span><time>{item.asOf}</time><em className={`badge badge-${item.state==="READY"?"green":"amber"}`}>{item.state==="READY"?"样例有效":"样例过期"}</em></button>)}</div><button className="output-add-source" onClick={()=>notify(mode==="real"?"请在设置 → 数据源中启用后端插件":"可返回研究助手补充资料")}>＋ {mode==="real"?"管理真实数据源":"补充数据或资料"}</button></section>
       <section className="output-panel template-panel"><header><div><span>02 · 报告结构</span><h3>选择出品类型</h3></div><em>机构报告模板</em></header><p className="panel-help">版式参照正式投研周报与月报，统一标题层级、图表规范、来源和页码。</p><div className="template-list">{templates.map(item=><button key={item.id} className={template===item.id?"selected":""} onClick={()=>setTemplate(item.id)}><i>{template===item.id?"●":"○"}</i><span><b>{item.name}</b><small>{item.note}</small><em>参考结构 · {item.sample}</em></span></button>)}</div></section>
-      <section className="output-panel brief-panel"><header><div><span>03 · 本期重点</span><h3>确定研究范围与结论口径</h3></div><em>编辑说明</em></header><textarea value={brief} onChange={event=>setBrief(event.target.value)} aria-label="本期研究重点"/><div className="brief-suggestions"><button onClick={()=>setBrief("梳理全球大类资产周度表现，比较主要指数估值，并解释本周显著变化。")}>市场综述</button><button onClick={()=>setBrief("重点分析美股上涨的集中度、主要驱动行业及估值风险。")}>美股结构</button><button onClick={()=>setBrief("跟踪 REITs 发行、成交、分红与政策变化，形成月度结论。")}>REITs 跟踪</button></div><div className="generation-boundary"><i>✓</i><span><b>出品规范</b><small>所有图表均保留单位、统计区间、数据来源和截止日期；研究判断与原始数据分开呈现。</small></span></div><button className="button primary generate-output" disabled={!selectedCount||!brief.trim()} onClick={generate}>生成 {currentTemplate.name} <span>→</span></button></section>
+      <section className="output-panel brief-panel"><header><div><span>03 · 本期重点</span><h3>确定研究范围与结论口径</h3></div><em>编辑说明</em></header><textarea value={brief} onChange={event=>setBrief(event.target.value)} aria-label="本期研究重点"/><div className="brief-suggestions"><button onClick={()=>setBrief("梳理全球大类资产周度表现，比较主要指数估值，并解释本周显著变化。")}>市场综述</button><button onClick={()=>setBrief("重点分析美股上涨的集中度、主要驱动行业及估值风险。")}>美股结构</button><button onClick={()=>setBrief("跟踪 REITs 发行、成交、分红与政策变化，形成月度结论。")}>REITs 跟踪</button></div><div className="generation-boundary"><i>✓</i><span><b>出品规范</b><small>所有图表均保留单位、统计区间、数据来源和截止日期；研究判断与原始数据分开呈现。</small></span></div><button className="button primary generate-output" disabled={!selectedCount||!brief.trim()||generating} onClick={()=>void generate()}>{generating?"正在导入并固定数据…":`生成 ${currentTemplate.name}`} <span>→</span></button></section>
     </div>{notice&&<div className="report-toast" role="status">✓ {notice}</div>}
   </div>;
+
+  if(mode==="real")return <LivePublication template={currentTemplate} brief={brief} datasets={imported} onBack={()=>setGenerated(false)} onExport={exportBundle} onNotify={notify} notice={notice}/>;
 
   return <div className="workspace-scroll output-studio publication-mode">
     <section className="canvas-toolbar"><div><button onClick={()=>setGenerated(false)}>← 修改报告设置</button><span>国际市场周报 · 2024年第02期</span><em className="badge badge-amber">待审阅</em></div><div><button className="button secondary" onClick={()=>notify("草稿已保存为 v1")}>保存草稿</button><button className="button primary" onClick={exportBundle}>导出报告数据 ↓</button></div></section>

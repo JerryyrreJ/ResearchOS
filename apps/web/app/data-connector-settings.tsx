@@ -1,20 +1,64 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Locale } from "./i18n";
-import { researchosApi, type DataConnector } from "../lib/api-client";
+import { DATA_CONNECTORS } from "../lib/connector-catalog";
+import {
+  researchosApi,
+  type DataPlugin,
+  type DataPluginDataset,
+} from "../lib/api-client";
 
 const copy = {
-  "zh-CN": { title:"数据连接器", intro:"连接行情、宏观、基本面与另类数据来源。密钥只在服务端加密保存。", save:"保存并启用", test:"测试连接", run:"运行样例", remove:"移除密钥", docs:"官方文档", keyless:"无需密钥", bridge:"需要桥接服务", licensed:"需要机构授权", configured:"已配置", available:"可连接", security:"API Key 会在服务端加密，永不返回浏览器，也不会写入 Git。", rows:"条记录" },
-  "zh-TW": { title:"資料連接器", intro:"連接行情、宏觀、基本面與另類資料來源。密鑰只在伺服器端加密保存。", save:"保存並啟用", test:"測試連接", run:"執行樣例", remove:"移除密鑰", docs:"官方文件", keyless:"無需密鑰", bridge:"需要橋接服務", licensed:"需要機構授權", configured:"已設定", available:"可連接", security:"API Key 會在伺服器端加密，永不返回瀏覽器，也不會寫入 Git。", rows:"條記錄" },
-  en: { title:"Data connectors", intro:"Connect market, macro, fundamentals, and alternative-data providers. Secrets stay encrypted on the server.", save:"Save & enable", test:"Test connection", run:"Run sample", remove:"Remove key", docs:"Documentation", keyless:"No key required", bridge:"Bridge required", licensed:"License required", configured:"Configured", available:"Available", security:"API keys are encrypted at rest, never returned to the browser, and never written to Git.", rows:"records" },
+  "zh-CN": { title:"数据连接器", intro:"目录展示可接入的数据源；只有后端已注册的插件才能进入版本化研究资产。", enable:"启用", disable:"停用", sample:"检查数据目录", docs:"官方文档", bridge:"需要桥接服务", licensed:"需要机构授权", configured:"后端已配置", unavailable:"后端未配置", security:"密钥由 ResearchOS 后端环境管理，不返回浏览器，也不会写入 Git。", rows:"个数据集" },
+  "zh-TW": { title:"資料連接器", intro:"目錄展示可接入的資料源；只有後端已註冊的外掛才能進入版本化研究資產。", enable:"啟用", disable:"停用", sample:"檢查資料目錄", docs:"官方文件", bridge:"需要橋接服務", licensed:"需要機構授權", configured:"後端已設定", unavailable:"後端未設定", security:"密鑰由 ResearchOS 後端環境管理，不返回瀏覽器，也不會寫入 Git。", rows:"個資料集" },
+  en: { title:"Data connectors", intro:"The catalog shows possible sources; only backend-registered plugins can create versioned research assets.", enable:"Enable", disable:"Disable", sample:"Inspect catalog", docs:"Documentation", bridge:"Bridge required", licensed:"License required", configured:"Backend configured", unavailable:"Backend not configured", security:"Credentials are managed by the ResearchOS backend environment, never returned to the browser, and never written to Git.", rows:"datasets" },
 };
 
 export default function DataConnectorSettings({ locale, active }: { locale: Locale; active: boolean }) {
-  const words=copy[locale]; const [connectors,setConnectors]=useState<DataConnector[]>([]); const [selectedId,setSelectedId]=useState<string>(); const [apiKey,setApiKey]=useState(""); const [busy,setBusy]=useState<string>(); const [message,setMessage]=useState<string>(); const [sample,setSample]=useState<{dataset:string;latencyMs:number;count:number}>();
-  const refresh=async()=>{const result=await researchosApi.listConnectors();setConnectors(result.connectors);setSelectedId(id=>id??result.connectors[0]?.id)};
-  useEffect(()=>{if(!active)return;let cancelled=false;void researchosApi.listConnectors().then(result=>{if(!cancelled){setConnectors(result.connectors);setSelectedId(id=>id??result.connectors[0]?.id)}}).catch(error=>{if(!cancelled)setMessage(error instanceof Error?error.message:"Connector catalog unavailable")});return()=>{cancelled=true}},[active]);
-  const selected=connectors.find(item=>item.id===selectedId); const query=selected?.id==="fred"?{series_id:"GDP",limit:5}:selected?.id==="tushare"?{api_name:"trade_cal",exchange:"SSE"}:selected?.id==="alpha-vantage"?{function:"TIME_SERIES_DAILY",symbol:"IBM"}:selected?.id==="nasdaq-data-link"?{dataset:"FRED/GDP",limit:5}:selected?.id==="world-bank"?{country:"US",indicator:"NY.GDP.MKTP.CD"}:selected?.id==="yahoo-finance"?{symbol:"NVDA",range:"1mo"}:{};
-  const act=async(action:"save"|"test"|"query"|"remove")=>{if(!selected)return;setBusy(action);setMessage(undefined);setSample(undefined);try{if(action==="save")await researchosApi.configureConnector(selected.id,apiKey,true);if(action==="test"){const r=await researchosApi.testConnector(selected.id);setMessage(`${words.configured} · ${r.latencyMs} ms`)}if(action==="query"){const r=await researchosApi.queryConnector(selected.id,query);setSample({dataset:r.dataset,latencyMs:r.latencyMs,count:Array.isArray(r.rows)?r.rows.length:Object.keys(r.rows??{}).length})}if(action==="remove")await researchosApi.clearConnector(selected.id);setApiKey("");await refresh()}catch(error){setMessage(error instanceof Error?error.message:"Connector operation failed")}finally{setBusy(undefined)}};
-  return <><div className="settings-head"><span>FINANCIAL DATA LAYER</span><h2>{words.title}</h2><p>{words.intro}</p></div><div className="connector-security"><i>⌁</i><span><b>Server-side secret policy</b><small>{words.security}</small></span></div><div className="connector-console"><div className="connector-list">{connectors.map(item=><button key={item.id} className={selectedId===item.id?"active":""} onClick={()=>{setSelectedId(item.id);setApiKey("");setMessage(undefined);setSample(undefined)}}><i>{item.mark}</i><span><b>{item.name}</b><small>{item.category} · {item.institution}</small></span><em className={item.configured?"connected":""}>{item.configured?"●":"○"}</em></button>)}</div><div className="connector-detail">{selected&&<><div className="connector-detail-head"><span className="extension-mark">{selected.mark}</span><span><h3>{selected.name}</h3><small>{selected.coverage}</small></span><b>{selected.configured?words.configured:selected.runtime==="native"?words.available:selected.runtime==="licensed"?words.licensed:words.bridge}</b></div>{selected.legalNote&&<p className="connector-legal">{selected.legalNote}</p>}{selected.runtime==="native"?<>{selected.keyRequired?<label className="connector-key"><span>API Key</span><input type="password" autoComplete="off" value={apiKey} onChange={e=>setApiKey(e.target.value)} placeholder={selected.configured?"••••••••":selected.keyPlaceholder}/></label>:<div className="connector-keyless">✓ {words.keyless}</div>}<div className="connector-actions"><button className="button primary" disabled={!!busy||(selected.keyRequired&&!selected.configured&&!apiKey.trim())} onClick={()=>void act("save")}>{words.save}</button><button className="button" disabled={!!busy||!selected.configured} onClick={()=>void act("test")}>{words.test}</button><button className="button" disabled={!!busy||!selected.configured} onClick={()=>void act("query")}>{words.run}</button></div>{selected.configured&&selected.keyRequired&&<button className="connector-remove" onClick={()=>void act("remove")}>{words.remove}</button>}</>:<p className="connector-unavailable">{selected.runtime==="licensed"?words.licensed:words.bridge}</p>}<a className="connector-docs" href={selected.docsUrl} target="_blank" rel="noreferrer">{words.docs} ↗</a>{message&&<p className="connector-message">{message}</p>}{sample&&<div className="connector-sample"><span>SAMPLE RESULT</span><b>{sample.dataset}</b><small>{sample.count} {words.rows} · {sample.latencyMs} ms</small></div>}</>}</div></div></>;
+  const words=copy[locale];
+  const [plugins,setPlugins]=useState<DataPlugin[]>([]);
+  const [selectedId,setSelectedId]=useState(DATA_CONNECTORS[0]?.id);
+  const [busy,setBusy]=useState<string>();
+  const [message,setMessage]=useState<string>();
+  const [sample,setSample]=useState<DataPluginDataset[]>([]);
+
+  const pluginMap=useMemo(()=>new Map(plugins.map(item=>[item.plugin_id,item])),[plugins]);
+  const selected=DATA_CONNECTORS.find(item=>item.id===selectedId);
+  const selectedPlugin=selected?pluginMap.get(selected.id):undefined;
+
+  const refresh=async()=>setPlugins(await researchosApi.listDataPlugins());
+  useEffect(()=>{
+    if(!active)return;
+    let cancelled=false;
+    void researchosApi.listDataPlugins()
+      .then(result=>{if(!cancelled)setPlugins(result)})
+      .catch(error=>{if(!cancelled)setMessage(error instanceof Error?error.message:"Data plugin catalog unavailable")});
+    return()=>{cancelled=true};
+  },[active]);
+
+  const toggle=async()=>{
+    if(!selectedPlugin)return;
+    setBusy("toggle");setMessage(undefined);setSample([]);
+    try{
+      await researchosApi.setDataPluginEnabled(selectedPlugin.plugin_id,!selectedPlugin.enabled);
+      await refresh();
+    }catch(error){setMessage(error instanceof Error?error.message:"Data plugin update failed")}
+    finally{setBusy(undefined)}
+  };
+  const inspect=async()=>{
+    if(!selectedPlugin)return;
+    setBusy("sample");setMessage(undefined);setSample([]);
+    try{
+      const result=await researchosApi.listDataPluginDatasets(selectedPlugin.plugin_id,undefined,8);
+      setSample(result);setMessage(`${result.length} ${words.rows}`);
+    }catch(error){setMessage(error instanceof Error?error.message:"Dataset catalog unavailable")}
+    finally{setBusy(undefined)}
+  };
+
+  const backendStatus=selectedPlugin
+    ? selectedPlugin.enabled?"已启用":selectedPlugin.configured&&selectedPlugin.available?words.configured:words.unavailable
+    : selected?.runtime==="licensed"?words.licensed:words.bridge;
+
+  return <><div className="settings-head"><span>FINANCIAL DATA LAYER</span><h2>{words.title}</h2><p>{words.intro}</p></div><div className="connector-security"><i>⌁</i><span><b>ResearchOS backend policy</b><small>{words.security}</small></span></div><div className="connector-console"><div className="connector-list">{DATA_CONNECTORS.map(item=>{const plugin=pluginMap.get(item.id);return <button key={item.id} className={selectedId===item.id?"active":""} onClick={()=>{setSelectedId(item.id);setMessage(undefined);setSample([])}}><i>{item.mark}</i><span><b>{item.name}</b><small>{item.category} · {item.institution}</small></span><em className={plugin?.enabled?"connected":""}>{plugin?.enabled?"●":"○"}</em></button>})}</div><div className="connector-detail">{selected&&<><div className="connector-detail-head"><span className="extension-mark">{selected.mark}</span><span><h3>{selected.name}</h3><small>{selected.coverage}</small></span><b>{backendStatus}</b></div>{selected.legalNote&&<p className="connector-legal">{selected.legalNote}</p>}{selectedPlugin?<><div className="connector-keyless">{selectedPlugin.configured&&selectedPlugin.available?"✓":"!"} {selectedPlugin.description}</div><div className="connector-actions"><button className="button primary" disabled={!!busy||!selectedPlugin.configured||!selectedPlugin.available} onClick={()=>void toggle()}>{selectedPlugin.enabled?words.disable:words.enable}</button><button className="button" disabled={!!busy||!selectedPlugin.available} onClick={()=>void inspect()}>{words.sample}</button></div>{!selectedPlugin.configured&&<p className="connector-unavailable">{selectedPlugin.credential_kind==="FRED_API_KEY"?"请在后端设置 FRED_API_KEY。":"请安装并配置对应的 ResearchOS 数据插件。"}</p>}</>:<p className="connector-unavailable">该来源目前仅存在于连接器目录，尚未注册到 B 的版本化数据插件系统，因此不会声称可执行。</p>}<a className="connector-docs" href={selected.docsUrl} target="_blank" rel="noreferrer">{words.docs} ↗</a>{message&&<p className="connector-message">{message}</p>}{sample.length>0&&<div className="connector-sample"><span>BACKEND DATASET CATALOG</span>{sample.slice(0,5).map(item=><small key={item.dataset_id}><b>{item.name}</b> · {item.description}</small>)}</div>}</>}</div></div></>;
 }

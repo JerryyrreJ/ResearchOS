@@ -85,6 +85,15 @@ class DataPluginIngestResponse(StrictModel):
     data_ref: DataObjectRef
 
 
+class DatasetPreviewView(StrictModel):
+    version_id: str
+    content_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+    columns: list[str]
+    rows: list[dict[str, str | None]]
+    returned_rows: int
+    truncated: bool
+
+
 class RequiredDataSchema(StrictModel):
     time_key: str | None = None
     fields: list[str]

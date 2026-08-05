@@ -11,6 +11,7 @@ from researchos.api.data_schemas import (
     DataResolveRequest,
     DataResolveResponse,
     DatasetDescriptorView,
+    DatasetPreviewView,
 )
 from researchos.api.dependencies import get_data_plugin_service, get_data_resolve_service
 from researchos.application.data_plugins import DataPluginService
@@ -83,3 +84,21 @@ def materialize_asset_version(
         filename=content.filename,
         headers={"X-ResearchOS-Content-SHA256": content.content_hash},
     )
+
+
+@router.get(
+    "/asset-versions/{version_id}/preview",
+    response_model=DatasetPreviewView,
+)
+def preview_asset_version(
+    version_id: str,
+    service: ResolveServiceDep,
+    limit: Annotated[int, Query(ge=1, le=200)] = 50,
+) -> dict:
+    preview = service.preview(version_id, limit)
+    if preview is None:
+        raise HTTPException(
+            status_code=404,
+            detail="CSV dataset preview is unavailable for this asset version",
+        )
+    return preview

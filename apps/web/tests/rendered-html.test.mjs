@@ -39,6 +39,9 @@ test("ships a publication-grade weekly report instead of a dashboard mockup", as
   for (const feature of ["全球主要市场表现", "单位：%，国债收益率变动为 bp", "professional-bar-chart", "中美港主要行业估值对比", "professional-line-chart", "数据截止日期", "研究结论", "研究员审阅后方可发布", "出版检查通过"]) assert.match(output, new RegExp(feature));
   assert.match(output, /<table className="market-table"/);
   assert.match(output, /<table className="valuation-table"/);
+  for (const operation of ["listDataPlugins", "listDataPluginDatasets", "ingestDataPluginDataset", "previewDataset"]) assert.match(output, new RegExp(operation));
+  assert.match(output, /不可变 AssetVersion/);
+  assert.match(output, /mode:\"REAL_API\"/);
   assert.doesNotMatch(output, /AI 排版|告诉 AI|AI 研究解读|AI 辅助研究稿/);
 });
 
@@ -88,7 +91,7 @@ test("serves a non-cached web health endpoint", async () => {
   assert.deepEqual(await response.json(), { status: "ok", service: "researchos-web", mode: "fixture", contract: "0.1.0-frozen" });
 });
 
-test("provides encrypted financial-data connectors with executable server routes", async () => {
+test("catalogues encrypted connectors while executing research data through B plugins", async () => {
   const [page, component, client, catalog, connectorWorker, worker, css] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/data-connector-settings.tsx", import.meta.url), "utf8"),
@@ -100,8 +103,10 @@ test("provides encrypted financial-data connectors with executable server routes
   ]);
   for (const source of ["FRED / ALFRED", "Tushare Pro", "Alpha Vantage", "Nasdaq Data Link", "World Bank Open Data", "AKShare", "巨潮资讯", "Wind", "Bloomberg"]) assert.match(catalog, new RegExp(source));
   for (const method of ["listConnectors", "configureConnector", "testConnector", "queryConnector", "clearConnector"]) assert.match(client, new RegExp(method));
+  for (const method of ["listDataPlugins", "setDataPluginEnabled", "listDataPluginDatasets", "ingestDataPluginDataset", "previewDataset"]) assert.match(client, new RegExp(method));
   assert.match(page, /DataConnectorSettings/);
-  assert.match(component, /API Key 会在服务端加密/);
+  assert.match(component, /密钥由 ResearchOS 后端环境管理/);
+  assert.match(component, /尚未注册到 B 的版本化数据插件系统/);
   assert.match(component, /需要桥接服务/);
   assert.match(connectorWorker, /AES-GCM/);
   assert.match(connectorWorker, /CONNECTOR_ENCRYPTION_KEY/);

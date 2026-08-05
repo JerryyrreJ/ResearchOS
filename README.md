@@ -1,9 +1,9 @@
-# MacroTrace × ResearchOS：让宏观观点真正开始跑实证
+# ResearchOS：版本化数据、金融研究与实证验证工作台
 
-MacroTrace is now the product entry point. A user supplies a macro claim or question; the
-system first lights up the data and document nodes used for that question, then expands the
-registered mechanisms, lanes, factors, models and diagnostics, and finally produces an
-evidence-bounded research report.
+The integrated product uses Role D's financial-research workspace as the browser entry and
+Role B's Python application as the backend foundation. Files and plugin datasets first enter
+Role A's immutable asset/version layer; Role C compiles claims; MacroTrace executes registered
+empirical validation without weakening evidence boundaries.
 
 `Question → Part A evidence space → Part B empirical compiler → confidence and report`
 
@@ -39,29 +39,30 @@ uv run pytest
 uv run ruff check .
 ```
 
-## Product entry
+## Start the integrated product
 
-On Windows, one command creates the environment, installs the optional data providers, runs
-the local migrations and opens the MacroTrace product:
+On Windows, one command creates both environments, installs the optional data providers, runs
+the migrations, starts the Python API and opens the integrated Role D workspace:
 
 ```powershell
 .\start.ps1
 ```
 
-Open http://127.0.0.1:8000. The default page is the mature MacroTrace research workspace:
+Open http://127.0.0.1:3000. The default product supports:
 
-1. enter a question or paste a report claim;
-2. inspect the zoomable Part A evidence space (grey = available, highlighted = used);
-3. inspect Part B lanes, factors, model runs, diagnostics and lineage;
-4. read the direct answer and full research report.
+1. drag files into the ResearchOS workspace and inspect immutable version history;
+2. select a registered FRED or AKShare dataset and persist it as a versioned Asset;
+3. generate a report data sheet from exact dataset versions and SHA-256 references;
+4. compile a thesis and send its registered validation plan to MacroTrace.
 
-The earlier ResearchOS workspace shell remains available as an optional supporting view:
+The MacroTrace engine console remains available at http://127.0.0.1:8000. To start only the
+backend and that console:
 
 ```powershell
-.\start.ps1 -WorkspaceShell
+.\start.ps1 -BackendOnly
 ```
 
-## Optional ResearchOS workspace shell
+## Manual frontend start
 
 Requires Node.js 22.13 or newer.
 
@@ -71,16 +72,17 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. This supporting shell exposes file intake, immutable versions,
-Thesis compilation and the frozen Tool Adapter. It is no longer the product's primary entry.
+Open http://localhost:3000. The workspace exposes file intake, immutable versions, backend
+data plugins, report production, Thesis compilation and the frozen Tool Adapter.
 
 The browser client defaults to `http://127.0.0.1:8000/api/v1`. To point it at another backend, set `NEXT_PUBLIC_RESEARCHOS_API_BASE_URL` before starting the web app. The backend accepts the documented local development ports by default; override them with `RESEARCHOS_CORS_ORIGINS`.
 
 ## Data plugins
 
 The integrated Python backend exposes selectable AKShare and FRED plugins. They appear in the
-main Part A evidence-space toolbar. Every fetched table is stored through Role A as an
-immutable, content-hashed AssetVersion before Role B can resolve it.
+Role D data-source settings and the research-output studio. Every fetched table is stored
+through Role A as an immutable, content-hashed AssetVersion before the report studio or Role B
+can resolve it.
 
 - AKShare accepts a public AKShare function name and structured JSON arguments. It never
   evaluates Python or SQL supplied by the browser.
@@ -101,8 +103,8 @@ An existing private environment file can instead be referenced without copying c
 RESEARCHOS_ENV_FILE=C:\path\to\your\private\.env.local
 ```
 
-The integration work is on `role/b-data-plugins` and intentionally reuses the existing A, B,
-C and D implementations instead of creating another product copy.
+The integration work is on `integration-v2` and intentionally reuses the existing A, B, C and
+D implementations instead of creating another product copy.
 
 ```bash
 cd apps/web

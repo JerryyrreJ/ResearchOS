@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -225,3 +226,34 @@ class DataResolveService:
             media_type=version.mime_type,
             content_hash=version.content_hash,
         )
+
+    def preview(self, version_id: str, limit: int) -> dict[str, Any] | None:
+        version = self.session.get(AssetVersionRecord, version_id)
+        content = self.content(version_id)
+        if version is None or content is None or version.format_kind != "CSV":
+            return None
+
+        rows: list[dict[str, str | None]] = []
+        truncated = False
+        with content.path.open("r", encoding="utf-8-sig", newline="") as handle:
+            reader = csv.DictReader(handle)
+            columns = [str(column) for column in (reader.fieldnames or [])]
+            for index, row in enumerate(reader):
+                if index >= limit:
+                    truncated = True
+                    break
+                rows.append(
+                    {
+                        str(key): None if value is None else str(value)
+                        for key, value in row.items()
+                        if key is not None
+                    }
+                )
+        return {
+            "version_id": version.id,
+            "content_hash": version.content_hash,
+            "columns": columns,
+            "rows": rows,
+            "returned_rows": len(rows),
+            "truncated": truncated,
+        }

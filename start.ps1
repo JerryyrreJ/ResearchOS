@@ -2,7 +2,8 @@
 param(
     [switch]$SkipInstall,
     [switch]$NoBrowser,
-    [switch]$WorkspaceShell
+    [switch]$WorkspaceShell,
+    [switch]$BackendOnly
 )
 
 $ErrorActionPreference = 'Stop'
@@ -11,6 +12,7 @@ $webRoot = Join-Path $root 'apps\web'
 $venvPython = Join-Path $root '.venv\Scripts\python.exe'
 $backend = $null
 $frontend = $null
+$launchWorkspace = $WorkspaceShell -or -not $BackendOnly
 
 function Find-Python312 {
     $launcher = Get-Command py -ErrorAction SilentlyContinue
@@ -55,7 +57,7 @@ if (-not (Test-Path -LiteralPath $venvPython)) {
 if (-not $SkipInstall) {
     Write-Host '正在同步 Python 数据插件…'
     & $venvPython -m pip install --disable-pip-version-check -e '.[data-plugins]'
-    if ($WorkspaceShell -and -not (Test-Path -LiteralPath (Join-Path $webRoot 'node_modules'))) {
+    if ($launchWorkspace -and -not (Test-Path -LiteralPath (Join-Path $webRoot 'node_modules'))) {
         Write-Host '正在安装前端依赖…'
         Push-Location $webRoot
         try {
@@ -80,8 +82,8 @@ try {
         -WorkingDirectory $root -WindowStyle Hidden -PassThru
     Wait-LocalUrl 'http://127.0.0.1:8000/api/v1/health' '后端'
 
-    if ($WorkspaceShell) {
-        Write-Host '正在启动 ResearchOS 工作区外壳…'
+    if ($launchWorkspace) {
+        Write-Host '正在启动 ResearchOS 统一金融研究工作台…'
         $frontend = Start-Process -FilePath 'npx.cmd' `
             -ArgumentList @('vinext', 'dev', '--host', '127.0.0.1', '--port', '3000') `
             -WorkingDirectory $webRoot -WindowStyle Hidden -PassThru
@@ -89,15 +91,16 @@ try {
     }
 
     Write-Host ''
-    Write-Host 'MacroTrace / ResearchOS 已启动：' -ForegroundColor Green
-    Write-Host '  主产品：http://127.0.0.1:8000'
-    if ($WorkspaceShell) {
-        Write-Host '  ResearchOS 工作区：http://127.0.0.1:3000'
+    Write-Host 'ResearchOS 已启动：' -ForegroundColor Green
+    if ($launchWorkspace) {
+        Write-Host '  统一金融研究工作台：http://127.0.0.1:3000'
     }
+    Write-Host '  MacroTrace 引擎控制台：http://127.0.0.1:8000'
     Write-Host '  API：http://127.0.0.1:8000/docs'
     Write-Host '  产品主线：数据证据层 → 实证研究图 → 研究报告'
     if (-not $NoBrowser) {
-        Start-Process 'http://127.0.0.1:8000'
+        $openUrl = if ($launchWorkspace) { 'http://127.0.0.1:3000' } else { 'http://127.0.0.1:8000' }
+        Start-Process $openUrl
     }
     Read-Host '按 Enter 停止本地服务'
 }

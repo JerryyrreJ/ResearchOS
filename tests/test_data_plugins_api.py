@@ -138,6 +138,17 @@ def test_plugin_catalog_toggle_ingest_and_resolve(
     assert content.content.startswith(b"date,value")
     assert content.headers["x-researchos-content-sha256"] == result["data_ref"]["content_hash"]
 
+    preview = client.get(f"/api/v1/asset-versions/{result['version_id']}/preview?limit=1")
+    assert preview.status_code == 200
+    assert preview.json() == {
+        "version_id": result["version_id"],
+        "content_hash": result["data_ref"]["content_hash"],
+        "columns": ["date", "value"],
+        "rows": [{"date": "2026-06-01", "value": "4.1"}],
+        "returned_rows": 1,
+        "truncated": True,
+    }
+
     replay = client.post(
         "/api/v1/data-plugins/fixture-data/ingest",
         json={
