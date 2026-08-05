@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- transparent mascot is a pre-optimized static brand asset */
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -214,7 +215,7 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
 
   return (
     <div className={`workspace-scroll api-workspace ${dragging ? "is-dragging" : ""}`} onDragEnter={onWorkspaceDragEnter} onDragOver={(event)=>event.preventDefault()} onDragLeave={onWorkspaceDragLeave} onDrop={onDrop}>
-      {dragging && <div className="workspace-drop-overlay" role="status"><div className="drop-target-mark">↓</div><b>松开即可上传并开始处理</b><span>自动建立对象、内容哈希与不可变版本</span></div>}
+      {dragging && <div className="workspace-drop-overlay" role="status"><img src="/brand/evidence-archivist.png" alt=""/><b>交给证据档案员</b><span>松开后自动保存、分类并建立不可变版本</span></div>}
       <section className="api-workspace-head">
         <div>
           <div className="eyebrow"><span className="status-dot green" /> SHARED · TEAM KNOWLEDGE</div>
@@ -247,7 +248,7 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
         <div className="library-toolbar"><div><span className="eyebrow">TEAM LIBRARY</span><h2>共享资料库</h2></div><form className="library-search" onSubmit={submitSearch}><span>⌕</span><input aria-label="Search knowledge base" value={query} onChange={event=>setQuery(event.target.value)} placeholder="搜索文件、类型或版本…"/><button>搜索</button></form></div>
         <div className="category-row">{categories.map(item=><button key={item.id} className={category===item.id?"active":""} onClick={()=>setCategory(item.id)}>{item.label}<em>{item.id==="ALL"?objects.length:objects.filter(object=>categoryFor(object)===item.id).length}</em></button>)}</div>
         <div className={`library-layout ${selectedObject ? "has-analysis" : ""}`}>
-          <div className="file-collection">{loading ? <div className="knowledge-empty">正在同步团队资料库…</div> : visibleObjects.length===0 ? <button className="knowledge-empty actionable" onClick={()=>inputRef.current?.click()}><i>＋</i><b>这里还没有文件</b><span>拖入文件，或点击这里开始建立共享知识库</span></button> : visibleObjects.map(item=>{const source=sourceFromObject(item);const itemCategory=categoryFor(item);return <button className={`knowledge-file ${selectedObjectId===item.object_id?"selected":""}`} key={item.object_id} onClick={()=>setSelectedObjectId(item.object_id)}><i className={`knowledge-file-icon kind-${itemCategory.toLowerCase()}`}>{source.formatKind.slice(0,2)}</i><span><b>{item.name}</b><small>{itemCategory} · {readableBytes(source.sizeBytes)} · {item.version_count} 个版本</small></span><em>{formatDate(source.updatedAt)}</em></button>})}</div>
+          <div className="file-collection">{loading ? <div className="knowledge-empty">正在同步团队资料库…</div> : visibleObjects.length===0 ? <button className="knowledge-empty actionable" onClick={()=>inputRef.current?.click()}><img src="/brand/evidence-archivist.png" alt="证据档案员"/><b>档案员正在等待第一份资料</b><span>拖入文件，或点击这里开始建立共享知识库</span></button> : visibleObjects.map(item=>{const source=sourceFromObject(item);const itemCategory=categoryFor(item);return <button className={`knowledge-file ${selectedObjectId===item.object_id?"selected":""}`} key={item.object_id} onClick={()=>setSelectedObjectId(item.object_id)}><i className={`knowledge-file-icon kind-${itemCategory.toLowerCase()}`}>{source.formatKind.slice(0,2)}</i><span><b>{item.name}</b><small>{itemCategory} · {readableBytes(source.sizeBytes)} · {item.version_count} 个版本</small></span><em>{formatDate(source.updatedAt)}</em></button>})}</div>
           {selectedObject&&<aside className="quick-analysis"><div className="analysis-head"><span>基础分析</span><button onClick={()=>setSelectedObjectId(undefined)} aria-label="Close analysis">×</button></div><div className="analysis-file"><i>{selectedObject.current_version?.format_kind.slice(0,2)}</i><h3>{selectedObject.name}</h3><p className="mono">{selectedObject.object_id}</p></div><div className="analysis-summary"><span>自动分类</span><b>{categoryFor(selectedObject)}</b><p>{selectedObject.current_version?.format_kind === "CSV" || selectedObject.current_version?.format_kind === "XLSX" ? "结构化数据文件，可用于后续统计与模型分析。" : "已安全保存并纳入团队检索，可继续建立论题与证据关系。"}</p></div><dl><dt>文件大小</dt><dd>{readableBytes(selectedObject.current_version?.size_bytes ?? 0)}</dd><dt>版本</dt><dd>{selectedObject.version_count}</dd><dt>可解析片段</dt><dd>{selectedObject.fragment_count}</dd><dt>状态</dt><dd>{selectedObject.status}</dd></dl><button className="button primary analysis-action" onClick={()=>window.dispatchEvent(new CustomEvent("researchos:new-thesis",{detail:{name:selectedObject.name}}))}>用于新论题 →</button></aside>}
         </div>
       </section>

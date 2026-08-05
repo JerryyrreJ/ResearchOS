@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- transparent mascot is a pre-optimized static brand asset */
 
 import { useEffect, useMemo, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -204,6 +205,7 @@ function LoginScreen({ onEnter, locale, onLocale }: { onEnter: () => void; local
       <div className="login-brand"><BrandMark inverse/><span>ResearchOS</span></div>
       <div className="login-statement"><span className="login-index">RESEARCH OPERATING SYSTEM · 01</span><h1>Evidence<br/><em>becomes</em><br/>structure.</h1><p>把散落的研究材料变成可追溯的证据结构，再让每一句结论通过编译。</p></div>
       <div className="evidence-field" aria-hidden="true">
+        <img className="archivist-login" src="/brand/evidence-archivist.png" alt=""/>
         <div className="e-node n-source"><span>01</span><b>Source</b></div><i className="e-line l1"/><div className="e-node n-evidence"><span>02</span><b>Evidence</b></div><i className="e-line l2"/><div className="e-node n-thesis"><span>03</span><b>Thesis</b></div>
       </div>
       <div className="login-foot"><span>研构 · ResearchOS</span><span>v0.1 · Frozen contracts</span></div>

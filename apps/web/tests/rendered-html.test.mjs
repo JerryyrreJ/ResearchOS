@@ -166,3 +166,18 @@ test("makes the shared knowledge library the primary product workflow", async ()
   assert.match(css, /\.knowledge-library/);
   assert.match(css, /\.quick-analysis/);
 });
+
+test("integrates the original Evidence Archivist as a restrained product mascot", async () => {
+  const [page, workspace, css, mascot] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/real-workspace.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/brand/evidence-archivist.png", import.meta.url)),
+  ]);
+  assert.match(page, /archivist-login/);
+  assert.match(workspace, /交给证据档案员/);
+  assert.match(workspace, /档案员正在等待第一份资料/);
+  assert.match(css, /\.archivist-login/);
+  assert.ok(mascot.byteLength > 100_000);
+  assert.equal(mascot.subarray(1, 4).toString(), "PNG");
+});
