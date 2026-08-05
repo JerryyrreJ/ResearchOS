@@ -1,0 +1,35 @@
+{
+  "contract_version": "0.1.0-frozen",
+  "object_id": "DATA_US_TREASURY_10Y",
+  "version_id": "VER_DEMO_20260804",
+  "object_type": "DATASET",
+  "name": "10-year Treasury yield demo snapshot",
+  "representation": "PARQUET",
+  "schema_version": "1.0.0",
+  "content_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "license_policy": "PUBLIC",
+  "access_scope": "WORKSPACE:WS_DEMO",
+  "content_uri": "objects/DATA_US_TREASURY_10Y/VER_DEMO_20260804/data.parquet",
+  "as_of_date": "2026-08-04",
+  "data_schema": {
+    "time_key": "date",
+    "entity_keys": [],
+    "value_fields": [
+      "ust10"
+    ],
+    "frequency": "D",
+    "units": {
+      "ust10": "percent"
+    },
+    "field_types": {
+      "date": "date",
+      "ust10": "float64"
+    }
+  },
+  "lineage_refs": [
+    "SRC_PUBLIC_DEMO"
+  ],
+  "metadata": {
+    "fixture_only": true
+  }
+}

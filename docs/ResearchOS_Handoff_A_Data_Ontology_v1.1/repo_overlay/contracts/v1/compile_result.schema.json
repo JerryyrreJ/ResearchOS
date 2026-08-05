@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://researchos.local/contracts/v1/compile_result.schema.json",
+  "title": "CompileResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "build_id",
+    "thesis_id",
+    "version_id",
+    "build_status",
+    "conclusion_state",
+    "original_claim",
+    "compiled_claim",
+    "issues",
+    "evidence_bundle_refs",
+    "language_policy",
+    "affected_node_ids",
+    "reused_node_ids",
+    "created_at",
+    "result_hash"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "0.1.0-frozen"
+    },
+    "build_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "thesis_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "version_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "parent_build_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "build_status": {
+      "enum": [
+        "SUCCESS",
+        "FAILED"
+      ]
+    },
+    "conclusion_state": {
+      "enum": [
+        "COMPILE_FAILED",
+        "EVIDENCE_INSUFFICIENT",
+        "SUPPORTED",
+        "WEAKENED",
+        "EVIDENCE_CONFLICT"
+      ]
+    },
+    "original_claim": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 4000
+    },
+    "compiled_claim": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 4000
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "$ref": "compile_issue.schema.json"
+      }
+    },
+    "validation_plan": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "step_id",
+          "label",
+          "status"
+        ],
+        "properties": {
+          "step_id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "READY",
+              "RUNNING",
+              "COMPLETE",
+              "BLOCKED",
+              "FAILED"
+            ]
+          },
+          "tool_request_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "evidence_bundle_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "language_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requested_level",
+        "allowed_level",
+        "reason"
+      ],
+      "properties": {
+        "requested_level": {
+          "type": "string"
+        },
+        "allowed_level": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "affected_node_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reused_node_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "result_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

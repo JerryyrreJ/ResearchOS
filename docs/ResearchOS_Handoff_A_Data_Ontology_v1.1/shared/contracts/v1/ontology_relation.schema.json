@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://researchos.local/contracts/v1/ontology_relation.schema.json",
+  "title": "OntologyRelation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "relation_id",
+    "source_ref",
+    "target_ref",
+    "relation_type",
+    "state",
+    "created_by",
+    "created_at"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "0.1.0-frozen"
+    },
+    "relation_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "source_ref": {
+      "type": "string",
+      "minLength": 3
+    },
+    "target_ref": {
+      "type": "string",
+      "minLength": 3
+    },
+    "relation_type": {
+      "enum": [
+        "DERIVED_FROM",
+        "NEW_VERSION_OF",
+        "DUPLICATES",
+        "REFERENCES",
+        "ABOUT",
+        "SUPPORTS",
+        "CONTRADICTS",
+        "EXPANDS",
+        "SUMMARIZES",
+        "ASSIGNED_TO",
+        "USED_BY",
+        "PRODUCED_BY",
+        "DEPENDS_ON",
+        "AFFECTS"
+      ]
+    },
+    "state": {
+      "enum": [
+        "AI_PROPOSED",
+        "CONFIRMED",
+        "REJECTED"
+      ]
+    },
+    "confidence": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 500
+      }
+    },
+    "created_by": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

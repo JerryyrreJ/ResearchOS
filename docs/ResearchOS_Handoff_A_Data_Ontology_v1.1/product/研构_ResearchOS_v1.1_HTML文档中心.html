@@ -1,0 +1,983 @@
+<!doctype html><html lang="zh-CN" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>研构 ResearchOS v1.1 文档中心</title><style>
+:root{--bg:#f3f6fa;--paper:#fff;--soft:#f7f9fc;--text:#172033;--muted:#667085;--line:#dfe5ee;--brand:#174c78;--brandsoft:#eaf2f8;--danger:#b42318;--code:#0b1624;--top:60px;--side:300px;--shadow:0 12px 35px rgba(16,38,64,.09)}
+html[data-theme=dark]{--bg:#0b1420;--paper:#111d2a;--soft:#172536;--text:#e8eef6;--muted:#a7b3c4;--line:#2b3b4f;--brand:#8bc1ec;--brandsoft:#173047;--danger:#ff9b91;--code:#07101b;--shadow:0 16px 40px rgba(0,0,0,.3)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:80px}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;font-size:15px;line-height:1.75}.progress{position:fixed;z-index:1100;left:0;top:0;height:3px;width:0;background:linear-gradient(90deg,var(--brand),#0f7b8f)}.top{position:fixed;z-index:1000;inset:0 0 auto;height:var(--top);display:flex;align-items:center;gap:12px;padding:0 18px;background:color-mix(in srgb,var(--paper) 94%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.mark{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#153e67,#1888a1);color:white;font-weight:800}.title{font-weight:760}.subtitle{font-size:11px;color:var(--muted)}.grow{flex:1}.btn{border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--text);padding:7px 10px;cursor:pointer}.sidebar{position:fixed;top:var(--top);bottom:0;left:0;width:var(--side);overflow:auto;background:var(--paper);border-right:1px solid var(--line);padding:18px 14px}.side-title{margin:0 8px 8px;font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.08em;text-transform:uppercase}.doc-nav{display:grid;gap:7px;margin-bottom:18px}.doc-tab{padding:10px;text-align:left;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--text);cursor:pointer}.doc-tab small{display:block;margin-top:3px;color:var(--muted);font-weight:400;line-height:1.35}.doc-tab.active{background:var(--brandsoft);border-color:var(--line);color:var(--brand);font-weight:760}.toc{display:block;padding:5px 8px;border-left:2px solid transparent;border-radius:0 7px 7px 0;color:var(--muted);font-size:12px;line-height:1.45;text-decoration:none}.toc:hover,.toc.active{background:var(--soft);color:var(--brand);border-left-color:var(--brand)}.toc.l3{padding-left:20px;font-size:11.5px}.toc.l4{padding-left:32px;font-size:11px}.main{margin-left:var(--side);padding:calc(var(--top) + 30px) 28px 70px}.panel{display:none}.panel.active{display:block}.meta{max-width:1000px;margin:0 auto 16px;padding:12px 15px;background:var(--paper);border:1px solid var(--line);border-radius:11px;color:var(--muted);font-size:12px}.article{max-width:1000px;margin:auto;padding:44px 58px 72px;background:var(--paper);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);overflow-wrap:anywhere}.article h1,.article h2,.article h3,.article h4{line-height:1.35;scroll-margin-top:80px}.article h1{font-size:34px;margin:0 0 28px;padding-bottom:18px;border-bottom:2px solid var(--line)}.article h2{font-size:25px;margin:52px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line)}.article h3{font-size:19px;margin:34px 0 12px}.article h4{font-size:16px;margin:25px 0 9px}.anchor{opacity:0;margin-left:8px;color:var(--muted);font-size:.7em;text-decoration:none}h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor{opacity:.7}.article blockquote{margin:18px 0;padding:13px 18px;border-left:4px solid var(--brand);border-radius:0 10px 10px 0;background:var(--brandsoft)}.article li{margin:5px 0}.article li::marker{color:var(--brand);font-weight:700}.article code:not(pre code){padding:.12em .38em;border:1px solid var(--line);border-radius:5px;background:var(--soft);color:var(--danger);font-family:Consolas,monospace;font-size:.88em}.code{position:relative;margin:18px 0;border-radius:11px;overflow:hidden;background:var(--code)}.code>span{position:absolute;right:0;top:0;padding:5px 8px;color:#aab8ca;font-size:9px;background:rgba(0,0,0,.18)}.code pre{margin:0;padding:18px 20px;overflow:auto;color:#e8eef6;font-family:Consolas,monospace;font-size:12.5px;line-height:1.6}.table-wrap{margin:19px 0;overflow:auto;border:1px solid var(--line);border-radius:11px}table{width:100%;border-collapse:collapse;min-width:560px;font-size:13px}th{padding:10px 12px;text-align:left;background:var(--soft);border-bottom:1px solid var(--line)}td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}.menu{display:none}.backdrop{display:none}@media(max-width:900px){.menu{display:inline-block}.sidebar{transform:translateX(-105%);transition:.18s;z-index:800;box-shadow:var(--shadow)}body.open .sidebar{transform:translateX(0)}body.open .backdrop{display:block;position:fixed;z-index:750;inset:var(--top) 0 0;background:rgba(0,0,0,.45)}.main{margin-left:0;padding:calc(var(--top) + 20px) 14px 50px}.article{padding:32px 24px 50px}}@media(max-width:560px){.subtitle{display:none}.article{padding:25px 17px 42px}.article h1{font-size:27px}.article h2{font-size:21px}}@media print{.top,.sidebar,.backdrop,.progress,.meta{display:none!important}.main{margin:0;padding:0}.panel{display:block!important}.panel+.panel{page-break-before:always}.article{max-width:none;padding:0;border:0;box-shadow:none}}
+</style></head><body><div class="progress"></div><header class="top"><button class="btn menu" id="menu">☰</button><div class="mark">研</div><div><div class="title">研构 ResearchOS v1.1 文档中心</div><div class="subtitle">Research Ontology × Thesis Compiler × MacroTrace</div></div><div class="grow"></div><button class="btn" id="theme">◐ 主题</button><button class="btn" id="print">⎙ 打印</button></header><aside class="sidebar"><p class="side-title">文档</p><div class="doc-nav"><button class="doc-tab active" data-doc="full">完整产品书<small>产品定位、Research Ontology、Thesis Compiler、MacroTrace 和 P0</small></button><button class="doc-tab" data-doc="plain">大白话版<small>给组员、PM、评委和第一次接触产品的人</small></button><button class="doc-tab" data-doc="tech">技术协作手册<small>四人边界、合同、Git、集成和实施</small></button><button class="doc-tab" data-doc="revision">修订说明<small>本轮相较 v1.0 的关键改变</small></button></div><p class="side-title">当前目录</p><div id="toc"></div></aside><div class="backdrop"></div><main class="main"><section class="panel active" data-doc="full"><div class="meta">产品定位、Research Ontology、Thesis Compiler、MacroTrace 和 P0 · v1.1</div><article class="article"><h1 id="full-研构-researchos-完整产品书">研构 ResearchOS 完整产品书<a class="anchor" href="#full-研构-researchos-完整产品书">#</a></h1><blockquote>
+<p>版本：v1.1 四人协作冻结稿<br/>
+日期：2026-08-04<br/>
+用途：统一产品叙事、系统权力关系、黑客松范围、接口边界和 Codex 并行开发</p>
+</blockquote>
+<h2 id="full-0-执行摘要">0. 执行摘要<a class="anchor" href="#full-0-执行摘要">#</a></h2><h3 id="full-0-1-产品定义">0.1 产品定义<a class="anchor" href="#full-0-1-产品定义">#</a></h3><p>研构 ResearchOS 是面向研究团队的可验证研究操作系统。它将团队和 Agent 产生的 Word、PDF、Markdown、Excel、聊天记录、数据快照和模型结果转换为有身份、有版本、有关系、可授权调用的研究对象，再围绕一条明确研究论点组织验证需求，调用 MacroTrace 等注册研究工具执行真实模型，最后生成受证据等级约束的结论版本。</p>
+<h3 id="full-0-2-一句话">0.2 一句话<a class="anchor" href="#full-0-2-一句话">#</a></h3><blockquote>
+<p><strong>把散落的文件变成会协作的研究资产，再让研究结论通过编译。</strong></p>
+</blockquote>
+<h3 id="full-0-3-产品三层权力关系">0.3 产品三层权力关系<a class="anchor" href="#full-0-3-产品三层权力关系">#</a></h3><div class="code"><span>TEXT</span><pre><code>Research Ontology
+共享文件、版本、关系、权限和 Agent Context
+        ↓
+Thesis Compiler
+接收论点、产生错误、组织验证、拥有最终结论权
+        ↓
+Registered Research Tools
+MacroTrace 运行注册数据、模型、诊断和稳健性
+        ↓
+Evidence Bundle
+返回证据等级、结果、失败、局限和哈希
+        ↓
+Thesis Compiler Rebuild
+通过、降级、削弱、冲突或失败
+</code></pre></div><h3 id="full-0-4-核心分工">0.4 核心分工<a class="anchor" href="#full-0-4-核心分工">#</a></h3><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>模块</th>
+<th>回答的问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Research Ontology</td>
+<td>团队拥有哪些对象，哪个版本有效，它们如何关联，谁可以调用</td>
+</tr>
+<tr>
+<td>Thesis Compiler</td>
+<td>一条论点缺什么证据，现有证据允许说到什么程度</td>
+</tr>
+<tr>
+<td>MacroTrace</td>
+<td>注册数据和模型实际发现了什么</td>
+</tr>
+<tr>
+<td>Frontend and Release</td>
+<td>用户如何看懂整条链路，现场如何稳定运行</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="full-1-问题背景">1. 问题背景<a class="anchor" href="#full-1-问题背景">#</a></h2><h3 id="full-1-1-ai-产出速度已经超过团队整理速度">1.1 AI 产出速度已经超过团队整理速度<a class="anchor" href="#full-1-1-ai-产出速度已经超过团队整理速度">#</a></h3><p>一个四人团队分别使用 ChatGPT、Claude、Codex 或其他 Agent，很快会产生几十份文档、数据表和代码说明。文件分散后，团队需要手工完成寻找、去重、版本判断、汇总、冲突处理和上下文重建。</p>
+<h3 id="full-1-2-现有工具缺少共同研究状态">1.2 现有工具缺少共同研究状态<a class="anchor" href="#full-1-2-现有工具缺少共同研究状态">#</a></h3><p>研究过程通常分布在：</p>
+<ul>
+<li>群聊；</li>
+<li>本地文件夹；</li>
+<li>网盘；</li>
+<li>Git；</li>
+<li>Notebook；</li>
+<li>Word 和 PPT；</li>
+<li>不同 Agent 会话。</li>
+</ul>
+<p>研究员很难快速确认：</p>
+<ul>
+<li>最新决定；</li>
+<li>未决问题；</li>
+<li>依赖接口；</li>
+<li>文件版本；</li>
+<li>数据来源；</li>
+<li>模型输入；</li>
+<li>结论影响。</li>
+</ul>
+<h3 id="full-1-3-研究表达也缺少可执行约束">1.3 研究表达也缺少可执行约束<a class="anchor" href="#full-1-3-研究表达也缺少可执行约束">#</a></h3><p>大模型可以生成流畅论述，但不会稳定地因为定义模糊、时间窗口缺失、因果证据不足或关键诊断失败而停止。研究团队需要一套允许 Build Failed 的机制。</p>
+<h2 id="full-2-research-ontology-的产品优势">2. Research Ontology 的产品优势<a class="anchor" href="#full-2-research-ontology-的产品优势">#</a></h2><h3 id="full-2-1-文件是入口">2.1 文件是入口<a class="anchor" href="#full-2-1-文件是入口">#</a></h3><p>支持：</p>
+<ul>
+<li>Markdown；</li>
+<li>DOCX；</li>
+<li>文本型 PDF；</li>
+<li>XLSX 和 CSV；</li>
+<li>JSON；</li>
+<li>网页归档；</li>
+<li>聊天记录导出；</li>
+<li>模型产物。</li>
+</ul>
+<h3 id="full-2-2-原始文件完整保留">2.2 原始文件完整保留<a class="anchor" href="#full-2-2-原始文件完整保留">#</a></h3><p>系统生成三层对象：</p>
+<div class="code"><span>TEXT</span><pre><code>Original
+原始 PDF、DOCX、XLSX、MD
+
+Canonical Representation
+content.md、document.json、tables/*.csv、manifest.json
+
+Semantic Objects
+主题、决定、接口、任务、风险、数据集、模型规格和论点
+</code></pre></div><h3 id="full-2-3-对象拥有稳定身份">2.3 对象拥有稳定身份<a class="anchor" href="#full-2-3-对象拥有稳定身份">#</a></h3><p>每个对象至少记录：</p>
+<ul>
+<li>object_id；</li>
+<li>version_id；</li>
+<li>SHA-256；</li>
+<li>创建者和负责人；</li>
+<li>来源和许可；</li>
+<li>状态；</li>
+<li>标签；</li>
+<li>规范化表示；</li>
+<li>父对象和派生对象；</li>
+<li>被哪些 Context Pack、模型和结论引用。</li>
+</ul>
+<h3 id="full-2-4-关系形成研究本体">2.4 关系形成研究本体<a class="anchor" href="#full-2-4-关系形成研究本体">#</a></h3><p>P0 关系包括：</p>
+<div class="code"><span>TEXT</span><pre><code>DERIVED_FROM
+NEW_VERSION_OF
+DUPLICATES
+REFERENCES
+ABOUT
+CONTRADICTS
+DEPENDS_ON
+AFFECTS
+USED_BY
+PRODUCED_BY
+</code></pre></div><p>AI 先提出候选关系。确认后的关系形成项目状态。</p>
+<h3 id="full-2-5-相较于本地文件夹">2.5 相较于本地文件夹<a class="anchor" href="#full-2-5-相较于本地文件夹">#</a></h3><p>文件夹按路径组织。Research Ontology 按对象含义、版本、关系和影响组织。它能够回答“改动会影响什么”，并为不同 Agent 选择固定版本材料。</p>
+<h3 id="full-2-6-相较于群聊">2.6 相较于群聊<a class="anchor" href="#full-2-6-相较于群聊">#</a></h3><p>群聊保存时间流。Research Ontology 保存决定、问题、接口和文件版本。新成员可以直接读取当前项目状态。</p>
+<h3 id="full-2-7-相较于-git">2.7 相较于 Git<a class="anchor" href="#full-2-7-相较于-git">#</a></h3><p>Git 提供文件历史。Research Ontology增加跨格式规范化、语义对象、责任关系、权限、许可、Context Pack、模型运行和结论影响。</p>
+<h3 id="full-2-8-相较于普通-rag">2.8 相较于普通 RAG<a class="anchor" href="#full-2-8-相较于普通-rag">#</a></h3><p>RAG 主要检索文本块。Research Ontology 继续保存原件、版本、关系、使用记录和正式状态。回答必须绑定对象版本和位置。</p>
+<h2 id="full-3-context-pack">3. Context Pack<a class="anchor" href="#full-3-context-pack">#</a></h2><h3 id="full-3-1-目标">3.1 目标<a class="anchor" href="#full-3-1-目标">#</a></h3><p>四名成员分别使用自己的 Codex。系统需要保证：</p>
+<ul>
+<li>每个 Codex 获得任务相关材料；</li>
+<li>所有人使用同一合同版本；</li>
+<li>已废弃对象不会进入默认上下文；</li>
+<li>未决冲突和禁止修改项会进入 Prompt；</li>
+<li>Context Pack 可以复现和比较。</li>
+</ul>
+<h3 id="full-3-2-内容">3.2 内容<a class="anchor" href="#full-3-2-内容">#</a></h3><div class="code"><span>TEXT</span><pre><code>Task
+Required Objects
+Frozen Interfaces
+Confirmed Decisions
+Open Questions
+Forbidden Changes
+Version Map
+Token Budget
+Pack Hash
+</code></pre></div><h3 id="full-3-3-价值">3.3 价值<a class="anchor" href="#full-3-3-价值">#</a></h3><p>Context Pack 将数据本体直接转化为多 Agent 协作能力。它减少重复解释，限制 Codex 越界修改，并保留每个任务使用的上下文版本。</p>
+<h2 id="full-4-thesis-compiler">4. Thesis Compiler<a class="anchor" href="#full-4-thesis-compiler">#</a></h2><h3 id="full-4-1-主交互">4.1 主交互<a class="anchor" href="#full-4-1-主交互">#</a></h3><p>用户提交明确论点：</p>
+<blockquote>
+<p>美国财政扩张正在持续推高 10 年期美债收益率。</p>
+</blockquote>
+<p>Thesis Compiler 先进行静态检查，再决定是否调用研究工具。</p>
+<h3 id="full-4-2-p0-编译规则">4.2 P0 编译规则<a class="anchor" href="#full-4-2-p0-编译规则">#</a></h3><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>错误码</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DEF001</td>
+<td>核心概念没有操作化定义</td>
+</tr>
+<tr>
+<td>HORIZON001</td>
+<td>时间窗口或“持续”未定义</td>
+</tr>
+<tr>
+<td>TIME001</td>
+<td>来源或数据晚于 as_of_date</td>
+</tr>
+<tr>
+<td>VAR001</td>
+<td>必需变量或竞争解释缺失</td>
+</tr>
+<tr>
+<td>FALS001</td>
+<td>关键论点缺少证伪条件</td>
+</tr>
+<tr>
+<td>TOOL001</td>
+<td>需要的注册工具路线不存在</td>
+</tr>
+<tr>
+<td>EVIDENCE001</td>
+<td>证据覆盖不足</td>
+</tr>
+<tr>
+<td>DIAG001</td>
+<td>阻断诊断失败</td>
+</tr>
+<tr>
+<td>CLAIM_LANG001</td>
+<td>证据等级不足以支持措辞</td>
+</tr>
+<tr>
+<td>PERM001</td>
+<td>输入对象无权访问</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="full-4-3-验证计划">4.3 验证计划<a class="anchor" href="#full-4-3-验证计划">#</a></h3><p>编译错误转为用户可执行步骤：</p>
+<div class="code"><span>TEXT</span><pre><code>定义财政扩张
+明确时间窗口
+加入竞争性解释
+运行注册研究工具
+添加证伪条件
+重新编译
+</code></pre></div><h3 id="full-4-4-最终状态">4.4 最终状态<a class="anchor" href="#full-4-4-最终状态">#</a></h3><div class="code"><span>TEXT</span><pre><code>COMPILE_FAILED
+EVIDENCE_INSUFFICIENT
+SUPPORTED
+WEAKENED
+EVIDENCE_CONFLICT
+</code></pre></div><p>只有 Thesis Compiler 可以产生这些状态。</p>
+<h2 id="full-5-macrotrace">5. MacroTrace<a class="anchor" href="#full-5-macrotrace">#</a></h2><h3 id="full-5-1-定位">5.1 定位<a class="anchor" href="#full-5-1-定位">#</a></h3><p>MacroTrace 直接复用为注册制实证工具。现有研究路由、Registry、模型、诊断、Research Graph、DuckDB、Artifact、API 和测试应尽量保持稳定。</p>
+<h3 id="full-5-2-输入">5.2 输入<a class="anchor" href="#full-5-2-输入">#</a></h3><p>C 通过 <code>ToolRequest</code> 请求研究：</p>
+<ul>
+<li>thesis_id；</li>
+<li>question；</li>
+<li>as_of_date；</li>
+<li>requested_evidence_type；</li>
+<li>workflow_hint；</li>
+<li>固定版本 DataObjectRef；</li>
+<li>falsifier_requirements；</li>
+<li>timeout。</li>
+</ul>
+<h3 id="full-5-3-输出">5.3 输出<a class="anchor" href="#full-5-3-输出">#</a></h3><p>B 返回 <code>EvidenceBundle</code>：</p>
+<ul>
+<li>engine_claim；</li>
+<li>evidence_type；</li>
+<li>model_runs；</li>
+<li>diagnostics；</li>
+<li>robustness；</li>
+<li>evidence_items；</li>
+<li>falsifiers；</li>
+<li>limitations；</li>
+<li>input_object_refs；</li>
+<li>registry_version；</li>
+<li>result_hash；</li>
+<li>artifacts。</li>
+</ul>
+<h3 id="full-5-4-证据等级">5.4 证据等级<a class="anchor" href="#full-5-4-证据等级">#</a></h3><div class="code"><span>TEXT</span><pre><code>DESCRIPTIVE
+PREDICTIVE
+ASSOCIATIONAL
+DYNAMIC_ASSOCIATION
+STRUCTURAL_PROXY
+CAUSAL_IDENTIFIED
+</code></pre></div><p>MacroTrace 的内部 Final Claim 在研构中映射为 <code>engine_claim</code>。产品最终结论仍由 C 编译。</p>
+<h2 id="full-6-用户完整路径">6. 用户完整路径<a class="anchor" href="#full-6-用户完整路径">#</a></h2><h3 id="full-6-1-项目文件进入">6.1 项目文件进入<a class="anchor" href="#full-6-1-项目文件进入">#</a></h3><p>团队批量投入文件。A 创建对象、规范化表示、候选关系和项目状态。</p>
+<h3 id="full-6-2-项目问答">6.2 项目问答<a class="anchor" href="#full-6-2-项目问答">#</a></h3><p>用户查询决定、冲突和接口，答案回到对象版本。</p>
+<h3 id="full-6-3-创建论点">6.3 创建论点<a class="anchor" href="#full-6-3-创建论点">#</a></h3><p>用户从项目对象或自然语言创建 ThesisBuild。</p>
+<h3 id="full-6-4-初次编译">6.4 初次编译<a class="anchor" href="#full-6-4-初次编译">#</a></h3><p>系统显示 Build Failed 和验证计划。</p>
+<h3 id="full-6-5-研究工具执行">6.5 研究工具执行<a class="anchor" href="#full-6-5-研究工具执行">#</a></h3><p>C 产生 ToolRequest。B 通过 A 的 Data Resolve 读取固定版本数据，运行 MacroTrace。</p>
+<h3 id="full-6-6-evidence-bundle">6.6 Evidence Bundle<a class="anchor" href="#full-6-6-evidence-bundle">#</a></h3><p>模型结果、失败、诊断和局限返回 C。</p>
+<h3 id="full-6-7-recompile">6.7 Recompile<a class="anchor" href="#full-6-7-recompile">#</a></h3><p>C 执行语言政策和证据规则，产生最终状态。</p>
+<h3 id="full-6-8-写回">6.8 写回<a class="anchor" href="#full-6-8-写回">#</a></h3><p>模型运行、Evidence Package 和 Claim Version 写回 Ontology。</p>
+<h3 id="full-6-9-diff">6.9 Diff<a class="anchor" href="#full-6-9-diff">#</a></h3><p>新文件或新数据版本激活后，系统定位受影响 Context Pack、模型运行和论点版本。</p>
+<h2 id="full-7-产品页面">7. 产品页面<a class="anchor" href="#full-7-产品页面">#</a></h2><ol>
+<li>Workspace and Ontology；</li>
+<li>Thesis Build Console；</li>
+<li>Validation Plan；</li>
+<li>MacroTrace Evidence Drawer；</li>
+<li>Recompile Result；</li>
+<li>Version Diff。</li>
+</ol>
+<p>Evidence Drawer 复用现有 MacroTrace Research Graph，不开发第二张同义研究图。</p>
+<h2 id="full-8-黑客松-p0">8. 黑客松 P0<a class="anchor" href="#full-8-黑客松-p0">#</a></h2><h3 id="full-8-1-research-ontology">8.1 Research Ontology<a class="anchor" href="#full-8-1-research-ontology">#</a></h3><ul>
+<li>批量上传 MD、DOCX、文本 PDF、XLSX；</li>
+<li>原始文件和哈希；</li>
+<li>规范化表示；</li>
+<li>对象版本；</li>
+<li>摘要和标签；</li>
+<li>重复、新版本、引用和冲突候选；</li>
+<li>项目关系图或关系表；</li>
+<li>Context Pack；</li>
+<li>Data Resolve。</li>
+</ul>
+<h3 id="full-8-2-thesis-compiler">8.2 Thesis Compiler<a class="anchor" href="#full-8-2-thesis-compiler">#</a></h3><ul>
+<li>ThesisBuild；</li>
+<li>8 至 10 条规则；</li>
+<li>Validation Plan；</li>
+<li>ToolRequest；</li>
+<li>EvidenceBundle 消费；</li>
+<li>Language Policy；</li>
+<li>CompileResult；</li>
+<li>Diff。</li>
+</ul>
+<h3 id="full-8-3-macrotrace">8.3 MacroTrace<a class="anchor" href="#full-8-3-macrotrace">#</a></h3><ul>
+<li>上游版本记录；</li>
+<li>Tool Adapter；</li>
+<li>Ontology Adapter；</li>
+<li>黄金路线；</li>
+<li>EvidenceBundle；</li>
+<li>Offline Snapshot。</li>
+</ul>
+<h3 id="full-8-4-frontend-and-release">8.4 Frontend and Release<a class="anchor" href="#full-8-4-frontend-and-release">#</a></h3><ul>
+<li>六个页面；</li>
+<li>Fixture First；</li>
+<li>E2E；</li>
+<li>Nginx 和服务部署；</li>
+<li>QR；</li>
+<li>Demo Reset；</li>
+<li>Offline Replay；</li>
+<li>录屏。</li>
+</ul>
+<h2 id="full-9-p0-暂缓">9. P0 暂缓<a class="anchor" href="#full-9-p0-暂缓">#</a></h2><ul>
+<li>完整企业权限；</li>
+<li>字段级权限；</li>
+<li>三个完整 Domain Pack；</li>
+<li>全量中国宏观迁移；</li>
+<li>任意统计代码生成；</li>
+<li>自动证明因果；</li>
+<li>全市场实时数据；</li>
+<li>个股涨跌预测；</li>
+<li>无限并发；</li>
+<li>第二套 Empirical Engine、Research Graph 或 Model Registry。</li>
+</ul>
+<h2 id="full-10-黄金案例">10. 黄金案例<a class="anchor" href="#full-10-黄金案例">#</a></h2><h3 id="full-10-1-保底路线">10.1 保底路线<a class="anchor" href="#full-10-1-保底路线">#</a></h3><p>使用现有 MacroTrace 美国财政和 10 年期美债路线，保证真实、稳定和离线可回放。</p>
+<h3 id="full-10-2-中国路线升级条件">10.2 中国路线升级条件<a class="anchor" href="#full-10-2-中国路线升级条件">#</a></h3><p>中国国债路线需要全部通过：</p>
+<ol>
+<li>Ontology 数据版本冻结；</li>
+<li>主模型连续运行三次；</li>
+<li>关键诊断可展示；</li>
+<li>EvidenceBundle 合同通过；</li>
+<li>Offline Snapshot 通过；</li>
+<li>团队确认稳定性更高。</li>
+</ol>
+<h2 id="full-11-90-秒-demo">11. 90 秒 Demo<a class="anchor" href="#full-11-90-秒-demo">#</a></h2><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>时间</th>
+<th>画面</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 至 12 秒</td>
+<td>项目 Ontology、文件版本和接口影响</td>
+</tr>
+<tr>
+<td>12 至 27 秒</td>
+<td>明确论点初次 Build Failed</td>
+</tr>
+<tr>
+<td>27 至 42 秒</td>
+<td>Validation Plan 和 ToolRequest</td>
+</tr>
+<tr>
+<td>42 至 60 秒</td>
+<td>一个主模型、一个诊断和一个挑战结果</td>
+</tr>
+<tr>
+<td>60 至 76 秒</td>
+<td>原因果措辞失败，降级论点重新编译</td>
+</tr>
+<tr>
+<td>76 至 90 秒</td>
+<td>新版本触发局部重算和 Diff</td>
+</tr>
+</tbody>
+</table></div>
+<p>结束语：</p>
+<blockquote>
+<p><strong>MacroTrace 负责把研究跑出来，研构负责判断这些证据允许研究员说到什么程度。</strong></p>
+</blockquote>
+<h2 id="full-12-四人协作">12. 四人协作<a class="anchor" href="#full-12-四人协作">#</a></h2><h3 id="full-a-research-ontology">A：Research Ontology<a class="anchor" href="#full-a-research-ontology">#</a></h3><p>拥有对象、规范化、关系、搜索、Context Pack 和 Data Resolve。</p>
+<h3 id="full-b-macrotrace">B：MacroTrace<a class="anchor" href="#full-b-macrotrace">#</a></h3><p>拥有现有 MacroTrace、Tool Adapter、Ontology Adapter、EvidenceBundle、黄金路线和 Snapshot。</p>
+<h3 id="full-c-thesis-compiler">C：Thesis Compiler<a class="anchor" href="#full-c-thesis-compiler">#</a></h3><p>拥有 ThesisBuild、规则、Validation Plan、ToolRequest、EvidenceBundle 编译、Language Policy、最终状态、Diff 和合同治理。</p>
+<h3 id="full-d-frontend-and-release">D：Frontend and Release<a class="anchor" href="#full-d-frontend-and-release">#</a></h3><p>拥有前端、E2E、部署、二维码、Demo、Offline 和发布。</p>
+<h2 id="full-13-核心接口">13. 核心接口<a class="anchor" href="#full-13-核心接口">#</a></h2><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Producer</th>
+<th>Consumer</th>
+<th>Contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>B</td>
+<td>DataObjectRef、DataResolveRequest、DataResolveResponse</td>
+</tr>
+<tr>
+<td>A</td>
+<td>C</td>
+<td>DataObjectRef、ContextPack、OntologyRelation</td>
+</tr>
+<tr>
+<td>C</td>
+<td>B</td>
+<td>ToolRequest</td>
+</tr>
+<tr>
+<td>B</td>
+<td>C</td>
+<td>EvidenceBundle</td>
+</tr>
+<tr>
+<td>C</td>
+<td>D</td>
+<td>ThesisBuild、CompileResult、JobEvent、VersionDiff</td>
+</tr>
+<tr>
+<td>A</td>
+<td>D</td>
+<td>Object Summary、Ontology Graph、Context Pack</td>
+</tr>
+</tbody>
+</table></div>
+<p>公共合同版本为 <code>0.1.0-frozen</code>。破坏性变更需要四人批准并提升版本。</p>
+<h2 id="full-14-验收标准">14. 验收标准<a class="anchor" href="#full-14-验收标准">#</a></h2><h3 id="full-14-1-ontology">14.1 Ontology<a class="anchor" href="#full-14-1-ontology">#</a></h3><ul>
+<li>混合文件可批量上传；</li>
+<li>原件和规范化表示可回链；</li>
+<li>exact duplicate 不重复存储；</li>
+<li>修改创建新版本；</li>
+<li>Context Pack 固定版本和哈希；</li>
+<li>Data Resolve 不自动取最新。</li>
+</ul>
+<h3 id="full-14-2-macrotrace">14.2 MacroTrace<a class="anchor" href="#full-14-2-macrotrace">#</a></h3><ul>
+<li>上游来源和 commit 有记录；</li>
+<li>ToolRequest 和 EvidenceBundle 通过 Schema；</li>
+<li>黄金路线连续运行三次；</li>
+<li>失败模型保留；</li>
+<li>Offline 明确标识；</li>
+<li>engine_claim 不越权成为产品结论。</li>
+</ul>
+<h3 id="full-14-3-thesis-compiler">14.3 Thesis Compiler<a class="anchor" href="#full-14-3-thesis-compiler">#</a></h3><ul>
+<li>初次论点触发真实错误；</li>
+<li>Validation Plan 可执行；</li>
+<li>证据等级限制措辞；</li>
+<li>阻断诊断影响状态；</li>
+<li>降级论点可生成；</li>
+<li>Diff 正确。</li>
+</ul>
+<h3 id="full-14-4-frontend">14.4 Frontend<a class="anchor" href="#full-14-4-frontend">#</a></h3><ul>
+<li>Fixture 与真实 API 可切换；</li>
+<li>失败节点可见；</li>
+<li>未知状态有错误；</li>
+<li>E2E 黄金路径通过；</li>
+<li>QR 可访问；</li>
+<li>连续三次演示；</li>
+<li>录屏与实际产品一致。</li>
+</ul>
+<h2 id="full-15-商业化方向">15. 商业化方向<a class="anchor" href="#full-15-商业化方向">#</a></h2><h3 id="full-第一阶段">第一阶段<a class="anchor" href="#full-第一阶段">#</a></h3><p>项目研究工作区、批量文件、Ontology、Context Pack 和单一注册研究工具。</p>
+<h3 id="full-第二阶段">第二阶段<a class="anchor" href="#full-第二阶段">#</a></h3><p>多工作区、审批、iFind/Wind/内部数据库连接、行业模板和团队研究资产库。</p>
+<h3 id="full-第三阶段">第三阶段<a class="anchor" href="#full-第三阶段">#</a></h3><p>企业 Research API、大规模研报逆向、多工具 Registry 和受控 Agent 基础设施。</p>
+<h2 id="full-16-最终定位">16. 最终定位<a class="anchor" href="#full-16-最终定位">#</a></h2><p>Research Ontology 是共享状态和长期数据资产基础。Thesis Compiler 是用户形成和更新论点的主交互。MacroTrace 是已经成熟的实证执行工具。三者形成从文件到证据、从证据到结论、从结论到版本的完整闭环。</p>
+<blockquote>
+<p><strong>让团队和 Agent 共享同一份研究状态，让每条结论都能回到文件、数据和模型。</strong></p>
+</blockquote>
+</article></section><section class="panel" data-doc="plain"><div class="meta">给组员、PM、评委和第一次接触产品的人 · v1.1</div><article class="article"><h1 id="plain-研构-researchos-产品说明书">研构 ResearchOS 产品说明书<a class="anchor" href="#plain-研构-researchos-产品说明书">#</a></h1><blockquote>
+<p>v1.1 大白话版<br/>
+给组员、PM、评委和第一次接触产品的人阅读</p>
+</blockquote>
+<h2 id="plain-1-我们在解决什么问题">1. 我们在解决什么问题<a class="anchor" href="#plain-1-我们在解决什么问题">#</a></h2><p>现在每个人都可以用 AI 快速产生文件。一个四人小组很快会出现几十份：</p>
+<ul>
+<li>Markdown；</li>
+<li>Word；</li>
+<li>PDF；</li>
+<li>Excel；</li>
+<li>代码说明；</li>
+<li>数据表；</li>
+<li>路演稿；</li>
+<li>不同 Agent 的回答。</li>
+</ul>
+<p>这些文件通常散落在微信群、个人电脑和不同聊天窗口里。团队随后要花大量时间找文件、问版本、复制内容和重新解释上下文。</p>
+<p>研构提供一个统一项目面板。团队把文件批量投入后，系统保存原件，生成可理解的统一表示，再自动识别文件讲什么、属于哪个模块、由谁负责、和哪些文件有关、哪份是新版本，以及哪些内容互相冲突。</p>
+<p>一句话：</p>
+<blockquote>
+<p><strong>把散落的文件变成会协作的研究资产。</strong></p>
+</blockquote>
+<h2 id="plain-2-数据本体用人话怎么理解">2. 数据本体用人话怎么理解<a class="anchor" href="#plain-2-数据本体用人话怎么理解">#</a></h2><p>普通文件夹主要记录文件放在哪里。研构还记录：</p>
+<ul>
+<li>文件是谁产生的；</li>
+<li>它讨论哪个问题；</li>
+<li>它属于草稿、候选还是正式决定；</li>
+<li>它引用哪些文件；</li>
+<li>哪份是它的新版本；</li>
+<li>哪些内容和它冲突；</li>
+<li>哪个 Agent 使用过它；</li>
+<li>它更新后会影响哪些任务、模型和结论。</li>
+</ul>
+<p>因此，一个 <code>.docx</code>、<code>.pdf</code> 或 <code>.md</code> 会成为有身份、有版本、有权限、有关系的研究对象。</p>
+<h2 id="plain-3-文件进入系统后会发生什么">3. 文件进入系统后会发生什么<a class="anchor" href="#plain-3-文件进入系统后会发生什么">#</a></h2><h3 id="plain-3-1-保存原始文件">3.1 保存原始文件<a class="anchor" href="#plain-3-1-保存原始文件">#</a></h3><p>系统保留 Word、PDF、Excel 和 Markdown 原件，计算内容哈希，创建稳定对象 ID 和版本 ID。</p>
+<h3 id="plain-3-2-生成规范化表示">3.2 生成规范化表示<a class="anchor" href="#plain-3-2-生成规范化表示">#</a></h3><div class="code"><span>TEXT</span><pre><code>DOCX / PDF / Markdown
+→ content.md
+→ document.json
+→ manifest.json
+
+XLSX / CSV
+→ table.csv 或 table.parquet
+→ 字段目录
+→ 单位、频率和缺失信息
+</code></pre></div><h3 id="plain-3-3-ai-提出语义信息">3.3 AI 提出语义信息<a class="anchor" href="#plain-3-3-ai-提出语义信息">#</a></h3><p>AI 可以提出：</p>
+<ul>
+<li>摘要；</li>
+<li>标签；</li>
+<li>模块；</li>
+<li>决定；</li>
+<li>未决问题；</li>
+<li>接口；</li>
+<li>负责人；</li>
+<li>候选关系。</li>
+</ul>
+<p>重要关系先进入候选状态。团队确认后才成为正式项目状态。</p>
+<h3 id="plain-3-4-形成项目对象图">3.4 形成项目对象图<a class="anchor" href="#plain-3-4-形成项目对象图">#</a></h3><p>用户看到的内容包括：</p>
+<div class="code"><span>TEXT</span><pre><code>研构 ResearchOS
+├── Research Ontology
+├── Thesis Compiler
+├── MacroTrace
+├── Frontend
+├── Deployment
+└── Demo
+</code></pre></div><p>每个模块下面挂着相关文件、版本、决定、接口、负责人和未决问题。</p>
+<h2 id="plain-4-它比本地文件夹强在哪里">4. 它比本地文件夹强在哪里<a class="anchor" href="#plain-4-它比本地文件夹强在哪里">#</a></h2><p>文件夹能按路径保存文件。研构可以直接回答：</p>
+<ul>
+<li>最新产品定义是哪一版；</li>
+<li>A 和 B 还有哪些接口未冻结；</li>
+<li>哪些文件已经过期；</li>
+<li>哪两份方案互相冲突；</li>
+<li>某个修改会影响哪些 Codex；</li>
+<li>给前端 Codex 应该提供哪些材料；</li>
+<li>某个模型用了哪一版数据。</li>
+</ul>
+<p>文件夹像储物柜。研构提供项目状态和关系。</p>
+<h2 id="plain-5-它比微信群强在哪里">5. 它比微信群强在哪里<a class="anchor" href="#plain-5-它比微信群强在哪里">#</a></h2><p>群聊按时间排列。决定、闲聊和文件容易混在一起。研构把内容转成稳定对象：</p>
+<div class="code"><span>TEXT</span><pre><code>DECISION
+OPEN_QUESTION
+INTERFACE
+TASK
+RISK
+FILE_VERSION
+</code></pre></div><p>新成员可以直接读取项目当前状态，无需重翻全部消息。</p>
+<h2 id="plain-6-它比-git-强在哪里">6. 它比 Git 强在哪里<a class="anchor" href="#plain-6-它比-git-强在哪里">#</a></h2><p>Git 擅长代码和文本差分。研构在此基础上增加：</p>
+<ul>
+<li>Word、PDF、Excel 的规范化；</li>
+<li>文件语义；</li>
+<li>跨文件关系；</li>
+<li>项目决定和责任人；</li>
+<li>权限和许可；</li>
+<li>面向 Agent 的 Context Pack；</li>
+<li>模型运行和结论影响。</li>
+</ul>
+<p>普通用户只需看到“这是新版本、这些内容发生变化、这些任务受到影响”。</p>
+<h2 id="plain-7-context-pack-为什么重要">7. Context Pack 为什么重要<a class="anchor" href="#plain-7-context-pack-为什么重要">#</a></h2><p>四个人分别使用自己的 Codex。每个 Codex 需要的材料不同：</p>
+<div class="code"><span>TEXT</span><pre><code>A 的 Codex：对象 Schema、文件处理、版本、关系和权限
+B 的 Codex：MacroTrace、Data Resolve、ToolRequest 和 EvidenceBundle
+C 的 Codex：ThesisBuild、编译规则、语言政策和版本差分
+D 的 Codex：前端状态、OpenAPI、Fixtures、部署和 Demo
+</code></pre></div><p>研构会为每个任务生成固定版本的 Context Pack。四个 Codex 使用同一套接口版本，减少“各自理解了一套产品”的问题。</p>
+<h2 id="plain-8-文件整理完之后-研究怎样真正运行">8. 文件整理完之后，研究怎样真正运行<a class="anchor" href="#plain-8-文件整理完之后-研究怎样真正运行">#</a></h2><p>用户输入一条明确论点：</p>
+<blockquote>
+<p>美国财政扩张正在持续推高 10 年期美债收益率。</p>
+</blockquote>
+<p>系统先检查这句话：</p>
+<ul>
+<li>“财政扩张”如何定义；</li>
+<li>“持续”对应什么时间窗口；</li>
+<li>“推高”是否要求因果证据；</li>
+<li>是否缺少货币条件、通胀和经济活动等竞争解释；</li>
+<li>什么结果出现时应放弃该论点。</li>
+</ul>
+<p>第一次构建会返回错误和验证计划。</p>
+<p>随后 Thesis Compiler 调用 MacroTrace。MacroTrace 运行注册数据和模型，返回系数、置信区间、诊断、稳健性、Evidence Type 和局限。</p>
+<h2 id="plain-9-为什么-macrotrace-不能直接决定最终结论">9. 为什么 MacroTrace 不能直接决定最终结论<a class="anchor" href="#plain-9-为什么-macrotrace-不能直接决定最终结论">#</a></h2><p>MacroTrace 回答：</p>
+<blockquote>
+<p>注册数据和模型发现了什么。</p>
+</blockquote>
+<p>Thesis Compiler 回答：</p>
+<blockquote>
+<p>这些证据允许研究员把话说到什么程度。</p>
+</blockquote>
+<p>例如，模型提供的是条件关联，原论点使用了独立因果措辞。系统会保留实证结果，同时阻止原因果论点通过，并生成更准确的降级表述。</p>
+<p>最终状态包括：</p>
+<div class="code"><span>TEXT</span><pre><code>COMPILE_FAILED
+EVIDENCE_INSUFFICIENT
+SUPPORTED
+WEAKENED
+EVIDENCE_CONFLICT
+</code></pre></div><h2 id="plain-10-现场-demo">10. 现场 Demo<a class="anchor" href="#plain-10-现场-demo">#</a></h2><h3 id="plain-第一段-共同研究状态">第一段：共同研究状态<a class="anchor" href="#plain-第一段-共同研究状态">#</a></h3><p>批量导入四位成员的项目文件。系统展示原文件、规范化表示、标签、版本、关系和冲突。</p>
+<p>用户提问：</p>
+<blockquote>
+<p>A 和 B 之间还有哪些接口没有冻结？</p>
+</blockquote>
+<p>答案可以回到具体文件和版本。</p>
+<h3 id="plain-第二段-论点-build-failed">第二段：论点 Build Failed<a class="anchor" href="#plain-第二段-论点-build-failed">#</a></h3><p>输入待验证论点，系统显示定义、时间、因果和证伪错误。</p>
+<h3 id="plain-第三段-调用-macrotrace">第三段：调用 MacroTrace<a class="anchor" href="#plain-第三段-调用-macrotrace">#</a></h3><p>验证计划生成 ToolRequest。Evidence Drawer 展示一个主模型、一个关键诊断和一个挑战结果。</p>
+<h3 id="plain-第四段-重新编译">第四段：重新编译<a class="anchor" href="#plain-第四段-重新编译">#</a></h3><p>系统显示原因果措辞未通过，降级关联论点得到当前支持或证据不足状态。</p>
+<h3 id="plain-第五段-版本差分">第五段：版本差分<a class="anchor" href="#plain-第五段-版本差分">#</a></h3><p>加入新数据或修订文件。系统只重算受影响模型和结论，其他节点继续复用。</p>
+<h2 id="plain-11-四个人分别做什么">11. 四个人分别做什么<a class="anchor" href="#plain-11-四个人分别做什么">#</a></h2><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>人员</th>
+<th>负责内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>文件对象、规范化、版本、关系、Context Pack 和 Data Resolve</td>
+</tr>
+<tr>
+<td>B</td>
+<td>MacroTrace、真实模型、诊断、EvidenceBundle 和离线快照</td>
+</tr>
+<tr>
+<td>C</td>
+<td>Thesis Compiler、编译规则、工具编排、语言边界和最终状态</td>
+</tr>
+<tr>
+<td>D</td>
+<td>前端、部署、E2E、二维码、Demo Reset 和录屏</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="plain-12-产品边界">12. 产品边界<a class="anchor" href="#plain-12-产品边界">#</a></h2><p>黑客松版本集中完成一条真实闭环：</p>
+<div class="code"><span>TEXT</span><pre><code>文件进入
+→ 项目本体
+→ 论点编译失败
+→ 调用 MacroTrace
+→ Evidence Bundle
+→ 重新编译
+→ 版本差分
+</code></pre></div><p>本轮不追求完整企业权限、完整中国宏观迁移、任意模型代码生成、个股涨跌预测和无限并发。</p>
+<h2 id="plain-13-对外介绍">13. 对外介绍<a class="anchor" href="#plain-13-对外介绍">#</a></h2><h3 id="plain-20-秒版本">20 秒版本<a class="anchor" href="#plain-20-秒版本">#</a></h3><blockquote>
+<p>研构把团队产生的 Word、PDF、Markdown 和 Excel 变成有版本、有关系的研究对象。研究员提出论点后，系统先检查证据缺口，再调用 MacroTrace 运行真实模型，最后决定现有证据允许结论说到什么程度。</p>
+</blockquote>
+<h3 id="plain-结束语">结束语<a class="anchor" href="#plain-结束语">#</a></h3><blockquote>
+<p><strong>让团队和 Agent 共享同一份研究状态，让每条结论都能回到文件、数据和模型。</strong></p>
+</blockquote>
+</article></section><section class="panel" data-doc="tech"><div class="meta">四人边界、合同、Git、集成和实施 · v1.1</div><article class="article"><h1 id="tech-研构-researchos-技术-协作与实施手册">研构 ResearchOS 技术、协作与实施手册<a class="anchor" href="#tech-研构-researchos-技术-协作与实施手册">#</a></h1><blockquote>
+<p>版本：v1.1 四人 Codex 并行开发冻结稿<br/>
+合同版本：0.1.0-frozen</p>
+</blockquote>
+<h2 id="tech-1-技术目标">1. 技术目标<a class="anchor" href="#tech-1-技术目标">#</a></h2><p>系统需要交付两条可运行闭环。</p>
+<h3 id="tech-1-1-文件到共享研究状态">1.1 文件到共享研究状态<a class="anchor" href="#tech-1-1-文件到共享研究状态">#</a></h3><div class="code"><span>TEXT</span><pre><code>Upload
+→ Original Object
+→ Canonical Representation
+→ AI Enrichment
+→ Ontology Relations
+→ Project State
+→ Context Pack
+</code></pre></div><h3 id="tech-1-2-论点到可验证结论">1.2 论点到可验证结论<a class="anchor" href="#tech-1-2-论点到可验证结论">#</a></h3><div class="code"><span>TEXT</span><pre><code>ThesisBuild
+→ Compile Issues
+→ Validation Plan
+→ ToolRequest
+→ MacroTrace
+→ EvidenceBundle
+→ Language Policy
+→ CompileResult
+→ VersionDiff
+</code></pre></div><h2 id="tech-2-权力边界">2. 权力边界<a class="anchor" href="#tech-2-权力边界">#</a></h2><ul>
+<li>A 拥有对象身份、版本、关系和数据解析；</li>
+<li>B 拥有统计模型、诊断和 engine evidence；</li>
+<li>C 拥有编译规则、工具编排、语言政策和最终状态；</li>
+<li>D 拥有呈现、E2E、部署和演示；</li>
+<li>共享合同由团队冻结，C 负责 Steward 流程；</li>
+<li>任一模块不得直接读取其他模块数据库。</li>
+</ul>
+<h2 id="tech-3-推荐仓库结构">3. 推荐仓库结构<a class="anchor" href="#tech-3-推荐仓库结构">#</a></h2><div class="code"><span>TEXT</span><pre><code>AIY_Project/
+├── AGENTS.md
+├── contracts/v1/
+├── apps/
+│   ├── researchos_api/app/
+│   │   ├── objects/             # A
+│   │   ├── canonicalizers/      # A
+│   │   ├── ontology/            # A
+│   │   ├── search/              # A
+│   │   ├── context_builder/     # A
+│   │   ├── thesis/              # C
+│   │   ├── orchestration/       # C
+│   │   └── integrations/        # C
+│   └── web/                      # D
+├── services/macrotrace/          # B
+├── fixtures/
+├── tests/
+├── infra/                        # D
+├── scripts/
+└── docs/
+</code></pre></div><p>现有仓库结构优先保留。四个 Codex 必须先完成 Repo Inventory，再映射所有权。</p>
+<h2 id="tech-4-运行拓扑">4. 运行拓扑<a class="anchor" href="#tech-4-运行拓扑">#</a></h2><div class="code"><span>TEXT</span><pre><code>Browser
+  ↓
+Nginx
+  ├── /        → Web
+  └── /api/*   → ResearchOS API
+                    ├── A: Object and Ontology
+                    ├── C: Thesis and Orchestration
+                    └── localhost Tool Request
+                              ↓
+                         MacroTrace API
+                              ↓
+                         EvidenceBundle
+</code></pre></div><p>MacroTrace 保持独立运行。ResearchOS API 通过冻结合同调用它。</p>
+<h2 id="tech-5-共享合同">5. 共享合同<a class="anchor" href="#tech-5-共享合同">#</a></h2><h3 id="tech-5-1-dataobjectref">5.1 DataObjectRef<a class="anchor" href="#tech-5-1-dataobjectref">#</a></h3><p>固定对象版本、表示、Schema、许可和内容哈希。</p>
+<h3 id="tech-5-2-dataresolve">5.2 DataResolve<a class="anchor" href="#tech-5-2-dataresolve">#</a></h3><p>A 为 B 解析固定版本数据，返回任务物化路径、Schema、lineage 和 hash。</p>
+<h3 id="tech-5-3-contextpack">5.3 ContextPack<a class="anchor" href="#tech-5-3-contextpack">#</a></h3><p>A 为任务装配对象、接口、决定、问题、禁止改动和版本映射。</p>
+<h3 id="tech-5-4-thesisbuild">5.4 ThesisBuild<a class="anchor" href="#tech-5-4-thesisbuild">#</a></h3><p>C 保存原论点、规范化论点、语言等级、定义、证据要求、Falsifier 和输入对象。</p>
+<h3 id="tech-5-5-toolrequest">5.5 ToolRequest<a class="anchor" href="#tech-5-5-toolrequest">#</a></h3><p>C 请求 B 运行 MacroTrace。它不能携带任意 Python 或新公式。</p>
+<h3 id="tech-5-6-evidencebundle">5.6 EvidenceBundle<a class="anchor" href="#tech-5-6-evidencebundle">#</a></h3><p>B 返回 engine_claim、证据等级、模型、诊断、稳健性、局限、对象引用、Registry 版本和哈希。</p>
+<h3 id="tech-5-7-compileresult">5.7 CompileResult<a class="anchor" href="#tech-5-7-compileresult">#</a></h3><p>C 返回唯一产品结论状态、编译问题、Validation Plan、语言政策、受影响节点和复用节点。</p>
+<h3 id="tech-5-8-versiondiff">5.8 VersionDiff<a class="anchor" href="#tech-5-8-versiondiff">#</a></h3><p>C 汇总版本差异，A/B 提供对象和模型影响信息。</p>
+<h2 id="tech-6-合同变更等级">6. 合同变更等级<a class="anchor" href="#tech-6-合同变更等级">#</a></h2><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>等级</th>
+<th>含义</th>
+<th>审批</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L0</td>
+<td>模块内部修改，不改变公共语义</td>
+<td>角色自行决定</td>
+</tr>
+<tr>
+<td>L1</td>
+<td>向后兼容增加可选字段或内部端点</td>
+<td>Producer 和至少一个 Consumer</td>
+</tr>
+<tr>
+<td>L2</td>
+<td>重命名、删除字段、改变枚举或状态</td>
+<td>A、B、C、D 全部批准并升版本</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>改变模块所有权或绕过 Adapter</td>
+<td>团队会议、迁移和回滚方案</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="tech-7-git-工作流">7. Git 工作流<a class="anchor" href="#tech-7-git-工作流">#</a></h2><div class="code"><span>TEXT</span><pre><code>main
+integration
+role/a-ontology
+role/b-macrotrace
+role/c-thesis
+role/d-frontend
+</code></pre></div><p>每个角色从同一合同冻结提交创建分支。推荐使用 worktree。所有角色 PR 目标为 <code>integration</code>。<code>main</code> 只接受 Release PR。</p>
+<h2 id="tech-8-集成顺序">8. 集成顺序<a class="anchor" href="#tech-8-集成顺序">#</a></h2><ol>
+<li>导入共享合同和 Fixtures；</li>
+<li>A 提供 Object 和 Data Resolve Fixtures；</li>
+<li>B 提供 EvidenceBundle Fixture；</li>
+<li>C 使用 Fixture 完成 Compile；</li>
+<li>D 使用 Fixture 完成 UI；</li>
+<li>A/B 替换 Fixture 为真实服务；</li>
+<li>C 完成真实编排；</li>
+<li>D 完成 E2E 和部署；</li>
+<li>功能冻结；</li>
+<li>Release。</li>
+</ol>
+<h2 id="tech-9-role-a-实施边界">9. Role A 实施边界<a class="anchor" href="#tech-9-role-a-实施边界">#</a></h2><h3 id="tech-负责">负责<a class="anchor" href="#tech-负责">#</a></h3><ul>
+<li>ObjectRecord、ObjectVersion、Representation；</li>
+<li>MD、DOCX、文本 PDF、XLSX 规范化；</li>
+<li>SHA-256、重复和版本；</li>
+<li>AI 候选标签、决定、问题和关系；</li>
+<li>Project State；</li>
+<li>Context Pack；</li>
+<li>Data Resolve。</li>
+</ul>
+<h3 id="tech-禁止">禁止<a class="anchor" href="#tech-禁止">#</a></h3><ul>
+<li>选择统计模型；</li>
+<li>生成 CompileResult；</li>
+<li>改变 Evidence Type；</li>
+<li>让消费者绕过 version_id；</li>
+<li>修改 B/C/D 的内部代码。</li>
+</ul>
+<h2 id="tech-10-role-b-实施边界">10. Role B 实施边界<a class="anchor" href="#tech-10-role-b-实施边界">#</a></h2><h3 id="tech-负责-2">负责<a class="anchor" href="#tech-负责-2">#</a></h3><ul>
+<li>保留 MacroTrace 上游；</li>
+<li>ToolRequest Adapter；</li>
+<li>Ontology Data Adapter；</li>
+<li>模型运行和诊断；</li>
+<li>EvidenceBundle；</li>
+<li>黄金路线和 Offline Snapshot。</li>
+</ul>
+<h3 id="tech-禁止-2">禁止<a class="anchor" href="#tech-禁止-2">#</a></h3><ul>
+<li>开发第二套 Empirical Engine；</li>
+<li>让 MacroTrace 决定 <code>conclusion_state</code>；</li>
+<li>为结果表现修改规格；</li>
+<li>直接读取 A 的数据库；</li>
+<li>隐藏失败模型。</li>
+</ul>
+<h2 id="tech-11-role-c-实施边界">11. Role C 实施边界<a class="anchor" href="#tech-11-role-c-实施边界">#</a></h2><h3 id="tech-负责-3">负责<a class="anchor" href="#tech-负责-3">#</a></h3><ul>
+<li>ThesisBuild；</li>
+<li>编译规则；</li>
+<li>Validation Plan；</li>
+<li>ToolRequest；</li>
+<li>EvidenceBundle 消费；</li>
+<li>Language Policy；</li>
+<li>CompileResult；</li>
+<li>VersionDiff；</li>
+<li>Orchestration 和合同 Steward。</li>
+</ul>
+<h3 id="tech-禁止-3">禁止<a class="anchor" href="#tech-禁止-3">#</a></h3><ul>
+<li>直接运行统计模型；</li>
+<li>读取 A/B 数据库；</li>
+<li>单方面改变 L2/L3 合同；</li>
+<li>降低因果语言规则以通过 Demo；</li>
+<li>删除失败证据。</li>
+</ul>
+<h2 id="tech-12-role-d-实施边界">12. Role D 实施边界<a class="anchor" href="#tech-12-role-d-实施边界">#</a></h2><h3 id="tech-负责-4">负责<a class="anchor" href="#tech-负责-4">#</a></h3><ul>
+<li>Workspace and Ontology；</li>
+<li>Thesis Build Console；</li>
+<li>Validation Plan；</li>
+<li>Evidence Drawer；</li>
+<li>Recompile；</li>
+<li>Diff；</li>
+<li>API Client；</li>
+<li>E2E；</li>
+<li>Nginx、服务、QR、Offline 和录屏。</li>
+</ul>
+<h3 id="tech-禁止-4">禁止<a class="anchor" href="#tech-禁止-4">#</a></h3><ul>
+<li>在 UI 中复制状态机；</li>
+<li>写死未经生成的 Supported 或统计结果；</li>
+<li>直接访问文件系统和 DuckDB；</li>
+<li>修改公共 Schema；</li>
+<li>隐藏失败和局限。</li>
+</ul>
+<h2 id="tech-13-越界请求协议">13. 越界请求协议<a class="anchor" href="#tech-13-越界请求协议">#</a></h2><p>Codex 收到越界要求时必须停止，并返回：</p>
+<div class="code"><span>TEXT</span><pre><code>该修改会改变冻结边界：&lt;合同/目录/状态&gt;。
+受影响角色：&lt;A/B/C/D&gt;。
+直接实施风险：&lt;接口、数据、状态或 Demo 风险&gt;。
+非破坏性方案：&lt;Adapter、可选字段、Fixture 或本地实现&gt;。
+所需流程：ICR L1/L2/L3。
+</code></pre></div><p>Codex 可以生成 ICR，不得在批准前实施 L2/L3。</p>
+<h2 id="tech-14-contract-test">14. Contract Test<a class="anchor" href="#tech-14-contract-test">#</a></h2><p>每个公共 JSON 同时通过：</p>
+<ul>
+<li>JSON Schema；</li>
+<li>Producer Serialization；</li>
+<li>Consumer Parsing；</li>
+<li>Fixture Snapshot；</li>
+<li>合同版本；</li>
+<li>未知必需字段拒绝；</li>
+<li>未知枚举拒绝。</li>
+</ul>
+<p>合同测试失败时不得合并。</p>
+<h2 id="tech-15-失败和降级">15. 失败和降级<a class="anchor" href="#tech-15-失败和降级">#</a></h2><h3 id="tech-ontology">Ontology<a class="anchor" href="#tech-ontology">#</a></h3><p>解析失败保留原件和失败状态。AI 不可用时返回空候选关系。</p>
+<h3 id="tech-macrotrace">MacroTrace<a class="anchor" href="#tech-macrotrace">#</a></h3><p>Tool 不支持、Partial、模型失败和超时都映射为正式 EvidenceBundle 状态。</p>
+<h3 id="tech-thesis-compiler">Thesis Compiler<a class="anchor" href="#tech-thesis-compiler">#</a></h3><p>缺少证据或阻断诊断不能被 UI 或人工静默跳过。</p>
+<h3 id="tech-frontend">Frontend<a class="anchor" href="#tech-frontend">#</a></h3><p>图组件失败时显示关系表。模型服务不可用时显示 Offline Replay。录屏只能作为兜底并明确标识。</p>
+<h2 id="tech-16-时间计划">16. 时间计划<a class="anchor" href="#tech-16-时间计划">#</a></h2><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>时间</th>
+<th>目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>H0 至 H2</td>
+<td>仓库盘点、合同冻结、分支和 worktree</td>
+</tr>
+<tr>
+<td>H2 至 H8</td>
+<td>四个角色完成可测试 Skeleton</td>
+</tr>
+<tr>
+<td>H8 至 H14</td>
+<td>Fixture Vertical Slice</td>
+</tr>
+<tr>
+<td>H14 至 H22</td>
+<td>真实 Ontology、MacroTrace 和 Compiler 集成</td>
+</tr>
+<tr>
+<td>H22 至 H28</td>
+<td>前端、部署、Offline 和 Demo</td>
+</tr>
+<tr>
+<td>H28</td>
+<td>Feature Freeze</td>
+</tr>
+<tr>
+<td>H28 至 H32</td>
+<td>E2E、红队和稳定性</td>
+</tr>
+<tr>
+<td>H32</td>
+<td>Code Freeze</td>
+</tr>
+<tr>
+<td>H32 至 H36</td>
+<td>路演、录屏和 Release</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="tech-17-完成定义">17. 完成定义<a class="anchor" href="#tech-17-完成定义">#</a></h2><p>每个角色完成必须满足：</p>
+<ul>
+<li>单元测试；</li>
+<li>合同测试；</li>
+<li>Fixture；</li>
+<li>失败路径；</li>
+<li>README；</li>
+<li>PR 合同影响说明；</li>
+<li>无越界文件修改；</li>
+<li>下一消费者完成联调。</li>
+</ul>
+<h2 id="tech-18-仓库访问说明">18. 仓库访问说明<a class="anchor" href="#tech-18-仓库访问说明">#</a></h2><p>规划阶段无法读取 <code>JerryyrreJ/AIY_Project</code>，GitHub 接口返回 404。每个 Codex 的第一项工作必须是读取本地仓库、现有 AGENTS、README、依赖、测试和目录结构，生成 <code>repo_inventory_&lt;ROLE&gt;.md</code>。现有稳定代码优先复用，禁止按本手册强行重构目录。</p>
+<h2 id="tech-19-技术冻结结论">19. 技术冻结结论<a class="anchor" href="#tech-19-技术冻结结论">#</a></h2><blockquote>
+<p><strong>A 管理研究对象和版本，B 管理真实实证执行，C 管理结论资格和系统编排，D 管理用户体验和交付。公共合同连接四者，任何人都不能通过直接数据库访问绕过合同。</strong></p>
+</blockquote>
+</article></section><section class="panel" data-doc="revision"><div class="meta">本轮相较 v1.0 的关键改变 · v1.1</div><article class="article"><h1 id="revision-研构-researchos-v1-1-修订说明">研构 ResearchOS v1.1 修订说明<a class="anchor" href="#revision-研构-researchos-v1-1-修订说明">#</a></h1><blockquote>
+<p>日期：2026-08-04<br/>
+状态：四人分工与 Codex 交接前冻结稿</p>
+</blockquote>
+<h2 id="revision-1-本轮解决的核心问题">1. 本轮解决的核心问题<a class="anchor" href="#revision-1-本轮解决的核心问题">#</a></h2><p>上一版已经充分表达 Research Ontology 的价值，但比赛版产品权力关系仍容易被理解成“四个并列模块”。本轮将产品收敛为一条明确链路：</p>
+<div class="code"><span>TEXT</span><pre><code>Research Ontology
+共享文件、版本、关系和 Agent 上下文
+        ↓
+Thesis Compiler
+接收论点、发现缺口、提出验证计划
+        ↓
+MacroTrace
+运行注册模型、诊断和稳健性
+        ↓
+Evidence Bundle
+返回证据等级和局限
+        ↓
+Thesis Compiler Rebuild
+产生最终结论状态和版本差分
+</code></pre></div><h2 id="revision-2-保留的产品核心">2. 保留的产品核心<a class="anchor" href="#revision-2-保留的产品核心">#</a></h2><p>Research Ontology 继续承担底层核心能力：</p>
+<ul>
+<li>Word、PDF、Markdown、Excel 和聊天记录统一进入项目空间；</li>
+<li>原始文件完整保留；</li>
+<li>生成 Markdown、JSON、CSV 或 Parquet 规范化表示；</li>
+<li>自动标签、版本、引用、冲突和责任关系；</li>
+<li>为不同 Codex 生成固定版本的 Context Pack；</li>
+<li>记录模型输入、运行结果和结论产物。</li>
+</ul>
+<h2 id="revision-3-调整的产品主交互">3. 调整的产品主交互<a class="anchor" href="#revision-3-调整的产品主交互">#</a></h2><p>舞台主交互由“开放问题后直接跑模型”调整为“明确论点先编译”。</p>
+<p>示例：</p>
+<blockquote>
+<p>美国财政扩张正在持续推高 10 年期美债收益率。</p>
+</blockquote>
+<p>系统先返回定义、时间窗口、因果措辞、竞争解释和证伪条件错误。用户确认验证计划后，系统调用 MacroTrace。MacroTrace 的综合解释作为 <code>ENGINE_CLAIM</code> 进入编译器。最终 <code>SUPPORTED</code>、<code>WEAKENED</code>、<code>EVIDENCE_INSUFFICIENT</code>、<code>EVIDENCE_CONFLICT</code> 或 <code>COMPILE_FAILED</code> 只能由 Thesis Compiler 产生。</p>
+<h2 id="revision-4-empirical-部分的处理">4. Empirical 部分的处理<a class="anchor" href="#revision-4-empirical-部分的处理">#</a></h2><p>现有 MacroTrace 直接作为注册制实证工具接入。团队不再开发第二套 Empirical Engine、Research Graph 或 Model Registry。</p>
+<p>本轮新增内容集中在：</p>
+<ol>
+<li>ThesisBuild；</li>
+<li>编译规则；</li>
+<li>ToolRequest；</li>
+<li>EvidenceBundle Adapter；</li>
+<li>证据语言政策；</li>
+<li>Build Console；</li>
+<li>Recompile；</li>
+<li>Version Diff；</li>
+<li>Offline Demo。</li>
+</ol>
+<h2 id="revision-5-demo-策略">5. Demo 策略<a class="anchor" href="#revision-5-demo-策略">#</a></h2><p>美国财政与 10 年期美债路线是保底真实路线。中国国债路线只有在数据版本、模型运行、诊断、合同、离线快照和三次演示全部通过后，才替代保底案例。</p>
+<h2 id="revision-6-四人分工">6. 四人分工<a class="anchor" href="#revision-6-四人分工">#</a></h2><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>角色</th>
+<th>核心模块</th>
+<th>最终责任</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>Research Ontology</td>
+<td>文件对象、规范化、版本、关系、Context Pack、Data Resolve</td>
+</tr>
+<tr>
+<td>B</td>
+<td>MacroTrace</td>
+<td>现有实证内核、Ontology Adapter、EvidenceBundle、黄金路线</td>
+</tr>
+<tr>
+<td>C</td>
+<td>Thesis Compiler</td>
+<td>编译规则、验证计划、工具编排、语言边界、最终结论、合同治理</td>
+</tr>
+<tr>
+<td>D</td>
+<td>Frontend and Release</td>
+<td>前端、E2E、部署、二维码、离线演示、发布</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="revision-7-冻结结论">7. 冻结结论<a class="anchor" href="#revision-7-冻结结论">#</a></h2><blockquote>
+<p><strong>Research Ontology 让团队和 Agent 拥有同一份研究状态。MacroTrace 负责把研究跑出来。Thesis Compiler 决定证据允许研究员说到什么程度。</strong></p>
+</blockquote>
+</article></section></main><script id="tocdata" type="application/json">{"full": "<a class=\"toc l2\" href=\"#full-0-执行摘要\">0. 执行摘要</a><a class=\"toc l3\" href=\"#full-0-1-产品定义\">0.1 产品定义</a><a class=\"toc l3\" href=\"#full-0-2-一句话\">0.2 一句话</a><a class=\"toc l3\" href=\"#full-0-3-产品三层权力关系\">0.3 产品三层权力关系</a><a class=\"toc l3\" href=\"#full-0-4-核心分工\">0.4 核心分工</a><a class=\"toc l2\" href=\"#full-1-问题背景\">1. 问题背景</a><a class=\"toc l3\" href=\"#full-1-1-ai-产出速度已经超过团队整理速度\">1.1 AI 产出速度已经超过团队整理速度</a><a class=\"toc l3\" href=\"#full-1-2-现有工具缺少共同研究状态\">1.2 现有工具缺少共同研究状态</a><a class=\"toc l3\" href=\"#full-1-3-研究表达也缺少可执行约束\">1.3 研究表达也缺少可执行约束</a><a class=\"toc l2\" href=\"#full-2-research-ontology-的产品优势\">2. Research Ontology 的产品优势</a><a class=\"toc l3\" href=\"#full-2-1-文件是入口\">2.1 文件是入口</a><a class=\"toc l3\" href=\"#full-2-2-原始文件完整保留\">2.2 原始文件完整保留</a><a class=\"toc l3\" href=\"#full-2-3-对象拥有稳定身份\">2.3 对象拥有稳定身份</a><a class=\"toc l3\" href=\"#full-2-4-关系形成研究本体\">2.4 关系形成研究本体</a><a class=\"toc l3\" href=\"#full-2-5-相较于本地文件夹\">2.5 相较于本地文件夹</a><a class=\"toc l3\" href=\"#full-2-6-相较于群聊\">2.6 相较于群聊</a><a class=\"toc l3\" href=\"#full-2-7-相较于-git\">2.7 相较于 Git</a><a class=\"toc l3\" href=\"#full-2-8-相较于普通-rag\">2.8 相较于普通 RAG</a><a class=\"toc l2\" href=\"#full-3-context-pack\">3. Context Pack</a><a class=\"toc l3\" href=\"#full-3-1-目标\">3.1 目标</a><a class=\"toc l3\" href=\"#full-3-2-内容\">3.2 内容</a><a class=\"toc l3\" href=\"#full-3-3-价值\">3.3 价值</a><a class=\"toc l2\" href=\"#full-4-thesis-compiler\">4. Thesis Compiler</a><a class=\"toc l3\" href=\"#full-4-1-主交互\">4.1 主交互</a><a class=\"toc l3\" href=\"#full-4-2-p0-编译规则\">4.2 P0 编译规则</a><a class=\"toc l3\" href=\"#full-4-3-验证计划\">4.3 验证计划</a><a class=\"toc l3\" href=\"#full-4-4-最终状态\">4.4 最终状态</a><a class=\"toc l2\" href=\"#full-5-macrotrace\">5. MacroTrace</a><a class=\"toc l3\" href=\"#full-5-1-定位\">5.1 定位</a><a class=\"toc l3\" href=\"#full-5-2-输入\">5.2 输入</a><a class=\"toc l3\" href=\"#full-5-3-输出\">5.3 输出</a><a class=\"toc l3\" href=\"#full-5-4-证据等级\">5.4 证据等级</a><a class=\"toc l2\" href=\"#full-6-用户完整路径\">6. 用户完整路径</a><a class=\"toc l3\" href=\"#full-6-1-项目文件进入\">6.1 项目文件进入</a><a class=\"toc l3\" href=\"#full-6-2-项目问答\">6.2 项目问答</a><a class=\"toc l3\" href=\"#full-6-3-创建论点\">6.3 创建论点</a><a class=\"toc l3\" href=\"#full-6-4-初次编译\">6.4 初次编译</a><a class=\"toc l3\" href=\"#full-6-5-研究工具执行\">6.5 研究工具执行</a><a class=\"toc l3\" href=\"#full-6-6-evidence-bundle\">6.6 Evidence Bundle</a><a class=\"toc l3\" href=\"#full-6-7-recompile\">6.7 Recompile</a><a class=\"toc l3\" href=\"#full-6-8-写回\">6.8 写回</a><a class=\"toc l3\" href=\"#full-6-9-diff\">6.9 Diff</a><a class=\"toc l2\" href=\"#full-7-产品页面\">7. 产品页面</a><a class=\"toc l2\" href=\"#full-8-黑客松-p0\">8. 黑客松 P0</a><a class=\"toc l3\" href=\"#full-8-1-research-ontology\">8.1 Research Ontology</a><a class=\"toc l3\" href=\"#full-8-2-thesis-compiler\">8.2 Thesis Compiler</a><a class=\"toc l3\" href=\"#full-8-3-macrotrace\">8.3 MacroTrace</a><a class=\"toc l3\" href=\"#full-8-4-frontend-and-release\">8.4 Frontend and Release</a><a class=\"toc l2\" href=\"#full-9-p0-暂缓\">9. P0 暂缓</a><a class=\"toc l2\" href=\"#full-10-黄金案例\">10. 黄金案例</a><a class=\"toc l3\" href=\"#full-10-1-保底路线\">10.1 保底路线</a><a class=\"toc l3\" href=\"#full-10-2-中国路线升级条件\">10.2 中国路线升级条件</a><a class=\"toc l2\" href=\"#full-11-90-秒-demo\">11. 90 秒 Demo</a><a class=\"toc l2\" href=\"#full-12-四人协作\">12. 四人协作</a><a class=\"toc l3\" href=\"#full-a-research-ontology\">A：Research Ontology</a><a class=\"toc l3\" href=\"#full-b-macrotrace\">B：MacroTrace</a><a class=\"toc l3\" href=\"#full-c-thesis-compiler\">C：Thesis Compiler</a><a class=\"toc l3\" href=\"#full-d-frontend-and-release\">D：Frontend and Release</a><a class=\"toc l2\" href=\"#full-13-核心接口\">13. 核心接口</a><a class=\"toc l2\" href=\"#full-14-验收标准\">14. 验收标准</a><a class=\"toc l3\" href=\"#full-14-1-ontology\">14.1 Ontology</a><a class=\"toc l3\" href=\"#full-14-2-macrotrace\">14.2 MacroTrace</a><a class=\"toc l3\" href=\"#full-14-3-thesis-compiler\">14.3 Thesis Compiler</a><a class=\"toc l3\" href=\"#full-14-4-frontend\">14.4 Frontend</a><a class=\"toc l2\" href=\"#full-15-商业化方向\">15. 商业化方向</a><a class=\"toc l3\" href=\"#full-第一阶段\">第一阶段</a><a class=\"toc l3\" href=\"#full-第二阶段\">第二阶段</a><a class=\"toc l3\" href=\"#full-第三阶段\">第三阶段</a><a class=\"toc l2\" href=\"#full-16-最终定位\">16. 最终定位</a>", "plain": "<a class=\"toc l2\" href=\"#plain-1-我们在解决什么问题\">1. 我们在解决什么问题</a><a class=\"toc l2\" href=\"#plain-2-数据本体用人话怎么理解\">2. 数据本体用人话怎么理解</a><a class=\"toc l2\" href=\"#plain-3-文件进入系统后会发生什么\">3. 文件进入系统后会发生什么</a><a class=\"toc l3\" href=\"#plain-3-1-保存原始文件\">3.1 保存原始文件</a><a class=\"toc l3\" href=\"#plain-3-2-生成规范化表示\">3.2 生成规范化表示</a><a class=\"toc l3\" href=\"#plain-3-3-ai-提出语义信息\">3.3 AI 提出语义信息</a><a class=\"toc l3\" href=\"#plain-3-4-形成项目对象图\">3.4 形成项目对象图</a><a class=\"toc l2\" href=\"#plain-4-它比本地文件夹强在哪里\">4. 它比本地文件夹强在哪里</a><a class=\"toc l2\" href=\"#plain-5-它比微信群强在哪里\">5. 它比微信群强在哪里</a><a class=\"toc l2\" href=\"#plain-6-它比-git-强在哪里\">6. 它比 Git 强在哪里</a><a class=\"toc l2\" href=\"#plain-7-context-pack-为什么重要\">7. Context Pack 为什么重要</a><a class=\"toc l2\" href=\"#plain-8-文件整理完之后-研究怎样真正运行\">8. 文件整理完之后，研究怎样真正运行</a><a class=\"toc l2\" href=\"#plain-9-为什么-macrotrace-不能直接决定最终结论\">9. 为什么 MacroTrace 不能直接决定最终结论</a><a class=\"toc l2\" href=\"#plain-10-现场-demo\">10. 现场 Demo</a><a class=\"toc l3\" href=\"#plain-第一段-共同研究状态\">第一段：共同研究状态</a><a class=\"toc l3\" href=\"#plain-第二段-论点-build-failed\">第二段：论点 Build Failed</a><a class=\"toc l3\" href=\"#plain-第三段-调用-macrotrace\">第三段：调用 MacroTrace</a><a class=\"toc l3\" href=\"#plain-第四段-重新编译\">第四段：重新编译</a><a class=\"toc l3\" href=\"#plain-第五段-版本差分\">第五段：版本差分</a><a class=\"toc l2\" href=\"#plain-11-四个人分别做什么\">11. 四个人分别做什么</a><a class=\"toc l2\" href=\"#plain-12-产品边界\">12. 产品边界</a><a class=\"toc l2\" href=\"#plain-13-对外介绍\">13. 对外介绍</a><a class=\"toc l3\" href=\"#plain-20-秒版本\">20 秒版本</a><a class=\"toc l3\" href=\"#plain-结束语\">结束语</a>", "tech": "<a class=\"toc l2\" href=\"#tech-1-技术目标\">1. 技术目标</a><a class=\"toc l3\" href=\"#tech-1-1-文件到共享研究状态\">1.1 文件到共享研究状态</a><a class=\"toc l3\" href=\"#tech-1-2-论点到可验证结论\">1.2 论点到可验证结论</a><a class=\"toc l2\" href=\"#tech-2-权力边界\">2. 权力边界</a><a class=\"toc l2\" href=\"#tech-3-推荐仓库结构\">3. 推荐仓库结构</a><a class=\"toc l2\" href=\"#tech-4-运行拓扑\">4. 运行拓扑</a><a class=\"toc l2\" href=\"#tech-5-共享合同\">5. 共享合同</a><a class=\"toc l3\" href=\"#tech-5-1-dataobjectref\">5.1 DataObjectRef</a><a class=\"toc l3\" href=\"#tech-5-2-dataresolve\">5.2 DataResolve</a><a class=\"toc l3\" href=\"#tech-5-3-contextpack\">5.3 ContextPack</a><a class=\"toc l3\" href=\"#tech-5-4-thesisbuild\">5.4 ThesisBuild</a><a class=\"toc l3\" href=\"#tech-5-5-toolrequest\">5.5 ToolRequest</a><a class=\"toc l3\" href=\"#tech-5-6-evidencebundle\">5.6 EvidenceBundle</a><a class=\"toc l3\" href=\"#tech-5-7-compileresult\">5.7 CompileResult</a><a class=\"toc l3\" href=\"#tech-5-8-versiondiff\">5.8 VersionDiff</a><a class=\"toc l2\" href=\"#tech-6-合同变更等级\">6. 合同变更等级</a><a class=\"toc l2\" href=\"#tech-7-git-工作流\">7. Git 工作流</a><a class=\"toc l2\" href=\"#tech-8-集成顺序\">8. 集成顺序</a><a class=\"toc l2\" href=\"#tech-9-role-a-实施边界\">9. Role A 实施边界</a><a class=\"toc l3\" href=\"#tech-负责\">负责</a><a class=\"toc l3\" href=\"#tech-禁止\">禁止</a><a class=\"toc l2\" href=\"#tech-10-role-b-实施边界\">10. Role B 实施边界</a><a class=\"toc l3\" href=\"#tech-负责-2\">负责</a><a class=\"toc l3\" href=\"#tech-禁止-2\">禁止</a><a class=\"toc l2\" href=\"#tech-11-role-c-实施边界\">11. Role C 实施边界</a><a class=\"toc l3\" href=\"#tech-负责-3\">负责</a><a class=\"toc l3\" href=\"#tech-禁止-3\">禁止</a><a class=\"toc l2\" href=\"#tech-12-role-d-实施边界\">12. Role D 实施边界</a><a class=\"toc l3\" href=\"#tech-负责-4\">负责</a><a class=\"toc l3\" href=\"#tech-禁止-4\">禁止</a><a class=\"toc l2\" href=\"#tech-13-越界请求协议\">13. 越界请求协议</a><a class=\"toc l2\" href=\"#tech-14-contract-test\">14. Contract Test</a><a class=\"toc l2\" href=\"#tech-15-失败和降级\">15. 失败和降级</a><a class=\"toc l3\" href=\"#tech-ontology\">Ontology</a><a class=\"toc l3\" href=\"#tech-macrotrace\">MacroTrace</a><a class=\"toc l3\" href=\"#tech-thesis-compiler\">Thesis Compiler</a><a class=\"toc l3\" href=\"#tech-frontend\">Frontend</a><a class=\"toc l2\" href=\"#tech-16-时间计划\">16. 时间计划</a><a class=\"toc l2\" href=\"#tech-17-完成定义\">17. 完成定义</a><a class=\"toc l2\" href=\"#tech-18-仓库访问说明\">18. 仓库访问说明</a><a class=\"toc l2\" href=\"#tech-19-技术冻结结论\">19. 技术冻结结论</a>", "revision": "<a class=\"toc l2\" href=\"#revision-1-本轮解决的核心问题\">1. 本轮解决的核心问题</a><a class=\"toc l2\" href=\"#revision-2-保留的产品核心\">2. 保留的产品核心</a><a class=\"toc l2\" href=\"#revision-3-调整的产品主交互\">3. 调整的产品主交互</a><a class=\"toc l2\" href=\"#revision-4-empirical-部分的处理\">4. Empirical 部分的处理</a><a class=\"toc l2\" href=\"#revision-5-demo-策略\">5. Demo 策略</a><a class=\"toc l2\" href=\"#revision-6-四人分工\">6. 四人分工</a><a class=\"toc l2\" href=\"#revision-7-冻结结论\">7. 冻结结论</a>"}</script><script>
+(()=>{const root=document.documentElement,body=document.body;root.dataset.theme=localStorage.getItem('researchos-v11-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.getElementById('theme').onclick=()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';localStorage.setItem('researchos-v11-theme',root.dataset.theme)};document.getElementById('print').onclick=()=>print();document.getElementById('menu').onclick=()=>body.classList.toggle('open');document.querySelector('.backdrop').onclick=()=>body.classList.remove('open');const maps=JSON.parse(document.getElementById('tocdata').textContent);let obs;function observe(){if(obs)obs.disconnect();obs=new IntersectionObserver(es=>{const x=es.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top)[0];if(!x)return;document.querySelectorAll('.toc').forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+x.target.id))},{rootMargin:'-80px 0px -70% 0px'});document.querySelectorAll('.panel.active h2[id],.panel.active h3[id],.panel.active h4[id]').forEach(h=>obs.observe(h))}function progress(){const p=document.querySelector('.panel.active');if(!p)return;const total=Math.max(1,p.offsetHeight-innerHeight),read=Math.max(0,-p.getBoundingClientRect().top+70);document.querySelector('.progress').style.width=Math.min(100,read/total*100)+'%'}function activate(id,scroll=true){document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.dataset.doc===id));document.querySelectorAll('.doc-tab').forEach(x=>x.classList.toggle('active',x.dataset.doc===id));document.getElementById('toc').innerHTML=maps[id]||'';document.querySelectorAll('.toc').forEach(a=>a.onclick=()=>body.classList.remove('open'));localStorage.setItem('researchos-v11-doc',id);if(scroll)scrollTo(0,0);observe();progress()}document.querySelectorAll('.doc-tab').forEach(b=>b.onclick=()=>activate(b.dataset.doc));const init=localStorage.getItem('researchos-v11-doc')||'full';activate(document.querySelector(`.doc-tab[data-doc="${init}"]`)?init:'full',false);addEventListener('scroll',progress,{passive:true});addEventListener('resize',progress)})();
+</script></body></html>

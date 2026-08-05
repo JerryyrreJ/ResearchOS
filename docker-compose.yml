@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: researchos
+      POSTGRES_USER: researchos
+      POSTGRES_PASSWORD: researchos
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U researchos"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - researchos_postgres:/var/lib/postgresql/data
+
+volumes:
+  researchos_postgres:
+
