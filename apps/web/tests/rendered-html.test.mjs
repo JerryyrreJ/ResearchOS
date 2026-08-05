@@ -181,3 +181,17 @@ test("integrates the original Evidence Archivist as a restrained product mascot"
   assert.ok(mascot.byteLength > 100_000);
   assert.equal(mascot.subarray(1, 4).toString(), "PNG");
 });
+
+test("explains backend deduplication and version outcomes in the upload UI", async () => {
+  const [workspace, css] = await Promise.all([
+    readFile(new URL("../app/real-workspace.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(workspace, /EXACT_DUPLICATE/);
+  assert.match(workspace, /重复文件 · 已跳过/);
+  assert.match(workspace, /已建立新版本/);
+  assert.match(workspace, /内容哈希完全相同/);
+  assert.match(workspace, /没有创建副本或占用额外存储/);
+  assert.match(css, /\.result-duplicate/);
+  assert.match(css, /\.result-version/);
+});

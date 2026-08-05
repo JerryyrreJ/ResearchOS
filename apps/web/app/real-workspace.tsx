@@ -17,6 +17,9 @@ type QueueItem = {
   fileName: string;
   status: QueueStatus;
   detail?: string;
+  resolution?: "NEW_ASSET" | "NEW_VERSION" | "EXACT_DUPLICATE" | string | null;
+  assetId?: string | null;
+  versionId?: string | null;
 };
 
 type RealWorkspaceProps = {
@@ -38,6 +41,15 @@ function readableBytes(value: number) {
   if (value < 1024) return `${value} B`;
   if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`;
   return `${(value / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function resolutionCopy(item: QueueItem) {
+  if (item.resolution === "EXACT_DUPLICATE" || item.status === "DUPLICATE") return { icon: "≡", label: "重复文件 · 已跳过", detail: "内容哈希完全相同，没有创建副本或占用额外存储。", tone: "duplicate" };
+  if (item.resolution === "NEW_VERSION") return { icon: "↟", label: "已建立新版本", detail: "检测到同名文件内容变化，旧版本已保留并建立版本关系。", tone: "version" };
+  if (item.status === "COMPLETED") return { icon: "✓", label: "已收录", detail: "文件已保存、分类并加入团队知识库。", tone: "stored" };
+  if (item.status === "FAILED") return { icon: "!", label: "处理失败", detail: item.detail ?? "请检查文件后重试。", tone: "failed" };
+  if (item.status === "UPLOADING") return { icon: "↻", label: "正在处理", detail: "正在上传、计算内容哈希并检查历史版本…", tone: "working" };
+  return { icon: "·", label: "等待处理", detail: "文件已进入上传队列。", tone: "queued" };
 }
 
 function sourceFromObject(item: ObjectSummary): WorkspaceSource {
@@ -155,6 +167,9 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
                     ...item,
                     status: status === "COMPLETED" || status === "DUPLICATE" ? status : "FAILED",
                     detail: outcome.resolution_status ?? outcome.error ?? undefined,
+                    resolution: outcome.resolution_status,
+                    assetId: outcome.asset_id,
+                    versionId: outcome.version_id,
                   }
                 : item,
             ),
@@ -239,8 +254,8 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
 
       {queue.length > 0 && (
         <section className="upload-queue">
-          <div className="section-title"><div><h2>Upload queue</h2><p>Each file is isolated so one failure does not roll back the batch.</p></div></div>
-          {queue.map((item) => <div className="upload-row" key={item.id}><span className={`upload-state ${item.status.toLowerCase()}`}>{item.status}</span><b>{item.fileName}</b><small>{item.detail ?? ""}</small></div>)}
+          <div className="upload-summary"><div><span className="eyebrow">INGEST RESULTS</span><h2>文件处理结果</h2><p>系统会依据内容哈希去重，并为发生变化的同名文件自动建立版本。</p></div><div className="ingest-counts"><span><b>{queue.filter(item=>item.status==="COMPLETED").length}</b> 已收录</span><span><b>{queue.filter(item=>item.resolution==="NEW_VERSION").length}</b> 新版本</span><span><b>{queue.filter(item=>item.status==="DUPLICATE").length}</b> 已去重</span></div></div>
+          {queue.map((item) => {const result=resolutionCopy(item);return <div className={`upload-row result-${result.tone}`} key={item.id}><span className="upload-result-icon">{result.icon}</span><span className="upload-result-file"><b>{item.fileName}</b><small>{result.detail}</small></span><span className="upload-result-state"><strong>{result.label}</strong>{item.versionId&&<small className="mono">{item.versionId}</small>}</span></div>})}
         </section>
       )}
 
