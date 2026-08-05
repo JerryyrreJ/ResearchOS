@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from apps.researchos_api.app.api.thesis import router as thesis_router
 from researchos.api.routes import router
 from researchos.config import Settings
 from researchos.domain.exceptions import (
@@ -15,6 +16,9 @@ from researchos.domain.exceptions import (
 from researchos.infrastructure.blob_store import LocalContentAddressedBlobStore
 from researchos.infrastructure.db import Base, build_engine, build_session_factory
 from researchos.infrastructure.parsers import ParserRegistry
+from services.macrotrace.backend.app.researchos_adapter.router import (
+    router as macrotrace_router,
+)
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -50,6 +54,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.blob_store = blob_store
     app.state.parser_registry = parser_registry
     app.include_router(router)
+    # Role C and Role B keep their frozen `/v1` contracts. Mounting them under
+    # `/api` gives the browser one same-origin API surface without rewriting
+    # either producer-owned router.
+    app.include_router(thesis_router, prefix="/api")
+    app.include_router(macrotrace_router, prefix="/api")
 
     @app.exception_handler(NotFoundError)
     async def not_found_handler(_: Request, exc: NotFoundError) -> JSONResponse:

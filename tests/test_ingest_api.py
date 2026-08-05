@@ -2,7 +2,6 @@ from io import BytesIO
 
 import fitz
 import pytest
-from conftest import create_batch, upload_bytes
 from docx import Document
 from fastapi.testclient import TestClient
 from openpyxl import Workbook
@@ -16,6 +15,7 @@ from researchos.infrastructure.orm import (
     FragmentRecord,
     ParseRunRecord,
 )
+from tests.conftest import create_batch, upload_bytes
 
 
 def test_markdown_ingest_creates_exact_fragments(

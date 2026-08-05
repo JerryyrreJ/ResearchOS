@@ -111,6 +111,72 @@ export type WorkspaceSource = {
   updatedAt: string;
 };
 
+export type CompileIssue = {
+  code: string;
+  severity: string;
+  blocking: boolean;
+  message: string;
+  suggested_actions: string[];
+};
+
+export type ValidationStep = {
+  step_id: string;
+  label: string;
+  status: string;
+  tool_request_id: string | null;
+};
+
+export type CompileResult = {
+  build_id: string;
+  thesis_id: string;
+  version_id: string;
+  parent_build_id: string | null;
+  build_status: string;
+  conclusion_state: string;
+  original_claim: string;
+  compiled_claim: string | null;
+  issues: CompileIssue[];
+  validation_plan: ValidationStep[];
+  evidence_bundle_refs: string[];
+  language_policy: { requested_level: string; allowed_level: string; reason: string };
+  affected_node_ids: string[];
+  reused_node_ids: string[];
+};
+
+export type ToolRequest = Record<string, unknown> & { request_id: string };
+export type EvidenceBundle = Record<string, unknown> & {
+  bundle_id: string;
+  status: string;
+  coverage: string;
+  evidence_type: string;
+  engine_claim: string | null;
+  model_runs: Array<Record<string, unknown> & { model_run_id: string; model_recipe_id: string; status: string; summary: string }>;
+  diagnostics: Array<Record<string, unknown> & { diagnostic_id: string; status: string; blocking: boolean; interpretation: string }>;
+  limitations: string[];
+  trace_ref: string;
+};
+
+export type CompileEnvelope = { job_id: string | null; compile_result: CompileResult; tool_request: ToolRequest };
+export type ToolRunEnvelope = {
+  tool_run_id: string;
+  request_id: string;
+  status: string;
+  progress: number;
+  mode: string;
+  evidence_bundle: EvidenceBundle;
+};
+export type VerifyEnvelope = { job_id: string | null; compile_result: CompileResult; idempotent_replay: boolean };
+export type VersionDiff = {
+  diff_id: string;
+  from_version_id: string;
+  to_version_id: string;
+  changed_objects: Array<{ field: string; from: unknown; to: unknown }>;
+  affected_model_runs: string[];
+  affected_claims: string[];
+  reused_refs: string[];
+  summary: string;
+};
+
 export class ResearchOSApiError extends Error {
   readonly status: number;
 
@@ -139,8 +205,9 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   if (!response.ok) {
     let detail = `ResearchOS API request failed (${response.status})`;
     try {
-      const body = (await response.json()) as { detail?: string; message?: string };
-      detail = body.detail ?? body.message ?? detail;
+      const body = (await response.json()) as { detail?: unknown; message?: unknown };
+      const candidate = body.detail ?? body.message;
+      detail = typeof candidate === "string" ? candidate : candidate ? JSON.stringify(candidate) : detail;
     } catch {
       // Preserve the status-based error when the server did not return JSON.
     }
@@ -202,4 +269,40 @@ export const researchosApi = {
     request<ProjectState>(
       `/workspaces/${encodeURIComponent(workspaceId)}/project-state`,
     ),
+
+  createThesis: (payload: Record<string, unknown>) =>
+    request<Record<string, unknown>>("/theses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }),
+
+  compileThesis: (thesisId: string) =>
+    request<CompileEnvelope>(`/theses/${encodeURIComponent(thesisId)}/compile`, { method: "POST" }),
+
+  runMacroTrace: (toolRequest: ToolRequest) =>
+    request<ToolRunEnvelope>("/tool-runs/macrotrace", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(toolRequest),
+    }),
+
+  verifyThesis: (thesisId: string, evidenceBundle: EvidenceBundle) =>
+    request<VerifyEnvelope>(`/theses/${encodeURIComponent(thesisId)}/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ evidence_bundle: evidenceBundle }),
+    }),
+
+  listThesisVersions: (thesisId: string) =>
+    request<CompileResult[]>(`/theses/${encodeURIComponent(thesisId)}/versions`),
+
+  getVersionDiff: (fromBuildId: string, toBuildId: string) =>
+    request<VersionDiff>(`/thesis-versions/${encodeURIComponent(fromBuildId)}/diff/${encodeURIComponent(toBuildId)}`),
+
+  getToolGraph: (toolRunId: string) =>
+    request<Record<string, unknown>>(`/tool-runs/${encodeURIComponent(toolRunId)}/graph`),
+
+  getToolArtifacts: (toolRunId: string) =>
+    request<{ items: Array<Record<string, unknown>> }>(`/tool-runs/${encodeURIComponent(toolRunId)}/artifacts`),
 };

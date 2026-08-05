@@ -1,5 +1,6 @@
-from conftest import create_batch, upload_bytes
 from fastapi.testclient import TestClient
+
+from tests.conftest import create_batch, upload_bytes
 
 
 def test_object_projection_and_structural_graph_are_real(
