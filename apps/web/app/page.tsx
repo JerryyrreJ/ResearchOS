@@ -7,6 +7,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { localeNames, tx, type Locale } from "./i18n";
 import RealWorkspace from "./real-workspace";
 import LiveResearchFlow, { buildThesisPayload } from "./live-research-flow";
+import InterfaceLanguageBridge from "./interface-language";
 import type { WorkspaceSource } from "../lib/api-client";
 import { researchosApi } from "../lib/api-client";
 
@@ -1792,6 +1793,7 @@ export default function Home() {
       data-locale={locale}
       onClickCapture={handleShellClick}
     >
+      <InterfaceLanguageBridge locale={locale} />
       <aside className="sidebar">
         <div className="brand">
           <BrandMark />

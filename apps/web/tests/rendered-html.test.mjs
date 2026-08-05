@@ -50,6 +50,11 @@ test("ships Simplified Chinese, Traditional Chinese, and English UI catalogs", a
   assert.match(page, /<RealWorkspace\s+locale=\{locale\}/);
   assert.match(workspace, /Relationship network/);
   assert.match(workspace, /關係網路/);
+  assert.match(page, /InterfaceLanguageBridge/);
+  const bridge = await readFile(new URL("../app/interface-language.tsx", import.meta.url), "utf8");
+  assert.match(bridge, /MutationObserver/);
+  assert.match(bridge, /端到端研究編譯/);
+  assert.match(bridge, /End-to-end research compilation/);
   assert.match(css, /--font-ui/);
   assert.match(css, /PingFang SC/);
   assert.match(css, /PingFang TC/);
