@@ -179,6 +179,41 @@ export type VersionDiff = {
 
 export type JobEvent = { sequence: number; event_type: string; status: string; payload: Record<string, unknown> };
 
+export type DataConnector = {
+  id: string;
+  mark: string;
+  name: string;
+  institution: string;
+  category: "market" | "macro" | "fundamentals" | "alternative";
+  coverage: string;
+  keyRequired: boolean;
+  runtime: "native" | "python-bridge" | "licensed";
+  docsUrl: string;
+  keyUrl: string;
+  keyPlaceholder: string;
+  configured: boolean;
+  enabled: boolean;
+  apiKeyMasked: string | null;
+  lastTestStatus: string | null;
+  lastTestAt: string | null;
+  secretStorage: "server-encrypted" | "not-required";
+  legalNote?: string;
+};
+
+export type ConnectorCatalog = {
+  connectors: DataConnector[];
+  secretPolicy: { browserStorage: false; encryptedAtRest: true; returnedToClient: false };
+};
+
+export type ConnectorQueryResult = {
+  ok: true;
+  connectorId: string;
+  latencyMs: number;
+  dataset: string;
+  rows: unknown;
+  metadata: Record<string, unknown>;
+};
+
 export class ResearchOSApiError extends Error {
   readonly status: number;
 
@@ -227,6 +262,28 @@ async function requestJobEvents(jobId: string) {
 }
 
 export const researchosApi = {
+  listConnectors: () => request<ConnectorCatalog>("/connectors"),
+
+  configureConnector: (connectorId: string, apiKey: string, enabled = true) =>
+    request<DataConnector>(`/connectors/${encodeURIComponent(connectorId)}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ apiKey, enabled }),
+    }),
+
+  clearConnector: (connectorId: string) =>
+    request<DataConnector>(`/connectors/${encodeURIComponent(connectorId)}`, { method: "DELETE" }),
+
+  testConnector: (connectorId: string) =>
+    request<ConnectorQueryResult>(`/connectors/${encodeURIComponent(connectorId)}/test`, { method: "POST" }),
+
+  queryConnector: (connectorId: string, parameters: Record<string, unknown>) =>
+    request<ConnectorQueryResult>(`/connectors/${encodeURIComponent(connectorId)}/query`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(parameters),
+    }),
+
   listWorkspaces: () => request<Workspace[]>("/workspaces"),
 
   createWorkspace: (name: string) =>
