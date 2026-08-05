@@ -1,6 +1,49 @@
 {
   "components": {
     "schemas": {
+      "ApiErrorView": {
+        "additionalProperties": false,
+        "properties": {
+          "contract_version": {
+            "const": "0.1.0-frozen",
+            "title": "Contract Version",
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          },
+          "error_code": {
+            "title": "Error Code",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "related_refs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Related Refs",
+            "type": "array"
+          },
+          "retryable": {
+            "title": "Retryable",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "contract_version",
+          "error_code",
+          "message",
+          "retryable",
+          "related_refs"
+        ],
+        "title": "ApiErrorView",
+        "type": "object"
+      },
       "AssetDetailView": {
         "properties": {
           "created_at": {
@@ -286,6 +329,707 @@
           "actor_id"
         ],
         "title": "Body_upload_ingest_item_api_v1_ingest_batches__batch_id__items_post",
+        "type": "object"
+      },
+      "DataObjectRef": {
+        "additionalProperties": false,
+        "properties": {
+          "access_scope": {
+            "title": "Access Scope",
+            "type": "string"
+          },
+          "as_of_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of Date"
+          },
+          "content_hash": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Content Hash",
+            "type": "string"
+          },
+          "content_uri": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Uri"
+          },
+          "contract_version": {
+            "const": "0.1.0-frozen",
+            "title": "Contract Version",
+            "type": "string"
+          },
+          "data_schema": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Schema"
+          },
+          "license_policy": {
+            "enum": [
+              "PUBLIC",
+              "INTERNAL_ONLY",
+              "DERIVED_ONLY",
+              "NO_PERSIST"
+            ],
+            "title": "License Policy",
+            "type": "string"
+          },
+          "lineage_refs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Lineage Refs",
+            "type": "array"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "title": "Metadata",
+            "type": "object"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "object_id": {
+            "title": "Object Id",
+            "type": "string"
+          },
+          "object_type": {
+            "enum": [
+              "SOURCE_FILE",
+              "CANONICAL_REPRESENTATION",
+              "DATASET",
+              "REPORT_RECORD",
+              "MODEL_SPEC",
+              "MODEL_RUN",
+              "EVIDENCE_PACKAGE",
+              "CLAIM",
+              "ARTIFACT"
+            ],
+            "title": "Object Type",
+            "type": "string"
+          },
+          "representation": {
+            "enum": [
+              "MARKDOWN",
+              "DOCUMENT_JSON",
+              "CSV",
+              "PARQUET",
+              "JSON",
+              "PDF",
+              "DOCX",
+              "XLSX",
+              "BINARY"
+            ],
+            "title": "Representation",
+            "type": "string"
+          },
+          "schema_version": {
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "version_id": {
+            "title": "Version Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contract_version",
+          "object_id",
+          "version_id",
+          "object_type",
+          "representation",
+          "schema_version",
+          "content_hash",
+          "license_policy",
+          "access_scope"
+        ],
+        "title": "DataObjectRef",
+        "type": "object"
+      },
+      "DataPluginIngestRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "actor_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Actor Id",
+            "type": "string"
+          },
+          "dataset_id": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "logical_name": {
+            "anyOf": [
+              {
+                "maxLength": 512,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logical Name"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "title": "Parameters",
+            "type": "object"
+          },
+          "row_limit": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Row Limit"
+          },
+          "workspace_id": {
+            "maxLength": 160,
+            "minLength": 3,
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "actor_id",
+          "dataset_id"
+        ],
+        "title": "DataPluginIngestRequest",
+        "type": "object"
+      },
+      "DataPluginIngestResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "batch_id": {
+            "title": "Batch Id",
+            "type": "string"
+          },
+          "data_ref": {
+            "$ref": "#/components/schemas/DataObjectRef"
+          },
+          "dataset_id": {
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "plugin_id": {
+            "title": "Plugin Id",
+            "type": "string"
+          },
+          "resolution_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolution Status"
+          },
+          "row_count": {
+            "title": "Row Count",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "version_id": {
+            "title": "Version Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plugin_id",
+          "dataset_id",
+          "batch_id",
+          "asset_id",
+          "version_id",
+          "status",
+          "resolution_status",
+          "row_count",
+          "truncated",
+          "data_ref"
+        ],
+        "title": "DataPluginIngestResponse",
+        "type": "object"
+      },
+      "DataPluginToggle": {
+        "additionalProperties": false,
+        "properties": {
+          "actor_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Actor Id",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled",
+          "actor_id"
+        ],
+        "title": "DataPluginToggle",
+        "type": "object"
+      },
+      "DataPluginView": {
+        "additionalProperties": false,
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "configured": {
+            "title": "Configured",
+            "type": "boolean"
+          },
+          "credential_kind": {
+            "title": "Credential Kind",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "license_policy": {
+            "title": "License Policy",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "plugin_id": {
+            "title": "Plugin Id",
+            "type": "string"
+          },
+          "supports_catalog": {
+            "title": "Supports Catalog",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "plugin_id",
+          "name",
+          "description",
+          "credential_kind",
+          "license_policy",
+          "supports_catalog",
+          "available",
+          "configured",
+          "enabled"
+        ],
+        "title": "DataPluginView",
+        "type": "object"
+      },
+      "DataResolveRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of_date": {
+            "title": "As Of Date",
+            "type": "string"
+          },
+          "contract_version": {
+            "const": "0.1.0-frozen",
+            "title": "Contract Version",
+            "type": "string"
+          },
+          "dataset_ref": {
+            "$ref": "#/components/schemas/DataObjectRef"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "required_schema": {
+            "$ref": "#/components/schemas/RequiredDataSchema"
+          }
+        },
+        "required": [
+          "contract_version",
+          "request_id",
+          "dataset_ref",
+          "required_schema",
+          "as_of_date"
+        ],
+        "title": "DataResolveRequest",
+        "type": "object"
+      },
+      "DataResolveResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "content_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Hash"
+          },
+          "contract_version": {
+            "const": "0.1.0-frozen",
+            "title": "Contract Version",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApiErrorView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lineage": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Lineage",
+            "type": "array"
+          },
+          "materialized_uri": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Materialized Uri"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "resolved_ref": {
+            "$ref": "#/components/schemas/DataObjectRef"
+          },
+          "resolved_schema": {
+            "additionalProperties": true,
+            "title": "Resolved Schema",
+            "type": "object"
+          },
+          "status": {
+            "enum": [
+              "RESOLVED",
+              "SCHEMA_MISMATCH",
+              "PERMISSION_BLOCKED",
+              "NOT_FOUND",
+              "FAILED"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contract_version",
+          "request_id",
+          "status",
+          "resolved_ref",
+          "materialized_uri",
+          "content_hash",
+          "resolved_schema",
+          "lineage"
+        ],
+        "title": "DataResolveResponse",
+        "type": "object"
+      },
+      "DatasetDescriptorView": {
+        "additionalProperties": false,
+        "properties": {
+          "dataset_id": {
+            "title": "Dataset Id",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "parameters": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Parameters",
+            "type": "array"
+          }
+        },
+        "required": [
+          "dataset_id",
+          "name",
+          "description",
+          "parameters"
+        ],
+        "title": "DatasetDescriptorView",
+        "type": "object"
+      },
+      "Definition": {
+        "additionalProperties": false,
+        "properties": {
+          "definition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Definition"
+          },
+          "source_refs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Source Refs",
+            "type": "array"
+          },
+          "status": {
+            "default": "MISSING",
+            "title": "Status",
+            "type": "string"
+          },
+          "term": {
+            "title": "Term",
+            "type": "string"
+          }
+        },
+        "required": [
+          "term"
+        ],
+        "title": "Definition",
+        "type": "object"
+      },
+      "EvidenceBundle": {
+        "additionalProperties": false,
+        "properties": {
+          "artifacts": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Artifacts",
+            "type": "array"
+          },
+          "bundle_id": {
+            "title": "Bundle Id",
+            "type": "string"
+          },
+          "contract_version": {
+            "const": "0.1.0-frozen",
+            "default": "0.1.0-frozen",
+            "title": "Contract Version",
+            "type": "string"
+          },
+          "coverage": {
+            "enum": [
+              "FULL",
+              "PARTIAL",
+              "UNSUPPORTED",
+              "OUT_OF_SCOPE"
+            ],
+            "title": "Coverage",
+            "type": "string"
+          },
+          "diagnostics": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Diagnostics",
+            "type": "array"
+          },
+          "engine_claim": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Engine Claim"
+          },
+          "evidence_items": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Evidence Items",
+            "type": "array"
+          },
+          "evidence_type": {
+            "enum": [
+              "DESCRIPTIVE",
+              "PREDICTIVE",
+              "ASSOCIATIONAL",
+              "DYNAMIC_ASSOCIATION",
+              "STRUCTURAL_PROXY",
+              "CAUSAL_IDENTIFIED"
+            ],
+            "title": "Evidence Type",
+            "type": "string"
+          },
+          "falsifiers": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Falsifiers",
+            "type": "array"
+          },
+          "input_object_refs": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Input Object Refs",
+            "type": "array"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "title": "Metadata",
+            "type": "object"
+          },
+          "model_runs": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Model Runs",
+            "type": "array"
+          },
+          "registry_version": {
+            "title": "Registry Version",
+            "type": "string"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "research_job_id": {
+            "title": "Research Job Id",
+            "type": "string"
+          },
+          "result_hash": {
+            "title": "Result Hash",
+            "type": "string"
+          },
+          "robustness": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Robustness",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "COMPLETE",
+              "PARTIAL",
+              "FAILED",
+              "CANCELLED"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "trace_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trace Ref"
+          }
+        },
+        "required": [
+          "bundle_id",
+          "request_id",
+          "research_job_id",
+          "status",
+          "coverage",
+          "evidence_type",
+          "engine_claim",
+          "model_runs",
+          "diagnostics",
+          "robustness",
+          "evidence_items",
+          "falsifiers",
+          "limitations",
+          "input_object_refs",
+          "registry_version",
+          "result_hash",
+          "artifacts"
+        ],
+        "title": "EvidenceBundle",
         "type": "object"
       },
       "FragmentView": {
@@ -1087,6 +1831,152 @@
         "title": "RepresentationView",
         "type": "object"
       },
+      "RequiredDataSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "fields": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "frequency": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Frequency",
+            "type": "array"
+          },
+          "time_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time Key"
+          }
+        },
+        "required": [
+          "fields"
+        ],
+        "title": "RequiredDataSchema",
+        "type": "object"
+      },
+      "ThesisBuild": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of_date": {
+            "title": "As Of Date",
+            "type": "string"
+          },
+          "contract_version": {
+            "const": "0.1.0-frozen",
+            "default": "0.1.0-frozen",
+            "title": "Contract Version",
+            "type": "string"
+          },
+          "definitions": {
+            "items": {
+              "$ref": "#/components/schemas/Definition"
+            },
+            "title": "Definitions",
+            "type": "array"
+          },
+          "falsifier_requirements": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Falsifier Requirements",
+            "type": "array"
+          },
+          "input_object_refs": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Input Object Refs",
+            "type": "array"
+          },
+          "language_level": {
+            "enum": [
+              "DESCRIPTIVE",
+              "PREDICTIVE",
+              "ASSOCIATIONAL",
+              "STRUCTURAL_PROXY",
+              "CAUSAL"
+            ],
+            "title": "Language Level",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "title": "Metadata",
+            "type": "object"
+          },
+          "normalized_claim": {
+            "title": "Normalized Claim",
+            "type": "string"
+          },
+          "parent_version_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Version Id"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "raw_claim": {
+            "title": "Raw Claim",
+            "type": "string"
+          },
+          "required_evidence_types": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Required Evidence Types",
+            "type": "array"
+          },
+          "scope": {
+            "additionalProperties": true,
+            "title": "Scope",
+            "type": "object"
+          },
+          "thesis_id": {
+            "title": "Thesis Id",
+            "type": "string"
+          },
+          "version_id": {
+            "title": "Version Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "thesis_id",
+          "project_id",
+          "version_id",
+          "raw_claim",
+          "normalized_claim",
+          "as_of_date",
+          "language_level",
+          "definitions",
+          "required_evidence_types",
+          "falsifier_requirements",
+          "input_object_refs"
+        ],
+        "title": "ThesisBuild",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -1125,6 +2015,18 @@
           "type"
         ],
         "title": "ValidationError",
+        "type": "object"
+      },
+      "VerifyRequest": {
+        "properties": {
+          "evidence_bundle": {
+            "$ref": "#/components/schemas/EvidenceBundle"
+          }
+        },
+        "required": [
+          "evidence_bundle"
+        ],
+        "title": "VerifyRequest",
         "type": "object"
       },
       "VersionDetailView": {
@@ -1442,6 +2344,43 @@
         "summary": "Get Asset Version"
       }
     },
+    "/api/v1/asset-versions/{version_id}/content": {
+      "get": {
+        "operationId": "materialize_asset_version_api_v1_asset_versions__version_id__content_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "version_id",
+            "required": true,
+            "schema": {
+              "title": "Version Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Materialize Asset Version"
+      }
+    },
     "/api/v1/assets/{asset_id}": {
       "get": {
         "operationId": "get_asset_api_v1_assets__asset_id__get",
@@ -1479,6 +2418,235 @@
           }
         },
         "summary": "Get Asset"
+      }
+    },
+    "/api/v1/data-plugins": {
+      "get": {
+        "operationId": "list_data_plugins_api_v1_data_plugins_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DataPluginView"
+                  },
+                  "title": "Response List Data Plugins Api V1 Data Plugins Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Data Plugins"
+      }
+    },
+    "/api/v1/data-plugins/{plugin_id}": {
+      "put": {
+        "operationId": "configure_data_plugin_api_v1_data_plugins__plugin_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plugin_id",
+            "required": true,
+            "schema": {
+              "title": "Plugin Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DataPluginToggle"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataPluginView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Configure Data Plugin"
+      }
+    },
+    "/api/v1/data-plugins/{plugin_id}/datasets": {
+      "get": {
+        "operationId": "list_plugin_datasets_api_v1_data_plugins__plugin_id__datasets_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plugin_id",
+            "required": true,
+            "schema": {
+              "title": "Plugin Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DatasetDescriptorView"
+                  },
+                  "title": "Response List Plugin Datasets Api V1 Data Plugins  Plugin Id  Datasets Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Plugin Datasets"
+      }
+    },
+    "/api/v1/data-plugins/{plugin_id}/ingest": {
+      "post": {
+        "operationId": "ingest_plugin_dataset_api_v1_data_plugins__plugin_id__ingest_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plugin_id",
+            "required": true,
+            "schema": {
+              "title": "Plugin Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DataPluginIngestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataPluginIngestResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ingest Plugin Dataset"
+      }
+    },
+    "/api/v1/data/resolve": {
+      "post": {
+        "operationId": "resolve_data_api_v1_data_resolve_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DataResolveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResolveResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resolve Data"
       }
     },
     "/api/v1/health": {
@@ -1636,6 +2804,43 @@
         "summary": "Upload Ingest Item"
       }
     },
+    "/api/v1/jobs/{job_id}/events": {
+      "get": {
+        "operationId": "job_events_api_v1_jobs__job_id__events_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Job Events"
+      }
+    },
     "/api/v1/objects/{object_id}": {
       "get": {
         "operationId": "get_object_api_v1_objects__object_id__get",
@@ -1716,6 +2921,423 @@
           }
         },
         "summary": "List Object Versions"
+      }
+    },
+    "/api/v1/theses": {
+      "post": {
+        "operationId": "create_thesis_api_v1_theses_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThesisBuild"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Thesis"
+      }
+    },
+    "/api/v1/theses/{thesis_id}": {
+      "get": {
+        "operationId": "get_thesis_api_v1_theses__thesis_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thesis_id",
+            "required": true,
+            "schema": {
+              "title": "Thesis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Thesis"
+      }
+    },
+    "/api/v1/theses/{thesis_id}/compile": {
+      "post": {
+        "operationId": "compile_thesis_api_v1_theses__thesis_id__compile_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thesis_id",
+            "required": true,
+            "schema": {
+              "title": "Thesis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Compile Thesis"
+      }
+    },
+    "/api/v1/theses/{thesis_id}/verify": {
+      "post": {
+        "operationId": "verify_thesis_api_v1_theses__thesis_id__verify_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thesis_id",
+            "required": true,
+            "schema": {
+              "title": "Thesis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify Thesis"
+      }
+    },
+    "/api/v1/theses/{thesis_id}/versions": {
+      "get": {
+        "operationId": "versions_api_v1_theses__thesis_id__versions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thesis_id",
+            "required": true,
+            "schema": {
+              "title": "Thesis Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Versions"
+      }
+    },
+    "/api/v1/thesis-versions/{a}/diff/{b}": {
+      "get": {
+        "operationId": "diff_api_v1_thesis_versions__a__diff__b__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "a",
+            "required": true,
+            "schema": {
+              "title": "A",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "b",
+            "required": true,
+            "schema": {
+              "title": "B",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Diff"
+      }
+    },
+    "/api/v1/tool-runs/macrotrace": {
+      "post": {
+        "operationId": "create_macrotrace_tool_run_api_v1_tool_runs_macrotrace_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Create Macrotrace Tool Run Api V1 Tool Runs Macrotrace Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Macrotrace Tool Run",
+        "tags": [
+          "ResearchOS MacroTrace Tool Adapter"
+        ]
+      }
+    },
+    "/api/v1/tool-runs/{tool_run_id}": {
+      "get": {
+        "operationId": "get_macrotrace_tool_run_api_v1_tool_runs__tool_run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tool_run_id",
+            "required": true,
+            "schema": {
+              "title": "Tool Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Get Macrotrace Tool Run Api V1 Tool Runs  Tool Run Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Macrotrace Tool Run",
+        "tags": [
+          "ResearchOS MacroTrace Tool Adapter"
+        ]
+      }
+    },
+    "/api/v1/tool-runs/{tool_run_id}/artifacts": {
+      "get": {
+        "operationId": "get_macrotrace_tool_artifacts_api_v1_tool_runs__tool_run_id__artifacts_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tool_run_id",
+            "required": true,
+            "schema": {
+              "title": "Tool Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Get Macrotrace Tool Artifacts Api V1 Tool Runs  Tool Run Id  Artifacts Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Macrotrace Tool Artifacts",
+        "tags": [
+          "ResearchOS MacroTrace Tool Adapter"
+        ]
+      }
+    },
+    "/api/v1/tool-runs/{tool_run_id}/graph": {
+      "get": {
+        "operationId": "get_macrotrace_tool_graph_api_v1_tool_runs__tool_run_id__graph_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tool_run_id",
+            "required": true,
+            "schema": {
+              "title": "Tool Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Get Macrotrace Tool Graph Api V1 Tool Runs  Tool Run Id  Graph Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Macrotrace Tool Graph",
+        "tags": [
+          "ResearchOS MacroTrace Tool Adapter"
+        ]
       }
     },
     "/api/v1/workspaces": {

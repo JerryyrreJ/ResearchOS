@@ -126,6 +126,8 @@ class IngestService:
         asset_id: str | None = None,
         source_key: str | None = None,
         force_new_asset: bool = False,
+        source_kind: SourceKind = SourceKind.BROWSER_UPLOAD,
+        source_metadata: dict[str, Any] | None = None,
     ) -> IngestOutcome:
         batch = self._batch(batch_id)
         if batch.status not in {BatchStatus.OPEN.value, BatchStatus.RUNNING.value}:
@@ -178,6 +180,8 @@ class IngestService:
                 detected_kind=detected.kind,
                 mime_type=detected.mime_type,
                 metadata=metadata,
+                source_kind=source_kind,
+                source_metadata=source_metadata or {},
             )
             item.resolved_asset_id = asset.id
             item.created_version_id = version.id
@@ -297,6 +301,8 @@ class IngestService:
         detected_kind: FormatKind,
         mime_type: str,
         metadata: dict[str, Any],
+        source_kind: SourceKind,
+        source_metadata: dict[str, Any],
     ) -> tuple[AssetRecord, AssetVersionRecord, ResolutionStatus]:
         asset: AssetRecord | None = None
 
@@ -351,6 +357,10 @@ class IngestService:
             resolution = ResolutionStatus.NEW_VERSION
             parent_version_id = asset.current_version_id
 
+        version_metadata = dict(metadata)
+        if source_metadata:
+            version_metadata["source_provenance"] = source_metadata
+
         version = AssetVersionRecord(
             asset_id=asset.id,
             parent_version_id=parent_version_id,
@@ -359,9 +369,9 @@ class IngestService:
             mime_type=mime_type,
             format_kind=detected_kind.value,
             size_bytes=blob.size_bytes,
-            source_kind=SourceKind.BROWSER_UPLOAD.value,
+            source_kind=source_kind.value,
             source_filename=filename,
-            deterministic_metadata=metadata,
+            deterministic_metadata=version_metadata,
             created_by=actor_id,
         )
         self.session.add(version)

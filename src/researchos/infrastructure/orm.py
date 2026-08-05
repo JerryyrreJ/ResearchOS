@@ -46,6 +46,19 @@ class WorkspaceRecord(Base):
     status: Mapped[str] = mapped_column(String(32), default=AssetStatus.ACTIVE.value)
 
 
+class DataPluginSettingRecord(Base):
+    __tablename__ = "data_plugin_settings"
+
+    plugin_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    enabled: Mapped[bool] = mapped_column(default=False)
+    updated_by: Mapped[str] = mapped_column(String(128))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utc_now,
+        onupdate=utc_now,
+    )
+
+
 class BlobRecord(Base):
     __tablename__ = "blobs"
 
