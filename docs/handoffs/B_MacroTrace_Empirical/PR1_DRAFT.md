@@ -8,7 +8,7 @@
 
 - Head: `role/b-macrotrace`
 - Base: `integration`
-- State: Draft
+- State: Draft PR #2 open — `https://github.com/JerryyrreJ/AIY_Project/pull/2`
 - Contract impact: `NONE`
 - Open only after the D/shared baseline inherited by B is present in `integration` and the three-dot PR diff contains only B-owned paths.
 
@@ -89,3 +89,5 @@ The D frontend baseline lint passed. Its Windows build/test command uses Unix in
 ## Merge gate
 
 Do not merge until C validates all three core EvidenceBundle fixtures and D confirms the graph/artifact boundary. After merge, Role B may begin the separately reviewed Data Resolve and REAL/Offline delivery unit.
+
+Independent pre-review evidence: `role/c-thesis@41546b4` successfully deserialized the COMPLETE, PARTIAL, and FAILED B fixtures, and all 15 C tests passed in an isolated worktree. This does not replace C owner confirmation on the PR.

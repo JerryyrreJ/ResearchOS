@@ -2,7 +2,7 @@
 
 Updated: 2026-08-05 (Asia/Shanghai)
 
-Current state: `FIRST_VERTICAL_SLICE_COMPLETE_WAITING_FOR_D_BASE_MERGE`
+Current state: `PR1_DRAFT_OPEN_AWAITING_C_D_CONFIRMATION`
 
 Detailed implementation and handoff log: `IMPLEMENTATION_LOG.md`
 
@@ -11,10 +11,10 @@ Role: B — MacroTrace Empirical Tool
 Branch: role/b-macrotrace
 Commit: docs 008bfb672e75; subtree 1ac66da8c637; fixture adapter f40c6fdcc892
 Completed: isolated workspace; immutable handoff source archive and SHA-256 manifest; latest D-base scope audit; frozen-contract verification; repository inventory; MacroTrace subtree import; fixture-only Tool Adapter; COMPLETE/PARTIAL/FAILED fixtures; CANCELLED/UNSUPPORTED/OUT_OF_SCOPE mappings; stable graph/artifact routes; 65 upstream tests and 33 adapter tests; remote branch handoff; team-readable implementation log
-In progress: first PR is fully prepared; waiting for D/shared baseline to enter integration before opening it
-Blocked: integration exists at the empty master baseline and does not contain the D/shared contracts base inherited by B; A M1 does not expose /v1/data/resolve; C has no remote branch; D baseline build/test scripts fail on Windows because they use Unix inline environment-variable syntax
+In progress: Draft PR #2 is open, cleanly mergeable, and awaiting formal C/D consumer confirmation
+Blocked: PR #2 is not merged; C and D have not formally confirmed consumption on the PR; A/integration does not expose /v1/data/resolve, so REAL mode remains locked
 Contract impact: NONE
-Need from other roles: D/shared baseline merged into integration; A implements frozen /v1/data/resolve; C confirms fixture deserialization; D consumes B graph/artifact routes and owns or documents its Windows script issue
+Need from other roles: C confirms COMPLETE/PARTIAL/FAILED fixture consumption; D confirms graph/artifact boundary; reviewers merge PR #2 after those checks; A implements frozen /v1/data/resolve before REAL work
 Next integration test: C deserializes COMPLETE, PARTIAL, and FAILED EvidenceBundle fixtures; D consumes stable graph/artifact URLs only
 ```
 
@@ -31,4 +31,7 @@ Next integration test: C deserializes COMPLETE, PARTIAL, and FAILED EvidenceBund
 - PR scope guard: no PR opened yet because B inherits D through `e0ec0ded1abe`; targeting the current empty integration would mix D/shared files into the B PR
 - A dependency audit: the current A M1 implements deterministic asset ingest/versioning but has no `/v1/data/resolve`, so REAL mode remains gated
 - D consumer note: B graph and artifact routes now exist, but D's status still lists them as missing and has not confirmed consumption
+- Draft PR opened: `https://github.com/JerryyrreJ/AIY_Project/pull/2`; base `integration`, head `role/b-macrotrace`, state Draft, mergeability `CLEAN`, contract impact `NONE`
+- PR scope revalidated: 209 changed files, all within B-owned paths; zero `contracts/v1` or `fixtures/contracts` changes; secret scan passed
+- Independent C compatibility check: current `role/c-thesis@41546b4` successfully deserialized all three core B fixtures and its 15 tests passed; this is technical evidence, not a substitute for C owner confirmation
 - Secrets: no credentials or API keys copied from chat into the workspace or repository
