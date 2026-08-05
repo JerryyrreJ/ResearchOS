@@ -23,6 +23,22 @@ type RealWorkspaceProps = {
   onObjectCount: (count: number) => void;
 };
 
+type LibraryCategory = "ALL" | "DOCUMENT" | "DATA" | "NOTE" | "PDF";
+
+function categoryFor(item: ObjectSummary): Exclude<LibraryCategory, "ALL"> {
+  const kind = item.current_version?.format_kind ?? "";
+  if (kind === "CSV" || kind === "XLSX") return "DATA";
+  if (kind === "MARKDOWN" || kind === "TEXT") return "NOTE";
+  if (kind === "PDF_TEXT") return "PDF";
+  return "DOCUMENT";
+}
+
+function readableBytes(value: number) {
+  if (value < 1024) return `${value} B`;
+  if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`;
+  return `${(value / 1024 / 1024).toFixed(1)} MB`;
+}
+
 function sourceFromObject(item: ObjectSummary): WorkspaceSource {
   const current = item.current_version;
   return {
@@ -56,6 +72,8 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [query, setQuery] = useState("");
   const [workspaceTab, setWorkspaceTab] = useState<"objects" | "relations" | "conflicts">("objects");
+  const [category, setCategory] = useState<LibraryCategory>("ALL");
+  const [selectedObjectId, setSelectedObjectId] = useState<string>();
   const [loading, setLoading] = useState(true);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string>();
@@ -103,6 +121,12 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
       cancelled = true;
     };
   }, [refresh]);
+
+  useEffect(() => {
+    const choose = () => inputRef.current?.click();
+    window.addEventListener("researchos:choose-files", choose);
+    return () => window.removeEventListener("researchos:choose-files", choose);
+  }, []);
 
   const acceptFiles = async (incoming: File[]) => {
     if (!workspaceId || incoming.length === 0) return;
@@ -181,25 +205,32 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
     if (workspaceId) void refresh(workspaceId, query);
   };
 
+  const visibleObjects = objects.filter(item => category === "ALL" || categoryFor(item) === category);
+  const selectedObject = objects.find(item => item.object_id === selectedObjectId);
+  const categories: Array<{ id: LibraryCategory; label: string }> = [
+    { id: "ALL", label: "全部" }, { id: "DOCUMENT", label: "文档" }, { id: "DATA", label: "数据" },
+    { id: "NOTE", label: "笔记" }, { id: "PDF", label: "PDF" },
+  ];
+
   return (
     <div className={`workspace-scroll api-workspace ${dragging ? "is-dragging" : ""}`} onDragEnter={onWorkspaceDragEnter} onDragOver={(event)=>event.preventDefault()} onDragLeave={onWorkspaceDragLeave} onDrop={onDrop}>
       {dragging && <div className="workspace-drop-overlay" role="status"><div className="drop-target-mark">↓</div><b>松开即可上传并开始处理</b><span>自动建立对象、内容哈希与不可变版本</span></div>}
       <section className="api-workspace-head">
         <div>
-          <div className="eyebrow"><span className="status-dot green" /> REAL API · M1 ASSET FOUNDATION</div>
-          <h2>Live research workspace</h2>
-          <p>Files, versions and parser results below come from the deterministic ResearchOS API.</p>
+          <div className="eyebrow"><span className="status-dot green" /> SHARED · TEAM KNOWLEDGE</div>
+          <h2>把团队文件放到同一个地方</h2>
+          <p>上传后自动保存、识别类型并建立版本。所有成员看到的是同一份资料库。</p>
         </div>
-        <button className="button secondary" onClick={() => workspaceId && void refresh(workspaceId, query)}>↻ Refresh</button>
+        <div className="knowledge-presence"><span>TW</span><span>YR</span><span>+3</span><button className="button secondary" onClick={() => workspaceId && void refresh(workspaceId, query)}>↻ 同步</button></div>
       </section>
 
       <div
         className={`dropzone ${dragging ? "dragging" : ""}`}
         onClick={()=>inputRef.current?.click()}
       >
-        <div className="dropzone-icon">＋</div>
-        <div><b>Drop research files here</b><small>Markdown, DOCX, XLSX, CSV and text PDF · the API determines facts and versions</small></div>
-        <button className="button primary small" onClick={(event) => { event.stopPropagation(); inputRef.current?.click(); }}>Choose files</button>
+        <div className="dropzone-icon">↓</div>
+        <div><b>拖入任何团队文件</b><small>松开后立即保存并分类 · 支持 Markdown、Word、Excel、CSV、PDF 与文本</small></div>
+        <button className="button primary small" onClick={(event) => { event.stopPropagation(); inputRef.current?.click(); }}>选择文件</button>
         <input ref={inputRef} type="file" multiple hidden onChange={onInputChange} />
       </div>
 
@@ -211,6 +242,15 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
           {queue.map((item) => <div className="upload-row" key={item.id}><span className={`upload-state ${item.status.toLowerCase()}`}>{item.status}</span><b>{item.fileName}</b><small>{item.detail ?? ""}</small></div>)}
         </section>
       )}
+
+      <section className="knowledge-library">
+        <div className="library-toolbar"><div><span className="eyebrow">TEAM LIBRARY</span><h2>共享资料库</h2></div><form className="library-search" onSubmit={submitSearch}><span>⌕</span><input aria-label="Search knowledge base" value={query} onChange={event=>setQuery(event.target.value)} placeholder="搜索文件、类型或版本…"/><button>搜索</button></form></div>
+        <div className="category-row">{categories.map(item=><button key={item.id} className={category===item.id?"active":""} onClick={()=>setCategory(item.id)}>{item.label}<em>{item.id==="ALL"?objects.length:objects.filter(object=>categoryFor(object)===item.id).length}</em></button>)}</div>
+        <div className={`library-layout ${selectedObject ? "has-analysis" : ""}`}>
+          <div className="file-collection">{loading ? <div className="knowledge-empty">正在同步团队资料库…</div> : visibleObjects.length===0 ? <button className="knowledge-empty actionable" onClick={()=>inputRef.current?.click()}><i>＋</i><b>这里还没有文件</b><span>拖入文件，或点击这里开始建立共享知识库</span></button> : visibleObjects.map(item=>{const source=sourceFromObject(item);const itemCategory=categoryFor(item);return <button className={`knowledge-file ${selectedObjectId===item.object_id?"selected":""}`} key={item.object_id} onClick={()=>setSelectedObjectId(item.object_id)}><i className={`knowledge-file-icon kind-${itemCategory.toLowerCase()}`}>{source.formatKind.slice(0,2)}</i><span><b>{item.name}</b><small>{itemCategory} · {readableBytes(source.sizeBytes)} · {item.version_count} 个版本</small></span><em>{formatDate(source.updatedAt)}</em></button>})}</div>
+          {selectedObject&&<aside className="quick-analysis"><div className="analysis-head"><span>基础分析</span><button onClick={()=>setSelectedObjectId(undefined)} aria-label="Close analysis">×</button></div><div className="analysis-file"><i>{selectedObject.current_version?.format_kind.slice(0,2)}</i><h3>{selectedObject.name}</h3><p className="mono">{selectedObject.object_id}</p></div><div className="analysis-summary"><span>自动分类</span><b>{categoryFor(selectedObject)}</b><p>{selectedObject.current_version?.format_kind === "CSV" || selectedObject.current_version?.format_kind === "XLSX" ? "结构化数据文件，可用于后续统计与模型分析。" : "已安全保存并纳入团队检索，可继续建立论题与证据关系。"}</p></div><dl><dt>文件大小</dt><dd>{readableBytes(selectedObject.current_version?.size_bytes ?? 0)}</dd><dt>版本</dt><dd>{selectedObject.version_count}</dd><dt>可解析片段</dt><dd>{selectedObject.fragment_count}</dd><dt>状态</dt><dd>{selectedObject.status}</dd></dl><button className="button primary analysis-action" onClick={()=>window.dispatchEvent(new CustomEvent("researchos:new-thesis",{detail:{name:selectedObject.name}}))}>用于新论题 →</button></aside>}
+        </div>
+      </section>
 
       <div className="summary-strip api-summary">
         <div><span>Research objects</span><b>{loading ? "…" : objects.length}</b></div>

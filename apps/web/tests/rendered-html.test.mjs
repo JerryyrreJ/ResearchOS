@@ -149,3 +149,20 @@ test("supports workspace-wide drag upload and a collapsible functional sidebar",
   assert.match(css, /\.app-shell\.sidebar-collapsed/);
   assert.match(css, /\.workspace-drop-overlay/);
 });
+
+test("makes the shared knowledge library the primary product workflow", async () => {
+  const [page, workspace, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/real-workspace.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /useState<View>\("workspace"\)/);
+  assert.match(page, /团队知识库/);
+  assert.match(page, /researchos:choose-files/);
+  assert.match(workspace, /共享资料库/);
+  assert.match(workspace, /categoryFor/);
+  assert.match(workspace, /基础分析/);
+  assert.match(workspace, /researchos:new-thesis/);
+  assert.match(css, /\.knowledge-library/);
+  assert.match(css, /\.quick-analysis/);
+});
