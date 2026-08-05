@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="MacroTrace — 可审计、可展开的美国宏观研究编译器">
-  <title>MacroTrace / White-box Macro Research</title>
+  <meta name="description" content="MacroTrace — 从每日信息到可审计实证结论的研究系统">
+  <title>MacroTrace / 白盒实证研究系统</title>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,43 +15,84 @@
 </head>
 <body>
   <header class="masthead">
-    <a class="brand" href="/" aria-label="MacroTrace home">
+    <a class="brand" href="/" aria-label="MacroTrace 首页">
       <span class="brand-mark">M<span>T</span></span>
-      <span><strong>MacroTrace</strong><small>RESEARCH OPERATING SYSTEM / US MACRO</small></span>
+      <span><strong>MacroTrace</strong><small>白盒实证研究操作系统</small></span>
     </a>
-    <nav class="primary-nav" aria-label="Primary navigation">
-      <a class="active" href="#researchForm">Workbench</a>
-      <a href="#workspace">Research graph</a>
-      <button id="historyButton" type="button">Run archive</button>
-      <button id="settingsButton" type="button">API &amp; data</button>
+    <nav class="primary-nav" aria-label="主要导航">
+      <a class="active" href="#dailyBrief">01 每日日报</a>
+      <a href="#researchForm">02 研究工作台</a>
+      <a href="#workspace">03 证据图谱</a>
+      <button id="historyButton" type="button">本地记录</button>
+      <button id="settingsButton" type="button">接口与数据</button>
     </nav>
     <button id="mobileSettingsButton" class="mobile-settings-button" type="button" aria-label="打开 API 与数据源配置">API</button>
     <div class="system-state" aria-live="polite">
       <span id="healthPulse" class="pulse"></span>
-      <span id="healthText">CONNECTING</span>
+      <span id="healthText">正在连接</span>
       <i></i>
-      <span id="seriesCount">— SERIES</span>
+      <span id="seriesCount">— 条序列</span>
     </div>
   </header>
 
   <main>
+    <section id="dailyBrief" class="daily-brief" aria-labelledby="dailyBriefTitle">
+      <header class="daily-brief-head">
+        <div>
+          <span>01 / 每日研究简报</span>
+          <h1 id="dailyBriefTitle">先阅读观点，再决定检验什么</h1>
+          <p>以买方日报的方式阅读美国宏观与资产市场；选中一句或一段文字，即可把它编译成值得完整研究的实证问题。</p>
+        </div>
+        <div class="daily-head-actions">
+          <label class="daily-upload" for="dailyPdfInput">阅读本地 PDF</label>
+          <input id="dailyPdfInput" type="file" accept="application/pdf,.pdf" hidden>
+          <button id="refreshDailyBrief" class="daily-refresh" type="button"><span>刷新今日日报</span><i>↻</i></button>
+        </div>
+      </header>
+      <div class="daily-reader-shell">
+        <aside class="daily-reader-nav">
+          <span>阅读目录</span>
+          <strong id="dailyReaderModeLabel">美国市场日报</strong>
+          <div id="dailyDomainFilters" class="daily-domain-filters"></div>
+          <div id="dailySourceState" class="daily-source-state"></div>
+          <span id="dailyBriefMeta" class="daily-reader-meta">—</span>
+          <button id="backToDailyBrief" class="daily-back hidden" type="button">← 返回每日日报</button>
+          <p>阅读时拖动选中文字。松开鼠标后，可将选段送入实证研究。</p>
+        </aside>
+        <article id="dailyBriefDocument" class="daily-report-paper" aria-live="polite">
+          <header class="daily-paper-head">
+            <div><span>MACROTRACE RESEARCH</span><b id="dailyBriefDate">最近可获取信息</b></div>
+            <p id="dailyPaperMarket">美国市场 · 每日研究简报</p>
+            <h2 id="dailyBriefHeadline">正在读取日报…</h2>
+            <p id="dailyBriefSummary">系统正在检查本地日报缓存和已登记公开来源。</p>
+          </header>
+          <div id="dailyBriefCards" class="daily-report-body"></div>
+          <footer id="dailyBriefLimitations" class="daily-brief-limitations"></footer>
+        </article>
+      </div>
+      <div id="selectionToolbar" class="selection-toolbar hidden" role="toolbar" aria-label="选中文字操作">
+        <span>已选择观点</span>
+        <button id="selectionResearchButton" type="button">进入实证研究 →</button>
+      </div>
+    </section>
+
     <section class="hero" aria-labelledby="heroTitle">
-      <div class="hero-index"><span>01</span> US MACRO / EMPIRICAL RESEARCH COMPILER</div>
+      <div class="hero-index"><span>02</span> 研究工作台 / 白盒实证编译器</div>
       <div class="hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow">Institutional research, compiled.</p>
+          <p class="eyebrow">把观点编译成可验证的研究。</p>
           <h1 id="heroTitle">从研究问题到<span>可审计证据</span></h1>
-          <p class="hero-deck">把开放式美国宏观问题编译为机制泳道、真实数据、计量模型、诊断与可证伪结论。</p>
+          <p class="hero-deck">把宏观、股票、债券、行业与商品问题编译为机制、真实数据、计量模型、诊断与可证伪结论。</p>
         </div>
         <div class="hero-note">
-          <p>AI 负责路由，Registry 负责约束，Python 负责执行。每一个最终观点都能沿图谱反向追溯。</p>
+          <p>AI 负责路由，注册表负责约束，Python 负责执行。每一个最终观点都能沿图谱反向追溯。</p>
           <dl>
-            <div><dt>Universe</dt><dd>United States macro</dd></div>
-            <div><dt>Execution</dt><dd>Registry-constrained</dd></div>
-            <div><dt>Evidence</dt><dd>Official data / Python</dd></div>
+            <div><dt>研究范围</dt><dd>宏观 / 股票 / 债券 / 行业 / 商品</dd></div>
+            <div><dt>执行方式</dt><dd>注册模块约束执行</dd></div>
+            <div><dt>证据来源</dt><dd>真实数据 / Python</dd></div>
           </dl>
           <button id="heroSettingsButton" class="setup-entry" type="button">
-            <span><i id="providerSetupDot"></i>LOCAL PROVIDERS</span>
+            <span><i id="providerSetupDot"></i>本地服务配置</span>
             <strong id="providerSetupLabel">配置你自己的模型与数据 API</strong>
             <b>→</b>
           </button>
@@ -59,81 +100,81 @@
       </div>
 
       <form id="researchForm" class="query-console">
-        <div class="console-rule"><span>NEW RESEARCH / NATURAL-LANGUAGE HORIZON</span><span id="charCount">0 / 4000</span></div>
-        <textarea id="questionInput" maxlength="4000" required placeholder="例如：美国经济当前是在走弱还是重新加速，未来三个月的衰退风险怎么样？"></textarea>
+        <div class="console-rule"><span>新研究 / 用自然语言说明期限</span><span id="charCount">0 / 4000</span></div>
+        <textarea id="questionInput" maxlength="4000" required placeholder="例如：明天上证指数更可能上涨还是下跌？主要驱动因素是什么？"></textarea>
         <div class="console-bottom">
           <div id="exampleQuestions" class="examples" aria-label="示例问题"></div>
           <button id="runButton" class="run-button" type="submit">
-            <span>RUN RESEARCH</span><i>→</i>
+            <span>开始实证研究</span><i>→</i>
           </button>
         </div>
-        <p class="horizon-note">期限由问题中的自然语言解析；未明确时使用并披露 Workflow Policy Default。模型只能从已审核 Registry 中选择。</p>
+        <p class="horizon-note">期限由问题中的自然语言解析；未明确时使用并披露工作流默认期限。模型只能从已审核注册表中选择。</p>
       </form>
     </section>
 
     <section id="jobStrip" class="job-strip hidden" aria-live="polite">
       <div class="job-ident">
-        <span id="jobStatus">QUEUED</span>
+        <span id="jobStatus">排队中</span>
         <strong id="jobId">—</strong>
       </div>
       <div class="progress-shell"><i id="progressBar"></i></div>
       <ol id="stageRail" class="stage-rail">
-        <li data-status="PARSING_QUERY">Query</li>
-        <li data-status="CLASSIFYING_WORKFLOW">Workflow</li>
-        <li data-status="ROUTING_LANES">Lanes</li>
-        <li data-status="ROUTING_NODES">Nodes</li>
-        <li data-status="SELECTING_FACTORS">Factors</li>
-        <li data-status="PLANNING_MODELS">Models</li>
-        <li data-status="SELECTING_PARAMETERS">Parameters</li>
-        <li data-status="VALIDATING_PLAN">Validate</li>
-        <li data-status="EXECUTING_MODELS">Execute</li>
-        <li data-status="AGGREGATING_LANES">Aggregate</li>
-        <li data-status="SYNTHESIZING">Synthesis</li>
+        <li data-status="PARSING_QUERY">解析问题</li>
+        <li data-status="CLASSIFYING_WORKFLOW">识别任务</li>
+        <li data-status="ROUTING_LANES">选择通道</li>
+        <li data-status="ROUTING_NODES">选择节点</li>
+        <li data-status="SELECTING_FACTORS">选择因子</li>
+        <li data-status="PLANNING_MODELS">规划模型</li>
+        <li data-status="SELECTING_PARAMETERS">选择参数</li>
+        <li data-status="VALIDATING_PLAN">验证计划</li>
+        <li data-status="EXECUTING_MODELS">执行模型</li>
+        <li data-status="AGGREGATING_LANES">聚合通道</li>
+        <li data-status="SYNTHESIZING">生成结论</li>
       </ol>
-      <button id="cancelButton" class="cancel-button" type="button">CANCEL</button>
+      <button id="cancelButton" class="cancel-button" type="button">取消</button>
     </section>
 
     <section id="emptyState" class="empty-state">
       <div class="empty-seal">MT</div>
-      <div><span>THE RESEARCH GRAPH WILL APPEAR HERE</span><p>一个问题会被编译成机制泳道、研究节点、真实数据、计量模型、诊断、证据与可证伪结论。</p></div>
+      <div><span>研究图谱将在这里生成</span><p>一个问题会被编译成机制通道、研究节点、真实数据、计量模型、诊断、证据与可证伪结论。</p></div>
     </section>
 
     <section id="errorState" class="error-state hidden" role="alert">
-      <span>EXECUTION INTERRUPTED</span>
+      <span>执行已中断</span>
       <h2 id="errorTitle">研究任务未完成</h2>
       <p id="errorDetail"></p>
-      <button id="retryButton" type="button">RETRY THIS QUESTION</button>
+      <button id="retryButton" type="button">重新运行这个问题</button>
     </section>
 
     <section id="workspace" class="workspace hidden">
       <article id="conclusionCard" class="conclusion-card hidden">
         <div class="conclusion-kicker">
-          <span>DIRECT ANSWER / RESEARCH REPORT</span>
+          <span>直接结论 / 研究报告</span>
           <span id="answerAsOf">—</span>
         </div>
         <div class="conclusion-grid">
           <div>
             <p id="coverageLabel" class="coverage-label">—</p>
             <h2 id="answerHeadline">—</h2>
-            <p id="answerQualifier" class="answer-qualifier hidden" data-label="RESEARCH LIMIT"></p>
+            <p id="answerQualifier" class="answer-qualifier hidden" data-label="研究边界"></p>
             <p id="answerNarrative" class="answer-narrative"></p>
           </div>
           <div class="confidence-block">
-            <span>CONFIDENCE</span><strong id="confidenceValue">—</strong>
+            <span>置信度</span><strong id="confidenceValue">—</strong>
             <div class="coverage-meter"><i id="coverageMeter"></i></div>
-            <small id="coverageValue">— COVERAGE</small>
+            <small id="coverageValue">— 覆盖度</small>
           </div>
         </div>
         <div class="conclusion-foot">
-          <div><span>FALSIFIERS</span><ul id="falsifierList"></ul></div>
-          <div><span>LIMITATIONS / COVERAGE GAPS</span><ul id="limitationList"></ul></div>
+          <div><span>证伪条件</span><ul id="falsifierList"></ul></div>
+          <div><span>研究限制 / 覆盖缺口</span><ul id="limitationList"></ul></div>
         </div>
       </article>
 
       <section id="dataEvidencePanel" class="data-evidence-panel" aria-labelledby="dataEvidenceTitle">
         <header class="data-evidence-head">
           <div>
-            <span>01 / PART A · EVIDENCE SPACE</span>
+            <span>03 / 数据证据层</span>
             <h2 id="dataEvidenceTitle">本次实证调用了哪些数据？</h2>
             <p>灰色节点是系统可用的数据与文档；蓝绿色节点是本次问题真正路由并读取的证据。点击节点可查看来源、序列、频率与版本。</p>
           </div>
@@ -153,26 +194,26 @@
             <div id="dataEvidenceNodes" class="data-evidence-nodes"></div>
           </div>
         </div>
-        <footer class="data-evidence-foot"><span><i class="used"></i>本次使用</span><span><i></i>可用但未路由</span><span><i class="document"></i>A 中已版本化的文档 / 数据</span><b>滚轮缩放 · 拖拽移动 · 点击查看 lineage</b></footer>
+        <footer class="data-evidence-foot"><span><i class="used"></i>本次使用</span><span><i></i>可用但未路由</span><span><i class="document"></i>A 中已版本化的文档 / 数据</span><b>滚轮缩放 · 拖拽移动 · 点击查看数据沿革</b></footer>
       </section>
 
       <section class="graph-panel" aria-labelledby="graphTitle">
         <header class="graph-header">
           <div>
-            <span>02 / PART B · EMPIRICAL COMPILER</span>
-            <h2 id="graphTitle">Research Graph</h2>
-            <p id="graphStats">Waiting for compiled nodes.</p>
+            <span>04 / 实证编译层</span>
+            <h2 id="graphTitle">研究图谱</h2>
+            <p id="graphStats">等待研究节点生成。</p>
           </div>
           <div class="graph-actions">
-            <label>Lane<select id="laneFilter"><option value="ALL">All lanes</option></select></label>
-            <label>Status<select id="statusFilter"><option value="ALL">All status</option><option value="PLANNED">Planned</option><option value="SUCCESS">Success</option><option value="WARNING">Warning</option><option value="FAILED">Failed</option><option value="RUNNING">Running</option><option value="BLOCKED">Blocked</option><option value="NOT_ROUTED">Not routed</option></select></label>
-            <label>Evidence<select id="evidenceFilter"><option value="ALL">All evidence</option><option value="PREDICTIVE">Predictive</option><option value="TAIL_RISK_PREDICTIVE">Tail risk</option><option value="DYNAMIC_ASSOCIATION">Dynamic association</option><option value="ASSOCIATIONAL_FIXTURE">Fixture</option></select></label>
-            <button id="detailToggle" class="toggle-button" type="button" aria-pressed="false"><i></i>Show data layer</button>
+            <label>通道<select id="laneFilter"><option value="ALL">全部通道</option></select></label>
+            <label>状态<select id="statusFilter"><option value="ALL">全部状态</option><option value="PLANNED">已规划</option><option value="SUCCESS">成功</option><option value="WARNING">警告</option><option value="FAILED">失败</option><option value="RUNNING">运行中</option><option value="BLOCKED">受阻</option><option value="NOT_ROUTED">未路由</option></select></label>
+            <label>证据<select id="evidenceFilter"><option value="ALL">全部证据</option><option value="PREDICTIVE">预测</option><option value="TAIL_RISK_PREDICTIVE">尾部风险</option><option value="DYNAMIC_ASSOCIATION">动态关联</option><option value="ASSOCIATIONAL_FIXTURE">测试样本</option></select></label>
+            <button id="detailToggle" class="toggle-button" type="button" aria-pressed="false"><i></i>显示数据层</button>
           </div>
         </header>
         <div class="graph-toolbar">
           <div class="legend">
-            <span><i class="core"></i>Routed</span><span><i class="support"></i>Supporting</span><span><i class="warn"></i>Blocked / warning</span><span><i class="fail"></i>Failed</span><span>Grey = registered, not routed</span>
+            <span><i class="core"></i>已路由</span><span><i class="support"></i>辅助证据</span><span><i class="warn"></i>受阻 / 警告</span><span><i class="fail"></i>失败</span><span>灰色 = 已登记但未路由</span>
           </div>
           <div class="zoom-controls"><button id="zoomOut" type="button" aria-label="Zoom out">−</button><button id="zoomReset" type="button">100%</button><button id="zoomIn" type="button" aria-label="Zoom in">＋</button></div>
         </div>
@@ -187,7 +228,7 @@
       <article id="researchReport" class="research-report hidden" aria-labelledby="reportTitle">
         <header class="report-head">
           <div>
-            <span>03 / MACROTRACE RESEARCH NOTE</span>
+            <span>05 / MACROTRACE 实证研究报告</span>
             <h2 id="reportTitle">完整研究报告</h2>
           </div>
           <p id="reportQuestion"></p>
@@ -196,7 +237,7 @@
         <section class="report-section report-abstract" aria-labelledby="abstractTitle">
           <div class="report-section-index">01</div>
           <div class="report-section-body">
-            <span class="report-section-kicker">ABSTRACT</span>
+            <span class="report-section-kicker">研究摘要</span>
             <h3 id="abstractTitle">摘要</h3>
             <p id="reportAbstract" class="report-prose report-lead"></p>
             <ul id="reportKeyPoints" class="report-key-points"></ul>
@@ -206,9 +247,9 @@
         <section class="report-section" aria-labelledby="mechanismTitle">
           <div class="report-section-index">02</div>
           <div class="report-section-body">
-            <span class="report-section-kicker">ECONOMIC MECHANISMS</span>
-            <h3 id="mechanismTitle">经济机制</h3>
-            <p class="report-section-intro">先解释问题通过哪些经济渠道传导，再进入数据检验。每条机制均来自本轮实际路由，并连接到下方的实证证据。</p>
+            <span class="report-section-kicker">作用机制</span>
+            <h3 id="mechanismTitle">机制与模型</h3>
+            <p class="report-section-intro">每一项先显示机制或模型名称，再说明它如何作用于用户关心的对象，并连接到实际实证证据。</p>
             <div id="mechanismList" class="mechanism-list"></div>
           </div>
         </section>
@@ -216,7 +257,7 @@
         <section class="report-section" aria-labelledby="empiricalTitle">
           <div class="report-section-index">03</div>
           <div class="report-section-body">
-            <span class="report-section-kicker">DATA &amp; EMPIRICAL EVIDENCE</span>
+            <span class="report-section-kicker">数据与实证证据</span>
             <h3 id="empiricalTitle">数据与实证分析</h3>
             <p id="empiricalIntro" class="report-section-intro"></p>
             <div id="empiricalList" class="empirical-list"></div>
@@ -226,7 +267,7 @@
         <section class="report-section report-conclusion" aria-labelledby="reportConclusionTitle">
           <div class="report-section-index">04</div>
           <div class="report-section-body">
-            <span class="report-section-kicker">CONCLUSION</span>
+            <span class="report-section-kicker">综合结论</span>
             <h3 id="reportConclusionTitle">总结</h3>
             <p id="reportConclusion" class="report-prose report-lead"></p>
           </div>
@@ -239,17 +280,17 @@
     <div class="drawer-scrim" data-close-drawer></div>
     <section class="drawer-sheet" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
       <header class="drawer-head">
-        <div><span id="drawerType">MODEL RUN</span><h2 id="drawerTitle">Node detail</h2><p id="drawerSubtitle"></p></div>
-        <button class="drawer-close" data-close-drawer type="button" aria-label="Close detail">×</button>
+        <div><span id="drawerType">模型运行</span><h2 id="drawerTitle">节点详情</h2><p id="drawerSubtitle"></p></div>
+        <button class="drawer-close" data-close-drawer type="button" aria-label="关闭详情">×</button>
       </header>
       <nav id="drawerTabs" class="drawer-tabs" aria-label="Node detail sections">
-        <button data-tab="overview" class="active" type="button">Overview</button>
-        <button data-tab="specification" type="button">Specification</button>
-        <button data-tab="data" type="button">Data & Variables</button>
-        <button data-tab="results" type="button">Results</button>
-        <button data-tab="diagnostics" type="button">Diagnostics</button>
-        <button data-tab="robustness" type="button">Robustness</button>
-        <button data-tab="provenance" type="button">Provenance</button>
+        <button data-tab="overview" class="active" type="button">概览</button>
+        <button data-tab="specification" type="button">模型设定</button>
+        <button data-tab="data" type="button">数据与变量</button>
+        <button data-tab="results" type="button">结果</button>
+        <button data-tab="diagnostics" type="button">诊断</button>
+        <button data-tab="robustness" type="button">稳健性</button>
+        <button data-tab="provenance" type="button">来源与追溯</button>
       </nav>
       <div id="drawerBody" class="drawer-body"></div>
     </section>
@@ -260,9 +301,9 @@
     <section class="settings-sheet">
       <header class="settings-head">
         <div>
-          <span>LOCAL CONNECTION CONTROL</span>
+          <span>本地连接管理</span>
           <h2 id="settingsTitle">API 与数据源</h2>
-          <p>使用你自己的账户连接模型和美国官方数据库。密钥不会写进浏览器历史、研究 trace 或 GitHub。</p>
+          <p>使用你自己的账户连接模型和官方数据库。密钥不会写进浏览器历史、研究追踪记录或 GitHub。</p>
         </div>
         <button class="settings-close" data-close-settings type="button" aria-label="关闭设置">×</button>
       </header>
@@ -276,10 +317,10 @@
       <div class="settings-body">
         <section id="settingsModelTab" class="settings-tab active" data-settings-panel="model">
           <div class="settings-section-head">
-            <div><span>RESEARCH LANGUAGE LAYER</span><h3>选择模型服务商</h3></div>
-            <span id="llmConfigStatus" class="config-status">NOT CONFIGURED</span>
+            <div><span>研究语言层</span><h3>选择模型服务商</h3></div>
+            <span id="llmConfigStatus" class="config-status">尚未配置</span>
           </div>
-          <p class="settings-intro">模型只负责问题解析、Registry 路由和证据解释；回归、时间序列、诊断和聚合仍由本地 Python 执行。</p>
+          <p class="settings-intro">模型只负责问题解析、注册表路由和证据解释；回归、时间序列、诊断和聚合仍由本地 Python 执行。</p>
           <div id="llmProviderPills" class="provider-pills" role="radiogroup" aria-label="模型服务商"></div>
           <div class="settings-form-grid">
             <label>
@@ -319,34 +360,34 @@
             <div id="llmGuideBody"></div>
           </details>
           <div class="security-contract">
-            <span>SECRET CONTRACT</span>
+            <span>密钥安全约束</span>
             <p>前端永不读取已保存密钥的明文。后端仅返回配置状态与掩码；连接错误也不会包含服务商响应正文或请求凭据。</p>
           </div>
         </section>
 
         <section id="settingsDataTab" class="settings-tab" data-settings-panel="data">
           <div class="settings-section-head">
-            <div><span>OFFICIAL US MACRO SOURCES</span><h3>连接已有数据源</h3></div>
+            <div><span>已登记数据来源</span><h3>连接已有数据源</h3></div>
             <button id="syncConfiguredSources" type="button">同步已配置来源</button>
           </div>
-          <p class="settings-intro">首个本地版本会附带一份可运行的数据快照。下面的密钥用于刷新数据和补充 vintage，而不是让大语言模型替代真实数据。</p>
+          <p class="settings-intro">首个本地版本会附带一份可运行的数据快照。下面的密钥用于刷新数据和补充历史版本，而不是让大语言模型替代真实数据。</p>
           <div id="dataSourceList" class="data-source-list"></div>
-          <p class="fred-disclaimer">This product uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.</p>
+          <p class="fred-disclaimer">本产品使用 FRED® API，但未获得圣路易斯联邦储备银行的认可或认证。</p>
         </section>
 
         <section id="settingsExtendTab" class="settings-tab" data-settings-panel="extend">
           <div class="settings-section-head">
-            <div><span>CODEX-ASSISTED CONNECTOR WORKFLOW</span><h3>把新的数据库接入 MacroTrace</h3></div>
+            <div><span>Codex 辅助接入流程</span><h3>把新的数据库接入 MacroTrace</h3></div>
           </div>
-          <p class="settings-intro">不要只把一个 Key 填进通用输入框。新来源必须同时定义数据集、因子、发布时间、vintage、变换、适用机制和可执行模型，才能进入白盒研究图。</p>
+          <p class="settings-intro">不要只把一个 Key 填进通用输入框。新来源必须同时定义数据集、因子、发布时间、历史版本、变换、适用机制和可执行模型，才能进入白盒研究图。</p>
           <ol class="connector-steps">
             <li><span>01</span><div><strong>准备官方资料</strong><p>数据库名称、官方 API 文档、申请页面、想使用的表或 series、单位、频率和发布时间。</p></div></li>
-            <li><span>02</span><div><strong>把资料交给本地 Codex / Claude Code</strong><p>让它先阅读本仓库的 connector、Catalog、Registry 与测试合同，再新增实现；不要直接改研究模型代码。</p></div></li>
-            <li><span>03</span><div><strong>完成 Registry 映射</strong><p>每个新 series 必须映射到 Factor、Dataset、Lane / Mechanism、变换与允许使用的 ModelRecipe。</p></div></li>
-            <li><span>04</span><div><strong>通过测试后再激活</strong><p>连接测试、快照测试、vintage 防穿越、Registry 校验和真实研究 smoke test 全部通过后，状态才能从 candidate 变为 active。</p></div></li>
+            <li><span>02</span><div><strong>把资料交给本地 Codex / Claude Code</strong><p>让它先阅读本仓库的数据连接器、目录、注册表与测试合同，再新增实现；不要直接改研究模型代码。</p></div></li>
+            <li><span>03</span><div><strong>完成注册表映射</strong><p>每个新序列必须映射到因子、数据集、通道 / 机制、变换与允许使用的模型配方。</p></div></li>
+            <li><span>04</span><div><strong>通过测试后再激活</strong><p>连接测试、快照测试、历史版本防穿越、注册表校验和真实研究冒烟测试全部通过后，状态才能从“候选”变为“已激活”。</p></div></li>
           </ol>
           <div class="codex-prompt">
-            <div><span>READY-TO-COPY REQUEST</span><button id="copyConnectorPrompt" type="button">复制给 Codex</button></div>
+            <div><span>可直接复制的请求</span><button id="copyConnectorPrompt" type="button">复制给 Codex</button></div>
             <pre id="connectorPrompt">请在本地 MacroTrace 仓库中新增一个官方宏观数据连接器。
 
 数据源名称：[填写]
@@ -371,16 +412,16 @@ API Key 申请页：[填写 URL；如无需 Key 请注明]
   </aside>
 
   <aside id="historyPanel" class="history-panel" role="dialog" aria-modal="true" aria-label="Local task history" aria-hidden="true">
-    <header><span>LOCAL TASK HISTORY</span><button id="historyClose" type="button">×</button></header>
+    <header><span>本地研究记录</span><button id="historyClose" type="button">×</button></header>
     <div id="historyList"></div>
   </aside>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <footer>
-    <span>MACROTRACE / LOCAL RESEARCH SYSTEM</span>
-    <span id="dataFreshness">Checking official-data warehouse…</span>
-    <span>REGISTRY V2 + V0.3 DEPTH / ARBITRARY CODE: OFF</span>
+    <span>MACROTRACE / 本地实证研究系统</span>
+    <span id="dataFreshness">正在检查真实数据仓库…</span>
+    <span>注册模块 V2 / 禁止任意代码</span>
   </footer>
 
   <script src="/assets/config.js"></script>

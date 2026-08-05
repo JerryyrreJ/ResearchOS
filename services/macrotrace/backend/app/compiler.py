@@ -61,6 +61,7 @@ def _number(value: str) -> int | None:
 
 def extract_horizon(question: str, default: dict[str, Any]) -> HorizonSpec:
     patterns = [
+        (r"明天|下一个交易日|tomorrow|next trading day", "NEXT_DAY"),
         (r"(?:未来|接下来)\s*([0-9一二两三四五六七八九十十二十八二十四]+)\s*(?:到|至|[-–—])\s*([0-9一二两三四五六七八九十十二十八二十四]+)\s*个?月", "MONTHS"),
         (r"([0-9一二两三四五六七八九十十二十八二十四]+)\s*(?:到|至|[-–—])\s*([0-9一二两三四五六七八九十十二十八二十四]+)\s*个月", "MONTHS"),
         (r"(?:未来|接下来)\s*([0-9一二两三四五六七八九十十二十八二十四]+)\s*个?月", "MONTHS"),
@@ -80,6 +81,14 @@ def extract_horizon(question: str, default: dict[str, Any]) -> HorizonSpec:
                 minimum=1,
                 maximum=1,
                 unit="MONTHS",
+                source="USER_EXPLICIT",
+                raw_text=match.group(0),
+            )
+        if unit == "NEXT_DAY":
+            return HorizonSpec(
+                minimum=1,
+                maximum=1,
+                unit="DAYS",
                 source="USER_EXPLICIT",
                 raw_text=match.group(0),
             )
@@ -111,12 +120,16 @@ def _concepts(question: str) -> list[str]:
         "recession": ("recession", "衰退"),
         "labor": ("labor", "employment", "unemployment", "wage", "就业", "失业", "工资"),
         "rates": ("yield", "rate", "treasury", "fed", "收益率", "利率", "美债", "美联储"),
-        "energy": ("oil", "wti", "energy", "油价", "能源"),
+        "energy": ("oil", "wti", "brent", "natural gas", "energy", "crude", "油价", "原油", "天然气", "能源"),
         "fiscal": ("fiscal", "debt", "deficit", "issuance", "财政", "债务", "赤字", "发行"),
         "housing": ("housing", "house price", "房价", "住房"),
         "panel": ("panel", "fixed effect", "面板", "固定效应"),
         "trade": ("trade", "tariff", "import", "export", "贸易", "关税", "进口", "出口"),
         "ai": ("artificial intelligence", "ai", "人工智能"),
+        "equity": ("stock", "equity", "s&p", "s&p 500", "sp500", "nasdaq", "dow", "vix", "标普", "纳斯达克", "指数", "股票", "个股", "美股"),
+        "bond": ("bond", "credit spread", "duration", "债券", "信用利差", "久期"),
+        "industry": ("industry", "sector", "景气度", "行业", "板块"),
+        "commodity": ("commodity", "futures", "gold", "copper", "silver", "corn", "wheat", "商品", "期货", "黄金", "白银", "铜价", "农产品"),
     }
     padded = f" {text} "
     return [name for name, terms in groups.items() if any(term in padded for term in terms)]
@@ -130,13 +143,32 @@ def _question_form(question: str, concepts: list[str]) -> str:
         return "SCENARIO"
     if "rates" in concepts and ("inflation" in concepts or "fiscal" in concepts):
         return "ASSET_TRANSMISSION"
-    if any(term in text for term in ("forecast", "predict", "未来", "下个月", "接下来")):
+    if any(term in text for term in ("forecast", "predict", "未来", "下个月", "接下来", "明天", "下一个交易日", "会涨", "会跌")):
         return "FORECAST"
     if any(term in text for term in ("nowcast", "current", "当前", "现在")):
         return "NOWCAST"
     if any(term in text for term in ("why", "driver", "什么推动", "原因")):
         return "DRIVER"
     return "STATE_ASSESSMENT"
+
+
+def _research_context(question: str, concepts: list[str]) -> tuple[str, str]:
+    text = question.lower()
+    jurisdiction = "US"
+    asset_concepts = {"equity", "bond", "commodity", "energy"}.intersection(concepts)
+    if len(asset_concepts) >= 2:
+        domain = "CROSS_ASSET"
+    elif "industry" in concepts:
+        domain = "INDUSTRY"
+    elif "equity" in concepts:
+        domain = "SINGLE_EQUITY" if any(term in text for term in ("个股", "公司", "股票代码")) else "EQUITY_INDEX"
+    elif "commodity" in concepts or "energy" in concepts:
+        domain = "COMMODITY"
+    elif "bond" in concepts or "rates" in concepts:
+        domain = "BOND"
+    else:
+        domain = "MACRO"
+    return jurisdiction, domain
 
 
 def _scenario_magnitude(question: str) -> dict[str, Any] | None:
@@ -227,6 +259,10 @@ class ResearchCompiler:
             return "WF.US.PANEL_FIXTURE.V1"
         if "inflation" in concepts:
             return "WF.US.INFLATION_OUTLOOK.V1"
+        if "commodity" in concepts or "energy" in concepts:
+            return "WF.US.COMMODITY_MARKET.V1"
+        if "equity" in concepts or "industry" in concepts:
+            return "WF.US.EQUITY_MARKET.V1"
         if "rates" in concepts or "fiscal" in concepts:
             return "WF.US.RATES_TRANSMISSION.V1"
         if "activity" in concepts or "recession" in concepts or "labor" in concepts:
@@ -239,6 +275,7 @@ class ResearchCompiler:
         # multiple ThreadPoolExecutor workers.
         self._trace_context.set([])
         concepts = _concepts(question)
+        jurisdiction, domain = _research_context(question, concepts)
         workflow_id = self._workflow_for(concepts)
         workflow = self.registry.get("workflows", workflow_id)
 
@@ -247,29 +284,41 @@ class ResearchCompiler:
         fallback_query = {
             "target_concepts": concepts or ["general macro"],
             "question_form": deterministic_form,
+            "domain": domain,
+            "research_target": question[:160],
             "conditional_events": [question[:160]] if deterministic_form == "SCENARIO" else [],
             "output_requirements": ["white-box evidence graph", "academic diagnostics"],
         }
 
         def validate_query(value: dict[str, Any]) -> dict[str, Any]:
-            _reject_extra(value, {"target_concepts", "question_form", "conditional_events", "output_requirements"})
+            _reject_extra(value, {"target_concepts", "question_form", "domain", "research_target", "conditional_events", "output_requirements"})
             form = value.get("question_form")
             if form not in {"FORECAST", "NOWCAST", "DRIVER", "CAUSAL", "SCENARIO", "ASSET_TRANSMISSION", "STATE_ASSESSMENT"}:
                 raise ValueError("invalid question form")
+            selected_domain = value.get("domain")
+            if selected_domain not in {"MACRO", "EQUITY_INDEX", "SINGLE_EQUITY", "BOND", "INDUSTRY", "COMMODITY", "CROSS_ASSET", "OTHER"}:
+                raise ValueError("invalid US research domain")
             targets = [str(item)[:80] for item in value.get("target_concepts", [])][:12]
             if not targets:
                 raise ValueError("missing target concepts")
             return {
                 "target_concepts": targets,
                 "question_form": form,
+                "domain": selected_domain,
+                "research_target": str(value.get("research_target", ""))[:160],
                 "conditional_events": [str(item)[:160] for item in value.get("conditional_events", [])][:8],
                 "output_requirements": [str(item)[:160] for item in value.get("output_requirements", [])][:8],
             }
 
         query_parts = self._llm_json(
             "LLM-0 Query Parser",
-            "Extract the query. Return exactly one object with keys target_concepts (string array), question_form (one supplied enum), conditional_events (string array), and output_requirements (string array). No other keys. Horizon is parsed separately from the user's exact language.",
-            {"question": question, "allowed_question_forms": ["FORECAST", "NOWCAST", "DRIVER", "CAUSAL", "SCENARIO", "ASSET_TRANSMISSION", "STATE_ASSESSMENT"]},
+            "Classify this US-market research question before any empirical routing. Return exactly one object with keys target_concepts (string array), question_form (one supplied enum), domain (one supplied enum), research_target (short string), conditional_events (string array), and output_requirements (string array). Distinguish macro, equity index, single equity, bond, industry, commodity/futures, and cross-asset questions from their economic meaning rather than keyword matching. No other keys. Horizon is parsed separately from the user's exact language.",
+            {
+                "question": question,
+                "market_scope": "United States only",
+                "allowed_domains": ["MACRO", "EQUITY_INDEX", "SINGLE_EQUITY", "BOND", "INDUSTRY", "COMMODITY", "CROSS_ASSET", "OTHER"],
+                "allowed_question_forms": ["FORECAST", "NOWCAST", "DRIVER", "CAUSAL", "SCENARIO", "ASSET_TRANSMISSION", "STATE_ASSESSMENT"],
+            },
             validate_query,
             fallback_query,
         )
@@ -281,6 +330,8 @@ class ResearchCompiler:
             if not query_parts["conditional_events"]:
                 query_parts["conditional_events"] = [question[:160]]
         query = StructuredQuery(
+            jurisdiction=jurisdiction,
+            domain=query_parts["domain"],
             question=question,
             as_of_date=as_of_date,
             target_concepts=query_parts["target_concepts"],
@@ -292,7 +343,31 @@ class ResearchCompiler:
         )
 
         emit("CLASSIFYING_WORKFLOW", {"role": "LLM-1"})
-        allowed_workflows = sorted(self.registry.ids("workflows"))
+        domain_workflows = {
+            "EQUITY_INDEX": ["WF.US.EQUITY_MARKET.V1"],
+            "SINGLE_EQUITY": ["WF.US.EQUITY_MARKET.V1"],
+            "INDUSTRY": ["WF.US.EQUITY_MARKET.V1"],
+            "COMMODITY": ["WF.US.COMMODITY_MARKET.V1"],
+            "BOND": ["WF.US.RATES_TRANSMISSION.V1"],
+            "CROSS_ASSET": ["WF.US.EQUITY_MARKET.V1", "WF.US.COMMODITY_MARKET.V1", "WF.US.RATES_TRANSMISSION.V1"],
+            "MACRO": ["WF.US.ACTIVITY_RISK.V1", "WF.US.INFLATION_OUTLOOK.V1", "WF.US.RATES_TRANSMISSION.V1", "WF.US.AI_LABOR_CAUSAL.V1", "WF.US.GENERAL_MACRO.V1"],
+            "OTHER": [workflow_id],
+        }
+        allowed_workflows = [
+            item for item in domain_workflows.get(query.domain, [workflow_id])
+            if item in self.registry.ids("workflows")
+        ]
+        if not allowed_workflows:
+            allowed_workflows = [workflow_id]
+        fallback_workflow_id = workflow_id if workflow_id in allowed_workflows else allowed_workflows[0]
+        workflow_options = [
+            {
+                "workflow_id": item,
+                "target_concepts": self.registry.get("workflows", item).get("target_concepts", []),
+                "lane_pool": self.registry.get("workflows", item).get("lane_pool", []),
+            }
+            for item in allowed_workflows
+        ]
 
         def validate_workflow(value: dict[str, Any]) -> dict[str, Any]:
             _reject_extra(value, {"workflow_id", "reason"})
@@ -303,10 +378,10 @@ class ResearchCompiler:
 
         selected_workflow = self._llm_json(
             "LLM-1 Workflow Classifier",
-            "Select exactly one supplied workflow_id. Return exactly {\"workflow_id\":\"one supplied ID\",\"reason\":\"short reason\"}. No other keys.",
-            {"query": query.model_dump(mode="json"), "allowed_workflow_ids": allowed_workflows},
+            "Reason over the structured US asset domain, research target, requested horizon and available lane pools, then select exactly one supplied workflow_id. Return exactly {\"workflow_id\":\"one supplied ID\",\"reason\":\"short reason\"}. No other keys.",
+            {"query": query.model_dump(mode="json"), "research_target": query_parts["research_target"], "workflow_options": workflow_options},
             validate_workflow,
-            {"workflow_id": workflow_id, "reason": "Deterministic concept-to-workflow fallback."},
+            {"workflow_id": fallback_workflow_id, "reason": "Deterministic concept-to-workflow fallback constrained by the structured asset domain."},
         )
         workflow_id = selected_workflow["workflow_id"]
         workflow = self.registry.get("workflows", workflow_id)
@@ -361,7 +436,7 @@ class ResearchCompiler:
             {"lanes": [], "excluded": lane_pool},
         )
         lanes = [LaneDecision(**row) for row in lane_selection["lanes"]]
-        if workflow.get("evidence_budget_id"):
+        if workflow.get("evidence_budget_id") or workflow.get("force_all_lanes"):
             selected_lane_ids_now = {lane.lane_id for lane in lanes}
             for index, lane_id in enumerate(workflow["lane_pool"]):
                 if lane_id not in selected_lane_ids_now:
@@ -369,9 +444,43 @@ class ResearchCompiler:
                         LaneDecision(
                             lane_id=lane_id,
                             priority="CORE" if index < 2 else "SUPPORTING",
-                            reason="Added by the registered evidence budget so a complex question cannot silently drop a required lane.",
+                            reason="Added by the registered workflow completeness policy so a complex question cannot silently drop a required lane.",
                         )
                     )
+        if workflow.get("required_lane_ids"):
+            required_lane_ids = list(workflow["required_lane_ids"])
+            lane_by_id = {lane.lane_id: lane for lane in lanes}
+            for lane_id in required_lane_ids:
+                lane_by_id.setdefault(
+                    lane_id,
+                    LaneDecision(
+                        lane_id=lane_id,
+                        priority="CORE",
+                        reason="Mandatory core lane retained by the registered hybrid-routing policy.",
+                    ),
+                )
+            ordered_lane_ids = [lane_id for lane_id in workflow["lane_pool"] if lane_id in lane_by_id]
+            minimum_lanes = int(workflow.get("minimum_selected_lanes", len(required_lane_ids)))
+            for lane_id in workflow["lane_pool"]:
+                if len(ordered_lane_ids) >= minimum_lanes:
+                    break
+                if lane_id not in ordered_lane_ids:
+                    lane_by_id[lane_id] = LaneDecision(
+                        lane_id=lane_id,
+                        priority="SUPPORTING",
+                        reason="Added by the registered minimum-lane fallback after API routing.",
+                    )
+                    ordered_lane_ids.append(lane_id)
+            maximum_lanes = int(workflow.get("maximum_selected_lanes", len(workflow["lane_pool"])))
+            retained_lane_ids = required_lane_ids + [
+                lane_id for lane_id in ordered_lane_ids if lane_id not in required_lane_ids
+            ][: max(0, maximum_lanes - len(required_lane_ids))]
+            lanes = [lane_by_id[lane_id] for lane_id in retained_lane_ids]
+            self._record(
+                "Hybrid Lane Guard",
+                "SUCCESS",
+                {"required": required_lane_ids, "retained": retained_lane_ids, "minimum": minimum_lanes, "maximum": maximum_lanes},
+            )
         selected_lane_ids = {lane.lane_id for lane in lanes}
 
         emit("ROUTING_NODES", {"role": "LLM-3"})
@@ -399,8 +508,32 @@ class ResearchCompiler:
                 {"node_ids": [], "reason": "Removed after two invalid LLM-3 outputs."},
             )
             selected_node_ids.extend(selection["node_ids"])
-        if workflow.get("evidence_budget_id"):
+        if workflow.get("evidence_budget_id") or workflow.get("force_all_nodes"):
             selected_node_ids = [node["node_id"] for node in candidate_nodes if node["lane_id"] in selected_lane_ids]
+        elif workflow.get("required_node_ids"):
+            required_node_ids = [
+                node_id for node_id in workflow["required_node_ids"]
+                if self.registry.get("nodes", node_id)["lane_id"] in selected_lane_ids
+            ]
+            api_selected = list(dict.fromkeys(selected_node_ids))
+            optional_candidates = [
+                node["node_id"] for node in candidate_nodes
+                if node["lane_id"] in selected_lane_ids and node["node_id"] not in required_node_ids
+            ]
+            optional_selected = [node_id for node_id in api_selected if node_id in optional_candidates]
+            minimum_optional = int(workflow.get("minimum_optional_nodes", 0))
+            for node_id in optional_candidates:
+                if len(optional_selected) >= minimum_optional:
+                    break
+                if node_id not in optional_selected:
+                    optional_selected.append(node_id)
+            maximum_optional = int(workflow.get("maximum_optional_nodes", len(optional_candidates)))
+            selected_node_ids = required_node_ids + optional_selected[:maximum_optional]
+            self._record(
+                "Hybrid Node Guard",
+                "SUCCESS",
+                {"required": required_node_ids, "api_optional": api_selected, "retained_optional": optional_selected[:maximum_optional], "minimum_optional": minimum_optional, "maximum_optional": maximum_optional},
+            )
         selected_nodes = [node for node in candidate_nodes if node["node_id"] in set(selected_node_ids)]
         node_decisions = [
             NodeDecision(
@@ -625,6 +758,11 @@ class ResearchCompiler:
         ]
 
         unsupported = []
+        if any(
+            term in question.lower()
+            for term in ("中国", "上证", "沪深", "a股", "人民币", "中债", "恒生", "港股")
+        ):
+            unsupported.append("MacroTrace 当前版本只覆盖美国市场；非美国市场问题不会被美国数据代理替代。")
         repair_failures = [entry["role"] for entry in self.trace if entry["status"] == "FALLBACK_AFTER_REPAIR"]
         if repair_failures:
             unsupported.append(f"Compiler stages removed invalid selections after one repair attempt: {', '.join(sorted(set(repair_failures)))}.")
@@ -838,6 +976,21 @@ class ResearchCompiler:
             return {"quantiles": [0.05, 0.25, 0.5, 0.75, 0.95], "forecast_horizon_quarters": min(4, max(1, round(horizon_months / 3))), "estimation_window": "EXPANDING"}
         if recipe_id == "M.PANEL_FE_FIXTURE.V1":
             return {"start_year": 2010, "fixed_effects": "TWO_WAY", "covariance": "CLUSTER_ENTITY"}
+        if recipe_id in {"M.DAILY_MARKET_AR.V1", "M.DAILY_MARKET_BRIDGE.V1", "M.DAILY_MARKET_VAR.V1"}:
+            if query.horizon.unit == "DAYS":
+                requested_days = query.horizon.maximum
+            elif query.horizon.unit == "WEEKS":
+                requested_days = query.horizon.maximum * 5
+            elif query.horizon.unit == "MONTHS":
+                requested_days = query.horizon.maximum * 21
+            elif query.horizon.unit == "QUARTERS":
+                requested_days = query.horizon.maximum * 63
+            else:
+                requested_days = query.horizon.maximum * 252
+            horizon_days = next((item for item in (1, 5, 21, 63) if requested_days <= item), 63)
+            if recipe_id == "M.DAILY_MARKET_VAR.V1":
+                return {"lags": 5, "forecast_horizon_days": min(horizon_days, 21), "estimation_window_years": 5, "identification": "REGISTERED_CHOLESKY"}
+            return {"lags": 5, "forecast_horizon_days": horizon_days, "estimation_window_years": 5, "covariance": "HAC"}
         if recipe_id in {"M.UNIVARIATE_AR.V1", "M.BRIDGE_OLS.V1"}:
             return {"lags": 3, "forecast_horizon": min(6, max(1, horizon_months)), "estimation_window_years": 10}
         raise RegistryError(f"no defaults for {recipe_id}")

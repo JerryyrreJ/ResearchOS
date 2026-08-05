@@ -136,6 +136,12 @@ class ResearchEngine:
             "N.FISCAL.DEBT_TRAJECTORY": "C.FISCAL.YIELD_PRESSURE",
             "N.FISCAL.BALANCE": "C.FISCAL.YIELD_PRESSURE",
             "N.FISCAL.TERM_PREMIUM": "C.FISCAL.YIELD_PRESSURE",
+            "N.EQUITY.PRICE_DIRECTION": "C.EQUITY.DIRECTION",
+            "N.EQUITY.VOLATILITY": "C.EQUITY.RISK_APPETITE",
+            "N.EQUITY.DISCOUNT_RATE": "C.EQUITY.DIRECTION",
+            "N.COMMODITY.PRICE_DIRECTION": "C.COMMODITY.DIRECTION",
+            "N.COMMODITY.SUPPLY_BALANCE": "C.COMMODITY.SUPPLY_BALANCE",
+            "N.COMMODITY.MACRO_TRANSMISSION": "C.COMMODITY.DIRECTION",
             "N.HOUSING.STATE_PANEL_FIXTURE": "C.PANEL.FIXTURE",
         }
         fallback_falsifiers = []
@@ -238,7 +244,7 @@ class ResearchEngine:
         if not self.llm.available:
             return fallback, {"role": "LLM-7 Synthesis Interpreter", "status": "FALLBACK_NO_KEY"}
         system = """
-You are LLM-7, the evidence-bound research-report editor in MacroTrace. Rewrite only the prose fields in the supplied deterministic report. Do not calculate, change any number, weight, method, variable, sample, diagnostic, source link, limitation, or falsifier. Do not add facts, models, causality, or probabilities.
+You are LLM-7, the evidence-bound research-report editor in MacroTrace. Rewrite only the prose fields in the supplied deterministic report. Do not calculate, change any number, weight, method, variable, sample, diagnostic, source link, limitation, or falsifier. Do not add facts, models, causality, probabilities, point forecasts, or price targets.
 
 The reader must receive a direct directional answer to the exact original question before any background. Use natural Chinese research prose. Never use these internal engineering expressions in reader-facing prose: 主命题, 注册命题, 序数信号, 系统平衡分, 等泳道, Registry, claim_id, lane_id. Never write “直接回答是”. Copy the supplied deterministic direct_answer.headline exactly; it is an immutable aggregation result. When causal identification is unavailable, keep the directional stance and explain the identification limit only in the supporting prose.
 
@@ -250,7 +256,9 @@ mechanism_explanations must contain one object for every supplied mechanism, in 
 empirical_explanations must contain one object for every supplied empirical item, in the same order, with exactly node_id, title, question_addressed, finding, implication.
 conclusion must contain exactly text.
 
-The direct answer should be 2-4 sentences and must begin with the stance, not a limitation. The abstract should synthesize the major result, conflict, coverage, and confidence. Explain economic transmission before empirical work. For empirical work, state what method was run, on what variables and sample, what the numerical result says, and what it implies. Preserve uncertainty and conflicts. Do not rewrite deterministic method/sample/diagnostic fields because they will be merged separately.
+First read deterministic_report.research_context and use the language of that domain: macro questions discuss economic states; equity-index and single-equity questions answer the named security or index first; bond questions discuss yield, duration, term premium and spreads; industry questions discuss demand, capacity, price, margins and cycle; commodity questions discuss supply, demand, inventories and pass-through. Never force every question into generic macro language.
+
+The direct answer should be 2-4 sentences and must begin with the stance on the exact object asked about, not a limitation. The abstract should synthesize the major result, conflict, coverage, and confidence. For each mechanism, name the actual mechanism or model first, then explain its transmission chain. For empirical work, state what data was used, what model was run, the sample, what the numerical result says, and an explicit interpretation. Preserve uncertainty and conflicts. If no registered predictive model produced a percentage or price range, do not invent one. Do not rewrite deterministic method/sample/diagnostic fields because they will be merged separately.
 """.strip()
         payload = {
             "question": question,

@@ -91,76 +91,58 @@
       "status": "reviewed"
     },
     {
-      "report_id": "RC.1FC594395298",
-      "title": "房地产：销售偏稳，投资偏弱——国内高频指标跟踪（2025年第1期）",
-      "institution": "海通国际",
-      "source_file": "H3_AP202501061641813484_1.pdf",
-      "review_status": "reviewed",
-      "status": "reviewed"
+      "report_id": "RC.0FA80A4AF119",
+      "title": "The Effect of the Federal Reserve on the Stock Market",
+      "institution": "Federal Reserve Board",
+      "source_file": "sidecar:US_EQ_FED_EVENT.pdf",
+      "source_sha256": "0fa80a4af119ceb69876ca01549261174bd6034964282b0d726222f2a5465d92",
+      "review_status": "candidate",
+      "status": "candidate"
     },
     {
-      "report_id": "RC.2CD64AF6A329",
-      "title": "贸易战的历史视角、影响和应对——中美关税博弈专题系列（二）",
-      "institution": "中诚信国际研究院",
-      "source_file": "H3_AP202505081669485448_1.pdf",
-      "review_status": "reviewed",
-      "status": "reviewed"
+      "report_id": "RC.75FA4CC97E50",
+      "title": "Forecasting Sector Stock Market Returns",
+      "institution": "University of Stirling",
+      "source_file": "sidecar:US_EQ_SECTOR_FORECAST.pdf",
+      "source_sha256": "75fa4cc97e50a9974a4dfd4c7e476de98a11f92cdf9f7675e6b77f0c035a2fd0",
+      "review_status": "candidate",
+      "status": "candidate"
     },
     {
-      "report_id": "RC.2DC4A6369CFD",
-      "title": "消费类REITs的估值方法和投资价值分析",
-      "institution": "东吴证券",
-      "source_file": "H3_AP202406301637118689_1.pdf",
-      "review_status": "reviewed",
-      "status": "reviewed"
+      "report_id": "RC.E0533A62D4CC",
+      "title": "The Fundamentals of Commodity Futures Returns",
+      "institution": "NBER",
+      "source_file": "sidecar:US_COMMODITY_FUNDAMENTALS.pdf",
+      "source_sha256": "e0533a62d4ccdd2b18d4b39d7fdec0c7f26367fb94ec8a877b927bfa16abf0ed",
+      "review_status": "candidate",
+      "status": "candidate"
     },
     {
-      "report_id": "RC.2E7BBC7A6643",
-      "title": "银行息差“临界点”在哪儿？",
-      "institution": "天风证券",
-      "source_file": "H3_AP202505301681674435_1.pdf",
-      "review_status": "reviewed",
-      "status": "reviewed"
+      "report_id": "RC.25386D9CC68D",
+      "title": "Equilibrium Forward Curves for Commodities",
+      "institution": "Carnegie Mellon University",
+      "source_file": "sidecar:US_COMMODITY_STORAGE_EQUILIBRIUM.pdf",
+      "source_sha256": "25386d9cc68d53962a8e28f061da1f0acd28b2adc8a86020c3cdd17ec5c21beb",
+      "review_status": "candidate",
+      "status": "candidate"
     },
     {
-      "report_id": "RC.51C8DCE891D6",
-      "title": "市场风险测度与研判月报——2月市场跟踪",
-      "institution": "湘财证券研究所",
-      "source_file": "H3_AP202202081545729535_1.pdf",
-      "review_status": "reviewed",
-      "status": "reviewed"
+      "report_id": "RC.7682F8E97EB4",
+      "title": "Time Series Momentum",
+      "institution": "NYU Stern",
+      "source_file": "sidecar:US_FUTURES_TS_MOMENTUM.pdf",
+      "source_sha256": "7682f8e97eb4b77591dc85e36731ff51ed031970cdde81678108734db9478379",
+      "review_status": "candidate",
+      "status": "candidate"
     },
     {
-      "report_id": "RC.5515F76ED0E1",
-      "title": "指标与工具系列之四：寻找A股里的“金丝雀”",
-      "institution": "莫尼塔研究",
-      "source_file": "H3_AP201901281289333922_1.pdf",
-      "review_status": "reviewed",
-      "status": "reviewed"
-    },
-    {
-      "report_id": "RC.A32607A91570",
-      "title": "财政政策力度指数构建（下）",
-      "institution": "国信证券经济研究所",
-      "source_file": "H3_AP202402291624095491_1.pdf",
-      "review_status": "reviewed",
-      "status": "reviewed"
-    },
-    {
-      "report_id": "RC.A8B571F4D9A8",
-      "title": "经济回升的“地基”仍待夯实",
-      "institution": "国信证券经济研究所",
-      "source_file": "H3_AP202603171820590426_1.pdf",
-      "review_status": "reviewed",
-      "status": "reviewed"
-    },
-    {
-      "report_id": "RC.B028A3A24798",
-      "title": "A股长牛的数学原理——基于CAPM和不变增长模型",
-      "institution": "华泰证券",
-      "source_file": "H3_AP201801111076762354_1.pdf",
-      "review_status": "reviewed",
-      "status": "reviewed"
+      "report_id": "RC.FC5C3DFA15F0",
+      "title": "The Term Structure of Oil Futures Prices",
+      "institution": "Oxford Institute for Energy Studies",
+      "source_file": "sidecar:US_OIL_TERM_STRUCTURE.pdf",
+      "source_sha256": "fc5c3dfa15f0cccb5d31fef97be57c1820cf6d6dbfd28950c7bc905939e0e0a7",
+      "review_status": "candidate",
+      "status": "candidate"
     }
   ]
 }

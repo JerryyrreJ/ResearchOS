@@ -64,7 +64,9 @@ def test_registry_is_versioned_and_reference_complete() -> None:
     assert summary["counts"]["model_specifications"] >= 50
     assert summary["counts"]["evidence_budgets"] >= 5
     assert summary["counts"]["scenario_mappings"] >= 8
-    assert summary["counts"]["reports"] >= 20
+    # The public prototype is deliberately US-only. Chinese-market report
+    # records were removed instead of being retained merely to inflate count.
+    assert summary["counts"]["reports"] >= 17
     assert summary["arbitrary_code_allowed"] is False
 
 

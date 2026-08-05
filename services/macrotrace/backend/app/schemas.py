@@ -97,8 +97,17 @@ class HorizonSpec(StrictModel):
 
 class StructuredQuery(StrictModel):
     schema_version: Literal["0.2.0"] = "0.2.0"
-    jurisdiction: Literal["US"] = "US"
-    domain: Literal["MACRO"] = "MACRO"
+    jurisdiction: Literal["US", "CN", "GLOBAL", "OTHER"] = "US"
+    domain: Literal[
+        "MACRO",
+        "EQUITY_INDEX",
+        "SINGLE_EQUITY",
+        "BOND",
+        "INDUSTRY",
+        "COMMODITY",
+        "CROSS_ASSET",
+        "OTHER",
+    ] = "MACRO"
     question: str
     as_of_date: date
     target_concepts: list[str] = Field(default_factory=list, max_length=12)

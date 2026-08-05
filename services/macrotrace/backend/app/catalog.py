@@ -43,6 +43,15 @@ FRED_SERIES: tuple[SeriesSpec, ...] = (
     SeriesSpec("FRED", "USREC", "NBER based recession indicator", "M", "binary", "US.ACTIVITY", "1980-01-01"),
     SeriesSpec("FRED", "ICSA", "Initial unemployment insurance claims", "W", "count", "US.LABOR", "1980-01-01"),
     SeriesSpec("FRED", "CCSA", "Continued unemployment insurance claims", "W", "count", "US.LABOR", "1980-01-01"),
+    SeriesSpec("FRED", "SP500", "S&P 500 index", "D", "index", "US.EQUITY_MARKET", "2016-01-01"),
+    SeriesSpec("FRED", "NASDAQCOM", "Nasdaq Composite index", "D", "index", "US.EQUITY_MARKET", "1990-01-01"),
+    SeriesSpec("FRED", "VIXCLS", "CBOE VIX index", "D", "index", "US.EQUITY_MARKET", "1990-01-01"),
+    SeriesSpec("FRED", "DTWEXBGS", "Nominal broad US dollar index", "D", "index", "US.MONETARY", "2006-01-01"),
+    SeriesSpec("FRED", "DCOILWTICO", "WTI spot price", "D", "usd_per_barrel", "US.COMMODITY_ENERGY", "1990-01-01"),
+    SeriesSpec("FRED", "DHHNGSP", "Henry Hub natural gas spot price", "D", "usd_per_mmbtu", "US.COMMODITY_ENERGY", "1997-01-01"),
+    SeriesSpec("FRED", "PCOPPUSDM", "Global copper price", "M", "usd_per_metric_ton", "US.COMMODITY_ENERGY", "1990-01-01"),
+    SeriesSpec("FRED", "WCESTUS1", "US crude oil stocks excluding SPR", "W", "thousand_barrels", "US.COMMODITY_ENERGY", "1990-01-01"),
+    SeriesSpec("FRED", "PALLFNFINDEXM", "IMF all-commodity price index", "M", "index", "US.COMMODITY_ENERGY", "1992-01-01"),
 )
 
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import hmac
+from io import BytesIO
 import json
 import time
 from collections import defaultdict, deque
@@ -10,11 +11,13 @@ from threading import Lock
 from urllib.parse import urlparse
 
 import httpx
-from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi import FastAPI, File, Header, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, ConfigDict, Field
+from pypdf import PdfReader
 
 from .config import get_settings
 from .connection_schemas import DataSourceSettingsUpdate, LLMSettingsUpdate
@@ -26,6 +29,7 @@ from .schemas import ResearchJobCreate, ResearchRequest
 from .storage import MacroStore
 from .sync import SyncService
 from .provider_catalog import public_provider_catalog
+from .daily_brief import DailyBriefService
 from .researchos_adapter import router as researchos_adapter_router
 from .researchos_adapter import service as researchos_adapter_service
 
@@ -36,13 +40,14 @@ credential_store = LocalCredentialStore(settings)
 sync_service = SyncService(settings, store, credential_store)
 engine = ResearchEngine(settings, store, credential_store)
 connection_service = ConnectionService(credential_store, engine.llm)
+daily_brief_service = DailyBriefService(settings.data_dir / "daily_brief", engine.llm)
 job_manager = ResearchJobManager(engine, store, max_workers=settings.max_job_workers)
 
 production_mode = settings.runtime_environment != "local"
 app = FastAPI(
     title="MacroTrace",
     version="0.4.0",
-    description="A registry-constrained, white-box US macro research compiler.",
+    description="A registry-constrained, white-box empirical research compiler.",
     docs_url=None if production_mode else "/docs",
     redoc_url=None if production_mode else "/redoc",
     openapi_url=None if production_mode else "/openapi.json",
@@ -292,14 +297,69 @@ def legacy_modules_registry() -> dict:
 def examples() -> dict:
     return {
         "questions": [
-            "美国经济当前是在走弱还是重新加速，未来三个月的衰退风险怎么样？",
+            "未来三个月美国经济是在重新加速还是继续走弱，主要驱动因素是什么？",
+            "明天标普500指数更可能上涨还是下跌，利率、盈利与风险偏好如何共同影响？",
+            "当前美国通胀是否正在回升，这会如何影响利率与美股风格？",
+            "未来一个月原油期货更可能上涨还是下跌，供需、库存与美元分别贡献多少？",
+            "美国半导体行业景气是否继续上行，盈利与估值能否支撑相对收益？",
             "未来一到三个月美国通胀是否会加速，这会不会推动10年期美债收益率上升？",
-            "最近油价变化会给美国通胀带来上行还是下行压力？",
-            "美国联邦债务扩张是否正在增加10年期收益率压力？",
-            "用州级真实面板数据检验房价同比和失业率的关系，并加入州和季度固定效应。",
-            "AI是否已经显著推高美国失业率？",
         ]
     }
+
+
+class DailyBriefQuestionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    excerpt: str = Field(min_length=8, max_length=1800)
+
+
+@app.get("/api/daily-brief")
+@app.get("/v1/daily-brief")
+def daily_brief() -> dict:
+    """Return the last source-backed brief without forcing network traffic."""
+    return daily_brief_service.latest()
+
+
+@app.post("/api/daily-brief/refresh")
+@app.post("/v1/daily-brief/refresh")
+def refresh_daily_brief(lookback_hours: int = 72) -> dict:
+    """Search registered public sources and compile a traceable daily brief."""
+    if not 12 <= lookback_hours <= 168:
+        raise HTTPException(status_code=422, detail="检索窗口必须在 12 到 168 小时之间。")
+    return daily_brief_service.generate(lookback_hours)
+
+
+@app.post("/api/daily-brief/research-question")
+@app.post("/v1/daily-brief/research-question")
+def daily_brief_research_question(payload: DailyBriefQuestionRequest) -> dict:
+    """Compile a selected report excerpt into a research-worthy empirical question."""
+    try:
+        return daily_brief_service.research_question(payload.excerpt)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.post("/api/documents/read-pdf")
+@app.post("/v1/documents/read-pdf")
+async def read_pdf_document(file: UploadFile = File(...)) -> dict:
+    """Extract a local PDF in memory for the research reader; the file is never persisted."""
+    if not (file.filename or "").lower().endswith(".pdf"):
+        raise HTTPException(status_code=422, detail="请选择 PDF 文件。")
+    content = await file.read(20 * 1024 * 1024 + 1)
+    if len(content) > 20 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="PDF 不能超过 20 MB。")
+    try:
+        reader = PdfReader(BytesIO(content))
+        pages = [
+            {"page": index + 1, "text": (page.extract_text() or "").strip()}
+            for index, page in enumerate(reader.pages[:120])
+        ]
+    except Exception as exc:
+        raise HTTPException(status_code=422, detail="PDF 无法解析，可能是加密文件或扫描图片。") from exc
+    pages = [page for page in pages if page["text"]]
+    if not pages:
+        raise HTTPException(status_code=422, detail="没有提取到可选择的文字；扫描版 PDF 暂未启用 OCR。")
+    return {"filename": file.filename, "page_count": len(reader.pages), "pages": pages, "persisted": False}
 
 
 @app.post("/v1/research-jobs", status_code=202)

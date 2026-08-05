@@ -16,6 +16,8 @@
     {"dataset_id":"DS.EIA.WTI","source":"EIA","series_ids":["RWTC"],"license":"US public data","frequency":"W","vintage":"snapshot","status":"active"},
     {"dataset_id":"DS.TREASURY.DEBT","source":"Treasury Fiscal Data","series_ids":["DEBT_TO_PENNY_TOTAL"],"license":"US public data","frequency":"D","vintage":"snapshot","status":"active"},
     {"dataset_id":"DS.FRED.STATE_PANEL","source":"FRED","series_ids":["STATE_UR","STATE_STHPI"],"license":"BLS/FHFA public data distributed by FRED","frequency":"M/Q","vintage":"snapshot","status":"fixture"},
-    {"dataset_id":"DS.FRED.FISCAL","source":"FRED / OMB / BEA","series_ids":["GFDEGDQ188S","FGDEF"],"license":"US official public data distributed by FRED","frequency":"Q","vintage":"ALFRED_when_as_of","status":"active"}
+    {"dataset_id":"DS.FRED.FISCAL","source":"FRED / OMB / BEA","series_ids":["GFDEGDQ188S","FGDEF"],"license":"US official public data distributed by FRED","frequency":"Q","vintage":"ALFRED_when_as_of","status":"active"},
+    {"dataset_id":"DS.FRED.MARKETS","source":"FRED / S&P Dow Jones Indices / Nasdaq / CBOE / Federal Reserve","series_ids":["SP500","NASDAQCOM","VIXCLS","DTWEXBGS"],"license":"series-specific public data distributed by FRED; downstream users must review each series notes","frequency":"D/W","vintage":"snapshot","status":"active"},
+    {"dataset_id":"DS.FRED.COMMODITIES","source":"FRED / EIA / IMF","series_ids":["DCOILWTICO","DHHNGSP","PCOPPUSDM","WCESTUS1","PALLFNFINDEXM"],"license":"US public and IMF series distributed by FRED","frequency":"D/W/M","vintage":"snapshot","status":"active"}
   ]
 }
