@@ -229,3 +229,13 @@ test("explains backend deduplication and version outcomes in the upload UI", asy
   assert.match(css, /\.result-duplicate/);
   assert.match(css, /\.result-version/);
 });
+
+test("uses the Cobalt Protocol visual system across light, dark, and login surfaces", async () => {
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(css, /ResearchOS Cobalt Protocol/);
+  assert.match(css, /--accent:#2f5bff/);
+  assert.match(css, /--surface:#141d31/);
+  assert.match(css, /grid-template-columns:minmax\(390px,42%\)/);
+  assert.match(css, /\.archivist-login\{display:none\}/);
+  assert.match(css, /background-size:32px 32px/);
+});
