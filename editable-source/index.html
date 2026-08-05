@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="description" content="研构 ResearchOS：把金融研究从搜索答案升级为生产可验证结论。" />
+  <title>研构 ResearchOS｜AIY 金稳院赛道十页路演</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f6f3ec;
+      --paper-strong: #fffefa;
+      --ink: #081522;
+      --muted: #64707d;
+      --line: #d6d7d5;
+      --cobalt: #2f63f5;
+      --cobalt-soft: #e8eeff;
+      --green: #1d765f;
+      --green-soft: #e7f3ed;
+      --amber: #b87810;
+      --amber-soft: #fbf2df;
+      --red: #a94a46;
+      --red-soft: #f8e8e5;
+      --navy: #071521;
+      --deck-scale: 1;
+      --shadow: 0 24px 60px rgba(8,21,34,.13);
+      --font-sans: "Noto Sans CJK SC","PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+      --font-serif: "Songti SC","Noto Serif CJK SC","STSong",serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #dededb; color: var(--ink); font-family: var(--font-sans); }
+    button { font: inherit; }
+    button:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+    .deck-shell {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1440px;
+      height: 810px;
+      transform: translate(-50%, -50%) scale(var(--deck-scale, 1));
+      transform-origin: center;
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+    .deck { position: absolute; inset: 0; }
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 54px 76px 58px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateX(7%);
+      pointer-events: none;
+      background: var(--paper);
+      transition: opacity .42s ease, transform .62s cubic-bezier(.22,.8,.24,1);
+    }
+    .slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+    .slide.exit-left { opacity: 0; transform: translateX(-7%); }
+    .slide.dark { background: var(--navy); color: #f4f6f7; }
+    .slide::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--cobalt);
+    }
+    .slide.dark::before { background: #65d2b9; }
+    .kicker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--cobalt);
+      font-size: 14px;
+      font-weight: 760;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .kicker::before { content: ""; width: 5px; height: 25px; background: currentColor; }
+    .template-note {
+      position: absolute;
+      right: 76px;
+      top: 34px;
+      color: #8f969c;
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .template-note::before { content: ""; display: inline-block; width: 38px; height: 1px; margin-right: 10px; vertical-align: middle; background: #bfc1c1; }
+    h1, h2, h3, p { margin: 0; }
+    .slide-title {
+      max-width: 1100px;
+      margin-top: 24px;
+      font-size: 50px;
+      line-height: 1.08;
+      letter-spacing: -.045em;
+      font-weight: 790;
+    }
+    .blue { color: var(--cobalt); }
+    .green { color: #45b99f; }
+    .serif { font-family: var(--font-serif); }
+    .conclusion {
+      position: absolute;
+      left: 76px;
+      right: 76px;
+      bottom: 76px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--ink);
+      font-size: 18px;
+      font-weight: 720;
+    }
+    .conclusion::before { content: ""; width: 52px; height: 2px; background: var(--cobalt); }
+    .dark .conclusion { color: #e9f6f1; }
+    .dark .conclusion::before { background: #65d2b9; }
+    .slide-footer {
+      position: absolute;
+      left: 76px;
+      right: 76px;
+      bottom: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      color: var(--cobalt);
+      font-size: 10px;
+      font-weight: 760;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .slide-footer::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -11px;
+      height: 1px;
+      background: #c9cbca;
+    }
+    .slide-footer .page-no { color: #a1a5a8; font-size: 13px; }
+    .dark .slide-footer { color: #65d2b9; }
+    .dark .slide-footer::before { background: #36505c; }
+    [data-step] { opacity: 0; transform: translateY(14px); }
+    .active [data-step] { animation: stage-in .55s cubic-bezier(.2,.72,.22,1) forwards; animation-delay: calc(var(--step, 1) * 120ms); }
+    .slide.replaying [data-step] { animation: none !important; opacity: 0 !important; transform: translateY(14px) !important; }
+    @keyframes stage-in { to { opacity: 1; transform: translateY(0); } }
+
+    /* 01 — cover */
+    .cover { padding: 0; background: #fffefa; }
+    .cover-visual { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .cover-copy {
+      position: absolute;
+      z-index: 2;
+      left: 76px;
+      top: 62px;
+      width: 590px;
+      padding: 26px 34px 30px 0;
+      background: rgba(255,254,250,.93);
+    }
+    .cover-copy .event { color: var(--cobalt); font-size: 14px; font-weight: 800; letter-spacing: .11em; }
+    .cover-copy h1 { margin-top: 42px; font-size: 68px; line-height: .96; letter-spacing: -.055em; }
+    .cover-thesis { margin-top: 24px; max-width: 560px; font-size: 28px; line-height: 1.28; font-weight: 760; }
+    .cover-definition { margin-top: 18px; max-width: 560px; color: #3d4852; font-size: 17px; line-height: 1.7; }
+    .cover-pills { display: flex; gap: 10px; margin-top: 22px; }
+    .cover-pills span { padding: 8px 12px; border: 1px solid #cbd4ec; background: rgba(255,255,255,.92); color: #263a5d; font-size: 12px; font-weight: 720; }
+    .cover .slide-footer { z-index: 3; }
+
+    /* 02 — broken chain */
+    .problem-grid { display: grid; grid-template-columns: 360px 1fr; gap: 70px; margin-top: 54px; }
+    .broken-word { padding-top: 50px; color: var(--cobalt); font-family: var(--font-serif); font-size: 74px; line-height: 1; }
+    .broken-word p { margin-top: 20px; color: var(--muted); font-family: var(--font-sans); font-size: 17px; line-height: 1.7; }
+    .break-flow { border-top: 2px solid var(--ink); }
+    .break-row { display: grid; grid-template-columns: 78px 160px 1fr; gap: 18px; padding: 22px 0; border-bottom: 1px solid var(--line); align-items: center; }
+    .break-row b { color: var(--cobalt); font-size: 13px; letter-spacing: .08em; }
+    .break-row strong { font-size: 21px; }
+    .break-row span { color: var(--muted); font-size: 15px; line-height: 1.55; }
+    .break-row.active-risk strong { color: var(--red); }
+
+    /* 03 — architecture */
+    .layer-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 42px; }
+    .layer-card { min-height: 300px; padding: 28px; border-top: 4px solid var(--ink); background: var(--paper-strong); box-shadow: 0 12px 28px rgba(8,21,34,.06); }
+    .layer-card:nth-child(2) { border-color: var(--green); }
+    .layer-card:nth-child(3) { border-color: var(--amber); }
+    .layer-no { color: #88919a; font-size: 11px; letter-spacing: .12em; }
+    .layer-card h3 { margin-top: 24px; font-size: 27px; }
+    .layer-card > p { margin-top: 13px; min-height: 52px; color: var(--muted); font-size: 16px; line-height: 1.65; }
+    .layer-card ul { margin: 24px 0 0; padding: 0; list-style: none; }
+    .layer-card li { padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px; }
+    .layer-output { margin-top: 18px; padding: 10px 12px; background: var(--cobalt-soft); color: #2246ad; font-size: 13px; font-weight: 760; }
+    .layer-card:nth-child(2) .layer-output { background: var(--green-soft); color: var(--green); }
+    .layer-card:nth-child(3) .layer-output { background: var(--amber-soft); color: var(--amber); }
+
+    /* 04 — pipeline */
+    .pipeline-wrap { display: grid; grid-template-columns: 320px 1fr; gap: 44px; margin-top: 40px; align-items: stretch; }
+    .question-card { padding: 28px; background: var(--paper-strong); border: 1px solid #d8d8d4; box-shadow: 0 14px 30px rgba(8,21,34,.06); }
+    .question-card small { color: var(--cobalt); font-weight: 780; letter-spacing: .08em; }
+    .question-card h3 { margin-top: 20px; font-family: var(--font-serif); font-size: 29px; line-height: 1.35; }
+    .question-card p { margin-top: 24px; padding: 13px 14px; background: var(--navy); color: #fff; font-size: 14px; line-height: 1.55; }
+    .pipeline { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; align-content: center; }
+    .pipe-node { position: relative; min-height: 118px; padding: 18px; border: 1px solid var(--line); background: rgba(255,255,255,.62); }
+    .pipe-node::after { content: ""; position: absolute; right: -13px; top: 50%; width: 13px; height: 1px; background: var(--cobalt); }
+    .pipe-node:nth-child(4)::after, .pipe-node:nth-child(7)::after { display: none; }
+    .pipe-node b { color: var(--cobalt); font-size: 11px; letter-spacing: .08em; }
+    .pipe-node strong { display: block; margin-top: 13px; font-size: 17px; }
+    .pipe-node span { display: block; margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .pipe-node.output { grid-column: 4; background: var(--cobalt); color: #fff; }
+    .pipe-node.output b, .pipe-node.output span { color: #fff; }
+
+    /* reusable inner demo controls */
+    .inner-tabs { display: flex; gap: 8px; align-items: center; }
+    .inner-tabs button { border: 1px solid #cdd0d0; padding: 8px 12px; background: #fff; color: #53606b; cursor: pointer; font-size: 12px; font-weight: 720; }
+    .inner-tabs button[aria-pressed="true"] { border-color: var(--cobalt); background: var(--cobalt); color: #fff; }
+
+    /* 05 — product demo */
+    .demo-head { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 16px; }
+    .demo-head .slide-title { max-width: 780px; margin-top: 12px; font-size: 42px; }
+    .demo-workspace { display: grid; grid-template-columns: 190px 1fr; gap: 16px; margin-top: 24px; height: 465px; }
+    .demo-rail { display: grid; gap: 10px; }
+    .demo-thumb { position: relative; padding: 0; overflow: hidden; border: 1px solid #ccd0d3; background: #fff; cursor: pointer; text-align: left; }
+    .demo-thumb img { width: 100%; height: 72px; display: block; object-fit: cover; object-position: top; }
+    .demo-thumb span { display: block; padding: 8px 10px; font-size: 11px; font-weight: 760; }
+    .demo-thumb[aria-pressed="true"] { border: 2px solid var(--cobalt); }
+    .demo-stage { position: relative; overflow: hidden; border: 1px solid #c8ccd0; background: #fff; box-shadow: 0 12px 32px rgba(8,21,34,.09); }
+    .demo-frame { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 290px; opacity: 0; pointer-events: none; transition: opacity .42s ease; }
+    .demo-frame.active { opacity: 1; pointer-events: auto; }
+    .full-shot { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+    .detail-panel { padding: 20px; border-left: 1px solid #d5d8da; background: #fafaf7; }
+    .detail-panel b { color: var(--cobalt); font-size: 11px; letter-spacing: .08em; }
+    .detail-panel h3 { margin-top: 12px; font-size: 22px; line-height: 1.3; }
+    .detail-panel p { margin-top: 12px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .detail-lens { margin-top: 18px; height: 170px; overflow: hidden; border: 1px solid #c9ccce; background: #fff; }
+    .detail-lens img { width: 210%; height: 210%; object-fit: cover; object-position: var(--lens-x, 50%) var(--lens-y, 20%); transform: translate(var(--lens-tx, -22%), var(--lens-ty, -12%)); }
+    .evidence-thread { position: absolute; left: 266px; right: 324px; bottom: 92px; height: 2px; background: var(--cobalt); transform-origin: left; }
+
+    /* 06 — agents */
+    .agent-board { margin-top: 42px; border-top: 2px solid var(--ink); }
+    .agent-slide .slide-title { max-width: 900px; }
+    .agent-screen { position: absolute; right: 76px; top: 72px; width: 300px; height: 146px; margin: 0; overflow: hidden; border: 1px solid #cbd0d2; background: #fff; box-shadow: 0 10px 24px rgba(8,21,34,.08); }
+    .agent-screen img { width: 100%; height: 100%; object-fit: contain; }
+    .agent-lane { display: grid; grid-template-columns: 70px 250px 1fr 240px; gap: 18px; padding: 18px 14px; border-bottom: 1px solid var(--line); align-items: center; }
+    .agent-lane b { color: var(--cobalt); font-size: 12px; }
+    .agent-lane strong { font-size: 18px; }
+    .agent-lane span { color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .agent-lane em { padding: 8px 10px; background: var(--green-soft); color: var(--green); font-size: 12px; font-style: normal; font-weight: 760; }
+
+    /* 07 — boundary */
+    .trust-grid { display: grid; grid-template-columns: 1fr 510px; gap: 38px; margin-top: 38px; }
+    .claim-flow { border-top: 1px solid #34505d; }
+    .claim-step { padding: 22px 0; border-bottom: 1px solid #263d49; }
+    .claim-step b { color: #65d2b9; font-size: 11px; letter-spacing: .1em; }
+    .claim-step p { margin-top: 10px; font-size: 19px; line-height: 1.5; }
+    .claim-step.over p { color: #ffaba5; text-decoration: line-through; text-decoration-thickness: 2px; }
+    .claim-step.bound p { color: #d8fff4; }
+    .trust-evidence { display: grid; grid-template-rows: 1fr 160px; gap: 12px; }
+    .trust-evidence figure { margin: 0; overflow: hidden; border: 1px solid #34505d; background: #fff; }
+    .trust-evidence img { width: 100%; height: 100%; object-fit: contain; }
+
+    /* 08 — comparison */
+    .comparison-slide .slide-title { margin-top: 14px; font-size: 40px; }
+    .shared-question { margin-top: 12px; padding: 12px 16px; border-left: 4px solid var(--cobalt); background: #fff; font-size: 16px; font-weight: 720; }
+    .comparison-toolbar { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+    .comparison-toolbar > span { color: var(--muted); font-size: 12px; }
+    .comparison-shell { position: relative; height: 416px; margin-top: 10px; }
+    .answer-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; height: 300px; transition: grid-template-columns .55s ease; }
+    .answer-card { position: relative; overflow: hidden; border: 1px solid #c8cccf; background: #fff; transition: opacity .4s ease, transform .5s ease; }
+    .answer-label { position: absolute; z-index: 3; left: 10px; top: 10px; padding: 7px 10px; background: rgba(7,21,33,.92); color: #fff; font-size: 12px; font-weight: 800; }
+    .answer-viewport { position: absolute; inset: 0; padding-top: 38px; overflow: hidden; background: #fff; }
+    .answer-viewport > img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .ifind-track { width: 100%; animation: ifind-scroll 10s ease-in-out infinite alternate; }
+    .ifind-track img { display: block; width: 100%; height: 300px; object-fit: cover; object-position: top; }
+    @keyframes ifind-scroll { 0%,24% { transform: translateY(0); } 40%,62% { transform: translateY(-300px); } 78%,100% { transform: translateY(-600px); } }
+    .answer-tags { position: absolute; z-index: 4; right: 10px; bottom: 10px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: 80%; }
+    .answer-tags span { padding: 5px 7px; background: rgba(255,255,255,.94); border: 1px solid #ccd1d4; color: #30404d; font-size: 10px; font-weight: 740; }
+    .comparison-shell[data-comparison-state="work"] .answer-grid { grid-template-columns: 2fr .55fr .55fr; }
+    .comparison-shell[data-comparison-state="ifind"] .answer-grid { grid-template-columns: .55fr 2fr .55fr; }
+    .comparison-shell[data-comparison-state="chatgpt"] .answer-grid { grid-template-columns: .55fr .55fr 2fr; }
+    .comparison-shell[data-comparison-state="work"] .answer-card:not([data-agent="work"]),
+    .comparison-shell[data-comparison-state="ifind"] .answer-card:not([data-agent="ifind"]),
+    .comparison-shell[data-comparison-state="chatgpt"] .answer-card:not([data-agent="chatgpt"]) { opacity: .44; transform: scale(.97); }
+    .researchos-band { position: absolute; left: 0; right: 0; bottom: 0; min-height: 102px; padding: 16px 20px; border: 1px solid #b8c8f6; background: var(--cobalt-soft); opacity: 0; transform: translateY(16px); transition: .42s ease; }
+    .comparison-shell[data-comparison-state="verdict"] .researchos-band { opacity: 1; transform: translateY(0); }
+    .researchos-band strong { color: #1f46b4; font-size: 16px; }
+    .researchos-band p { margin-top: 7px; color: #30405f; font-size: 13px; line-height: 1.55; }
+    .diagnostic-chips { display: flex; gap: 7px; margin-top: 9px; }
+    .diagnostic-chips span { padding: 5px 7px; background: #fff; color: #2949a7; font-size: 10px; font-weight: 760; }
+    .unshown { color: var(--red) !important; }
+
+    /* 09 — report */
+    .report-layout { display: grid; grid-template-columns: 300px 1fr; gap: 24px; height: 485px; margin-top: 26px; }
+    .report-overview { position: relative; overflow: hidden; border: 1px solid #c9cdcf; background: #fff; }
+    .report-overview img { width: 100%; height: 100%; object-fit: contain; }
+    .report-main { display: grid; grid-template-rows: 42px 1fr; border: 1px solid #c9cdcf; background: #fff; }
+    .report-main .inner-tabs { padding: 5px 8px; border-bottom: 1px solid #d5d7d8; }
+    .report-window { position: relative; overflow: hidden; }
+    .report-window img { position: absolute; left: 0; top: 0; width: 100%; height: auto; transform: translateY(var(--report-y,0)); transition: transform .7s cubic-bezier(.22,.76,.24,1); }
+    .report-main[data-report-state="p1"] { --report-y: 0%; }
+    .report-main[data-report-state="p2"] { --report-y: -32%; }
+    .report-main[data-report-state="sources"] { --report-y: -58%; }
+    .proof-stamp { position: absolute; right: 22px; bottom: 20px; padding: 10px 14px; background: var(--navy); color: #fff; font-size: 12px; font-weight: 760; }
+
+    /* 10 — close */
+    .closing-board { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 46px; }
+    .closing-column { min-height: 220px; padding: 24px; border-top: 4px solid var(--ink); background: #fff; }
+    .closing-column:nth-child(2) { border-color: var(--cobalt); }
+    .closing-column:nth-child(3) { border-color: var(--green); }
+    .closing-column b { color: #8a9198; font-size: 11px; letter-spacing: .1em; }
+    .closing-column h3 { margin-top: 16px; font-size: 25px; }
+    .closing-column ul { margin: 18px 0 0; padding-left: 18px; color: var(--muted); font-size: 14px; line-height: 1.85; }
+    .role-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 18px; }
+    .role-strip span { padding: 11px 12px; border: 1px solid #ccd0d1; background: rgba(255,255,255,.66); font-size: 12px; font-weight: 720; text-align: center; }
+    .final-line { margin-top: 24px; font-family: var(--font-serif); font-size: 25px; font-weight: 740; }
+
+    /* deck controls and overview */
+    .deck-controls {
+      position: fixed;
+      z-index: 40;
+      left: 50%;
+      bottom: 4px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      transform: translateX(-50%) scale(.86);
+      transform-origin: center bottom;
+      padding: 3px 5px;
+      opacity: .18;
+      border: 1px solid rgba(255,255,255,.32);
+      background: rgba(7,21,33,.86);
+      box-shadow: 0 10px 28px rgba(0,0,0,.22);
+      transition: opacity .2s ease;
+    }
+    .deck-controls:hover, .deck-controls:focus-within { opacity: .96; }
+    .deck-controls button { border: 0; padding: 5px 8px; background: transparent; color: #fff; cursor: pointer; font-size: 12px; }
+    .deck-controls button:hover { background: rgba(255,255,255,.12); }
+    #counter { min-width: 62px; color: #fff; font-size: 12px; text-align: center; }
+    body.overview { overflow: auto; background: #d9d9d6; }
+    body.overview .deck-shell { position: relative; left: 0; top: 0; width: auto; height: auto; margin: 24px; transform: none !important; overflow: visible; background: transparent; box-shadow: none; }
+    body.overview .deck { position: static; display: grid; grid-template-columns: repeat(2,minmax(520px,1fr)); gap: 20px; }
+    body.overview .slide { position: relative; inset: auto; width: 720px; height: 405px; padding: 27px 38px 29px; opacity: 1; transform: none; pointer-events: auto; zoom: .5; cursor: pointer; box-shadow: 0 12px 30px rgba(8,21,34,.14); }
+    body.overview .deck-controls { display: none; }
+    @media (max-width: 760px) {
+      body.overview .deck { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+      [data-step], .active [data-step] { opacity: 1 !important; transform: none !important; animation: none !important; }
+      .ifind-track { animation: none !important; }
+      .researchos-band { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck-shell" aria-label="研构 ResearchOS 十页路演">
+    <div class="deck" id="deck">
+      <section class="slide cover active" data-title="产品是什么" aria-label="第 1 页：产品是什么">
+        <img class="cover-visual" src="./assets/researchos-three-layer-cover.png" alt="ResearchOS 三层分权系统：Research Ontology、Thesis Compiler 与 MacroTrace" />
+        <div class="cover-copy">
+          <div class="event" data-step="1" style="--step:1">AIY HACKATHON 2026 · 金稳院赛道</div>
+          <h1 data-step="2" style="--step:2">研构<br><span class="blue">ResearchOS</span></h1>
+          <p class="cover-thesis" data-step="3" style="--step:3">把金融研究从“搜索答案”，升级为“生产可验证结论”</p>
+          <p class="cover-definition" data-step="4" style="--step:4">把提问、资料、数据、命题、实证、修正与报告，串成一条可追溯、可复核、可复现的研究生产链。</p>
+          <div class="cover-pills" data-step="5" style="--step:5"><span>研究对象有版本</span><span>模型执行可复现</span><span>结论受证据约束</span></div>
+        </div>
+        <div class="slide-footer"><span>AIY HACKATHON · 金稳院赛道</span><span class="page-no">01 / 10</span></div>
+      </section>
+
+      <section class="slide" data-title="用户、场景与问题" aria-label="第 2 页：用户、场景与问题">
+        <div class="template-note">Template 02 · User &amp; Problem</div>
+        <div class="kicker" data-step="1" style="--step:1">02 · 用户、场景与问题</div>
+        <h2 class="slide-title" data-step="2" style="--step:2">金融研究员缺的不是更多信息，<br>而是从信息到结论的<span class="blue">可信链路</span></h2>
+        <div class="problem-grid">
+          <div class="broken-word" data-step="3" style="--step:3">断链<p>新闻、财报、政策、行情每天涌入；研究对象、模型、证据和结论却分散在不同工具与版本里。</p></div>
+          <div class="break-flow">
+            <div class="break-row" data-step="3" style="--step:3"><b>01</b><strong>信息碎片</strong><span>来源多、时间乱，关键假设与引用难以稳定复用。</span></div>
+            <div class="break-row" data-step="4" style="--step:4"><b>02</b><strong>口径漂移</strong><span>同名指标的时间窗口、单位和定义可能已经不同。</span></div>
+            <div class="break-row" data-step="5" style="--step:5"><b>03</b><strong>版本失控</strong><span>研究过程被覆盖，无法回答“当时基于哪一版”。</span></div>
+            <div class="break-row active-risk" data-step="6" style="--step:6"><b>04</b><strong>语言越权</strong><span>关联性证据容易被包装成因果性结论。</span></div>
+          </div>
+        </div>
+        <div class="conclusion" data-step="7" style="--step:7">工具越多，不等于研究资产越完整。</div>
+        <div class="slide-footer"><span>AIY HACKATHON · 金稳院赛道</span><span class="page-no">02 / 10</span></div>
+      </section>
+
+      <section class="slide" data-title="核心机制与功能" aria-label="第 3 页：核心机制与功能">
+        <div class="template-note">Template 03 · Core Mechanism</div>
+        <div class="kicker" data-step="1" style="--step:1">03 · 核心机制与功能</div>
+        <h2 class="slide-title" data-step="2" style="--step:2">一套 ResearchOS，三层分权，<br>让研究结论<span class="blue">有边界</span></h2>
+        <div class="layer-grid">
+          <article class="layer-card" data-step="3" style="--step:3"><span class="layer-no">LAYER A</span><h3>Research Ontology</h3><p>管理研究对象、精确版本、资料与引用片段。</p><ul><li>对象身份稳定</li><li>历史版本可回看</li><li>引用定位到片段</li></ul><div class="layer-output">交接：Context Pack</div></article>
+          <article class="layer-card" data-step="4" style="--step:4"><span class="layer-no">LAYER B</span><h3>Thesis Compiler</h3><p>把自然语言判断编译成可验证命题和结论资格。</p><ul><li>命题与变量</li><li>证据 / 反证</li><li>适用范围与限制</li></ul><div class="layer-output">交接：Validation Plan</div></article>
+          <article class="layer-card" data-step="5" style="--step:5"><span class="layer-no">LAYER C</span><h3>MacroTrace</h3><p>运行已注册模型、诊断和稳健性检查。</p><ul><li>Research Graph</li><li>Registered Models</li><li>Diagnostics &amp; Evidence</li></ul><div class="layer-output">交接：Evidence Bundle</div></article>
+        </div>
+        <div class="conclusion" data-step="6" style="--step:6">AI 负责理解与编译；确定性程序负责执行；证据决定能说到哪里。</div>
+        <div class="slide-footer"><span>AIY HACKATHON · 金稳院赛道</span><span class="page-no">03 / 10</span></div>
+      </section>
+
+      <section class="slide" data-title="完整任务闭环" aria-label="第 4 页：完整任务闭环">
+        <div class="template-note">Template 04A · Input → Process</div>
+        <div class="kicker" data-step="1" style="--step:1">04 · 完整任务闭环</div>
+        <h2 class="slide-title" data-step="2" style="--step:2">从一个问题开始，七步形成<br><span class="blue">可重放研究资产</span></h2>
+        <div class="pipeline-wrap">
+          <article class="question-card" data-step="3" style="--step:3"><small>同一个真实问题</small><h3>本周美股上涨，是否主要由少数科技龙头驱动？</h3><p>输入的是开放研究问题，不是让模型直接生成最终答案。</p></article>
+          <div class="pipeline">
+            <div class="pipe-node" data-step="3" style="--step:3"><b>01 · ASK</b><strong>研究助手提问</strong><span>保留上下文与初始假设</span></div>
+            <div class="pipe-node" data-step="4" style="--step:4"><b>02 · SOURCE</b><strong>双路径取证</strong><span>公开来源 + 市场数据</span></div>
+            <div class="pipe-node" data-step="4" style="--step:4"><b>03 · FREEZE</b><strong>冻结研究对象</strong><span>身份、时间、版本、口径</span></div>
+            <div class="pipe-node" data-step="5" style="--step:5"><b>04 · COMPILE</b><strong>编译研究命题</strong><span>变量、证据、反证、限制</span></div>
+            <div class="pipe-node" data-step="5" style="--step:5"><b>05 · RUN</b><strong>MacroTrace 实证</strong><span>注册模型、诊断、稳健性</span></div>
+            <div class="pipe-node" data-step="6" style="--step:6"><b>06 · REVISE</b><strong>修正结论</strong><span>新证据触发版本差异</span></div>
+            <div class="pipe-node output" data-step="7" style="--step:7"><b>07 · OUTPUT</b><strong>Research Output</strong><span>周报 / 月报 / 专题报告</span></div>
+          </div>
+        </div>
+        <div class="conclusion" data-step="8" style="--step:8">ResearchOS 把一次回答，变成可以复核、重放和继续迭代的研究过程。</div>
+        <div class="slide-footer"><span>AIY HACKATHON · 金稳院赛道</span><span class="page-no">04 / 10</span></div>
+      </section>
+
+      <section class="slide" data-title="真实界面：问题到证据" aria-label="第 5 页：真实界面，问题到证据">
+        <div class="template-note">Template 04B · Real Product</div>
+        <div class="demo-head">
+          <div><div class="kicker" data-step="1" style="--step:1">05 · 真实界面：问题到证据</div><h2 class="slide-title" data-step="2" style="--step:2">同一个问题，如何进入资料、<br>研究图、模型与<span class="blue">证据</span></h2></div>
+          <div class="inner-tabs" data-step="3" style="--step:3" aria-label="产品演示状态">
+            <button type="button" data-demo-state="assistant" aria-pressed="true">研究助手</button>
+            <button type="button" data-demo-state="dual-path" aria-pressed="false">双路径资料</button>
+            <button type="button" data-demo-state="research-graph" aria-pressed="false">Research Graph</button>
+            <button type="button" data-demo-state="academic-results" aria-pressed="false">模型与证据</button>
+          </div>
+        </div>
+        <div class="demo-workspace" data-step="4" style="--step:4">
+          <div class="demo-rail">
+            <button class="demo-thumb" type="button" data-demo-state="assistant" aria-pressed="true"><img src="./assets/product-evidence/researchos-assistant-full.jpg" alt="" /><span>01 · 提问与资料侧栏</span></button>
+            <button class="demo-thumb" type="button" data-demo-state="dual-path" aria-pressed="false"><img src="./assets/product-evidence/researchos-dual-path-full.jpg" alt="" /><span>02 · 公开来源与市场数据</span></button>
+            <button class="demo-thumb" type="button" data-demo-state="research-graph" aria-pressed="false"><img src="./assets/product-evidence/macrotrace-research-graph-full.png" alt="" /><span>03 · MacroTrace Research Graph</span></button>
+            <button class="demo-thumb" type="button" data-demo-state="academic-results" aria-pressed="false"><img src="./assets/product-evidence/macrotrace-academic-results-full.png" alt="" /><span>04 · Academic Results</span></button>
+          </div>
+          <div class="demo-stage" id="demoStage" data-state="assistant">
+            <figure class="demo-frame active" data-frame="assistant"><img class="full-shot" src="./assets/product-evidence/researchos-assistant-full.jpg" alt="ResearchOS 金融研究助手与资料侧栏完整界面" /><figcaption class="detail-panel"><b>RESEARCH ASSISTANT</b><h3>自然语言问题进入研究工作台</h3><p>问题与研究模块、资料和数据处于同一产品空间，后续每一步都能回到原始上下文。</p><div class="detail-lens" style="--lens-x:50%;--lens-y:13%;--lens-tx:-36%;--lens-ty:-4%"><img src="./assets/product-evidence/researchos-assistant-full.jpg" alt="研究助手提问区局部放大" /></div></figcaption></figure>
+            <figure class="demo-frame" data-frame="dual-path"><img class="full-shot" src="./assets/product-evidence/researchos-dual-path-full.jpg" alt="ResearchOS 公开来源与市场数据双路径完整结果界面" /><figcaption class="detail-panel"><b>DUAL-PATH EVIDENCE</b><h3>公开来源与市场数据并行进入</h3><p>资料类型、时间、来源与引用关系被保留，为后续命题编译提供可复核上下文。</p><div class="detail-lens" style="--lens-x:72%;--lens-y:29%;--lens-tx:-42%;--lens-ty:-25%"><img src="./assets/product-evidence/researchos-dual-path-full.jpg" alt="双路径结果局部放大" /></div></figcaption></figure>
+            <figure class="demo-frame" data-frame="research-graph"><img class="full-shot" src="./assets/product-evidence/macrotrace-research-graph-full.png" alt="MacroTrace Research Graph 原始完整界面" /><figcaption class="detail-panel"><b>REGISTERED RESEARCH GRAPH</b><h3>命题进入注册研究图</h3><p>工作流、节点、变量、模型和参数形成可追踪的执行图，而不是临时生成一段不可审计代码。</p><div class="detail-lens" style="--lens-x:73%;--lens-y:48%;--lens-tx:-48%;--lens-ty:-33%"><img src="./assets/product-evidence/macrotrace-research-graph-full.png" alt="Research Graph 节点局部放大" /></div></figcaption></figure>
+            <figure class="demo-frame" data-frame="academic-results"><img class="full-shot" src="./assets/product-evidence/macrotrace-academic-results-full.png" alt="MacroTrace Academic Results 原始完整界面" /><figcaption class="detail-panel"><b>MODEL &amp; EVIDENCE</b><h3>模型、诊断与限制一并回流</h3><p>输出不仅有结果，还保留规格、变量、诊断、稳健性与 provenance，供结论编译器判断措辞资格。</p><div class="detail-lens" style="--lens-x:75%;--lens-y:54%;--lens-tx:-45%;--lens-ty:-35%"><img src="./assets/product-evidence/macrotrace-academic-results-full.png" alt="模型结果局部放大" /></div></figcaption></figure>
+          </div>
+        </div>
+        <div class="evidence-thread" data-step="5" style="--step:5"></div>
+        <div class="conclusion" data-step="6" style="--step:6">MacroTrace 是 ResearchOS 的实证研究引擎｜问题 → 研究对象 → 注册研究图 → Evidence Bundle。</div>
+        <div class="slide-footer"><span>AIY HACKATHON · 金稳院赛道</span><span class="page-no">05 / 10</span></div>
+      </section>
+
+      <section class="slide agent-slide" data-title="AI 与 Agent 分工" aria-label="第 6 页：AI 与 Agent 分工">
+        <div class="template-note">Template 05A · AI / Agent</div>
+        <div class="kicker" data-step="1" style="--step:1">06 · AI 与 Agent 分工</div>
+        <h2 class="slide-title" data-step="2" style="--step:2">不是一个 Agent 包办全部，<br>而是五个角色沿<span class="blue">研究契约</span>协作</h2>
+        <figure class="agent-screen" data-step="3" style="--step:3"><img src="./assets/product-evidence/researchos-thesis-compiler-full.jpg" alt="ResearchOS Thesis Compiler 论题编译完整界面" /></figure>
+        <div class="agent-board">
+          <div class="agent-lane" data-step="3" style="--step:3"><b>01</b><strong>Research Assistant</strong><span>理解开放问题，保留研究上下文与初始意图。</span><em>输出：Research Question</em></div>
+          <div class="agent-lane" data-step="4" style="--step:4"><b>02</b><strong>Evidence Curator</strong><span>整理公开来源、市场数据、内部资料与精确引用。</span><em>输出：Context Pack</em></div>
+          <div class="agent-lane" data-step="5" style="--step:5"><b>03</b><strong>Thesis Compiler</strong><span>拆解命题、变量、反证、限制与验证计划。</span><em>输出：Validation Plan</em></div>
+          <div class="agent-lane" data-step="6" style="--step:6"><b>04</b><strong>MacroTrace Engine</strong><span>注册模型、确定性执行、诊断、稳健性与失败记录。</span><em>输出：Evidence Bundle</em></div>
+          <div class="agent-lane" data-step="7" style="--step:7"><b>05</b><strong>Report Builder</strong><span>按结论资格生成周报、月报或专题研究出品。</span><em>输出：Research Output</em></div>
+        </div>
+        <div class="conclusion" data-step="8" style="--step:8">每个 Agent 只对自己的研究职责负责，交接物可见、失败状态可见。</div>
+        <div class="slide-footer"><span>AIY HACKATHON · 金稳院赛道</span><span class="page-no">06 / 10</span></div>
+      </section>
+
+      <section class="slide dark" data-title="校验、失败状态与结论边界" aria-label="第 7 页：校验、失败状态与结论边界">
+        <div class="template-note">Template 05B · Checks &amp; Boundary</div>
+        <div class="kicker green" data-step="1" style="--step:1">07 · 校验、失败状态与结论边界</div>
+        <h2 class="slide-title" data-step="2" style="--step:2">系统不是让 AI 更敢说，<br>而是让每句话只说到<span class="green">证据允许的程度</span></h2>
+        <div class="trust-grid">
+          <div class="claim-flow">
+            <div class="claim-step over" data-step="3" style="--step:3"><b>OVERCLAIM · 越界</b><p>“政策变化导致风险资产上涨。”</p></div>
+            <div class="claim-step" data-step="4" style="--step:4"><b>EVIDENCE RETURN · 新证据回流</b><p>模型只提供关联性与预测性证据，因果识别条件不成立。</p></div>
+            <div class="claim-step" data-step="5" style="--step:5"><b>RECOMPILE · 重新编译</b><p>保留 Fixture / Offline Replay / Real API 模式，Partial 与 Failed 状态不被隐藏。</p></div>
+            <div class="claim-step bound" data-step="6" style="--step:6"><b>QUALIFIED CLAIM · 有资格表达</b><p>“在当前样本与设定下，两者呈现关联；因果关系尚不能由本次结果识别。”</p></div>
+          </div>
+          <div class="trust-evidence">
+            <figure data-step="4" style="--step:4"><img src="./assets/product-evidence/researchos-version-diff-full.jpg" alt="ResearchOS 结论版本差异与降级完整界面" /></figure>
+            <figure data-step="6" style="--step:6"><img src="./assets/product-evidence/macrotrace-conclusion-full.png" alt="MacroTrace 有条件结论、置信度、反证和限制界面" /></figure>
+          </div>
+        </div>
+        <div class="conclusion" data-step="7" style="--step:7">失败不是异常信息，而是研究资产的一部分；边界不是免责声明，而是结论资格。</div>
+        <div class="slide-footer"><span>AIY HACKATHON · 金稳院赛道</span><span class="page-no">07 / 10</span></div>
+      </section>
+
+      <section class="slide comparison-slide" data-title="与现有方法比较" aria-label="第 8 页：与现有方法比较">
+        <div class="template-note">Template 06 · Differentiation</div>
+        <div class="kicker" data-step="1" style="--step:1">08 · 同题实测对比</div>
+        <h2 class="slide-title" data-step="2" style="--step:2">同一问题、三种回答：ResearchOS 的差异<br>不在“答得更多”，而在<span class="blue">研究过程可重放</span></h2>
+        <div class="shared-question" data-step="3" style="--step:3">美国经济当前是在走弱还是重新加速，未来三个月的衰退风险怎么样？</div>
+        <div class="comparison-toolbar" data-step="4" style="--step:4">
+          <span>同一问题 · 只比较截图中可观察到的回答结构</span>
+          <div class="inner-tabs" aria-label="回答对比状态">
+            <button type="button" data-comparison-state="overview" aria-pressed="true">总览</button>
+            <button type="button" data-comparison-state="work" aria-pressed="false">ChatGPT Work</button>
+            <button type="button" data-comparison-state="ifind" aria-pressed="false">iFinD Agent</button>
+            <button type="button" data-comparison-state="chatgpt" aria-pressed="false">ChatGPT</button>
+            <button type="button" data-comparison-state="verdict" aria-pressed="false">ResearchOS 分析</button>
+          </div>
+        </div>
+        <div class="comparison-shell" id="comparisonShell" data-comparison-state="overview" data-step="5" style="--step:5">
+          <div class="answer-grid">
+            <article class="answer-card" data-agent="work"><div class="answer-label">ChatGPT Work</div><div class="answer-viewport"><img src="./assets/agent-comparison/chatgpt-work.png" alt="ChatGPT Work 对美国经济与衰退风险问题的完整回答截图" /></div><div class="answer-tags"><span>结论先行</span><span>来源链接</span><span>概率表达</span></div></article>
+            <article class="answer-card" data-agent="ifind"><div class="answer-label">iFinD Agent</div><div class="answer-viewport"><div class="ifind-track"><img src="./assets/agent-comparison/ifind-01.png" alt="iFinD 回答第一段：结论与指标框架" /><img src="./assets/agent-comparison/ifind-02.png" alt="iFinD 回答第二段：指标详情" /><img src="./assets/agent-comparison/ifind-03.png" alt="iFinD 回答第三段：三个月风险判断" /></div></div><div class="answer-tags"><span>指标框架</span><span>逐项解释</span><span>引用编号</span></div></article>
+            <article class="answer-card" data-agent="chatgpt"><div class="answer-label">ChatGPT</div><div class="answer-viewport"><img src="./assets/agent-comparison/chatgpt.png" alt="ChatGPT 对美国经济与衰退风险问题的完整回答截图" /></div><div class="answer-tags"><span>矛盾信号总结</span><span>表格解释</span><span>外部来源</span></div></article>
+          </div>
+          <div class="researchos-band">
+            <strong>ResearchOS 的差异：不是回答更长，而是把回答背后的研究过程编译成资产。</strong>
+            <p>三个 Agent 都能生成有信息量的回答；但从这些截图中，研究对象版本、注册模型执行、Evidence Bundle 与结论资格<span class="unshown">本次回答未展示</span>。ResearchOS 把这些环节连成可以复核和重放的链路。</p>
+            <div class="diagnostic-chips"><span>问题进入 Ontology</span><span>研究图与版本冻结</span><span>MacroTrace 注册执行</span><span>Evidence Bundle 回流</span><span>Thesis Compiler 约束措辞</span></div>
+          </div>
+        </div>
+        <div class="slide-footer"><span>AIY HACKATHON · 金稳院赛道</span><span class="page-no">08 / 10</span></div>
+      </section>
+
+      <section class="slide" data-title="初步验证" aria-label="第 9 页：初步验证">
+        <div class="template-note">Template 07 · Validation</div>
+        <div class="kicker" data-step="1" style="--step:1">09 · 初步验证与真实交付</div>
+        <h2 class="slide-title" data-step="2" style="--step:2">闭环是否成立，看能否交付一份<br><span class="blue">可追溯研究出品</span></h2>
+        <div class="report-layout">
+          <figure class="report-overview" data-step="3" style="--step:3"><img src="./assets/product-evidence/researchos-output-p1-p2-full.jpg" alt="ResearchOS 研究出品 P1 和 P2 完整长图" /><figcaption class="proof-stamp">完整 P1 / P2</figcaption></figure>
+          <div class="report-main" id="reportMain" data-report-state="p1" data-step="4" style="--step:4">
+            <div class="inner-tabs" aria-label="研究出品浏览状态"><button type="button" data-report-state="p1" aria-pressed="true">P1 · 市场与指标</button><button type="button" data-report-state="p2" aria-pressed="false">P2 · 估值与宏观信号</button><button type="button" data-report-state="sources" aria-pressed="false">来源与风险边界</button></div>
+            <div class="report-window"><img src="./assets/product-evidence/researchos-output-p1-p2-full.jpg" alt="ResearchOS 研究出品可滚动放大视窗" /></div>
+          </div>
+        </div>
+        <div class="conclusion" data-step="5" style="--step:5">当前是可运行的 sample-mode 产品 Demo；入口—出品已进入同一路径，价值指标仍待正式测试。</div>
+        <div class="slide-footer"><span>AIY HACKATHON · 金稳院赛道</span><span class="page-no">09 / 10</span></div>
+      </section>
+
+      <section class="slide" data-title="团队与愿景" aria-label="第 10 页：团队与愿景">
+        <div class="template-note">Template 08 · Team &amp; Vision</div>
+        <div class="kicker" data-step="1" style="--step:1">10 · 团队与愿景</div>
+        <h2 class="slide-title" data-step="2" style="--step:2">把一次研究 Demo，变成金融研究团队的<br><span class="blue">生产基础设施</span></h2>
+        <div class="closing-board">
+          <article class="closing-column" data-step="3" style="--step:3"><b>NOW · 已打通</b><h3>完整产品路径</h3><ul><li>研究助手与资料侧栏</li><li>论题编译与验证计划</li><li>MacroTrace 实证与结论降级</li><li>Research Output P1/P2</li></ul></article>
+          <article class="closing-column" data-step="4" style="--step:4"><b>VALIDATE · 正在验证</b><h3>可用性与价值</h3><ul><li>同一任务完成率</li><li>引用错误与口径偏差</li><li>结论越界次数</li><li>研究员复核成本</li></ul></article>
+          <article class="closing-column" data-step="5" style="--step:5"><b>NEXT · 下一步接入</b><h3>团队研究环境</h3><ul><li>更多内部研究资产</li><li>组织级模型与数据源</li><li>审批、权限与审计流程</li><li>持续版本与研究复用</li></ul></article>
+        </div>
+        <div class="role-strip" data-step="6" style="--step:6"><span>研究资产与数据本体</span><span>论题编译与研究策略</span><span>MacroTrace 实证引擎</span><span>产品前端与交付体验</span></div>
+        <p class="final-line" data-step="7" style="--step:7">ResearchOS 不替研究员下结论；<span class="blue">它让结论有出处、有版本、有模型、有边界。</span></p>
+        <div class="slide-footer"><span>AIY HACKATHON · 金稳院赛道</span><span class="page-no">10 / 10</span></div>
+      </section>
+    </div>
+  </main>
+
+  <nav class="deck-controls" aria-label="演示控制">
+    <button id="prev" type="button" aria-label="上一页">上一页</button>
+    <span id="counter" aria-live="polite">01 / 10</span>
+    <button id="next" type="button" aria-label="下一页">下一页</button>
+    <button id="replay" type="button" aria-label="重播本页动画">重播</button>
+    <button id="overview" type="button" aria-label="总览">总览</button>
+    <button id="fullscreen" type="button" aria-label="全屏">全屏</button>
+  </nav>
+
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    const counter = document.getElementById("counter");
+    const deckShell = document.querySelector(".deck-shell");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let current = Math.max(0, Math.min(slides.length - 1, Number(location.hash.replace("#", "")) - 1 || 0));
+    let touchStartX = 0;
+    let wheelLock = false;
+    let comparisonTimers = [];
+    let demoTimer = 0;
+    let reportTimer = 0;
+
+    function fitDeck() {
+      if (document.body.classList.contains("overview")) return;
+      const scale = Math.min(window.innerWidth / 1440, window.innerHeight / 810);
+      document.documentElement.style.setProperty("--deck-scale", String(scale));
+    }
+
+    function clearInnerTimers() {
+      comparisonTimers.forEach(clearTimeout);
+      comparisonTimers = [];
+      clearTimeout(demoTimer);
+      clearTimeout(reportTimer);
+    }
+
+    function setPressed(buttons, value, attr) {
+      buttons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset[attr] === value)));
+    }
+
+    function setDemoState(name, userInitiated = false) {
+      const stage = document.getElementById("demoStage");
+      if (!stage) return;
+      stage.dataset.state = name;
+      document.querySelectorAll("[data-frame]").forEach((frame) => frame.classList.toggle("active", frame.dataset.frame === name));
+      const buttons = [...document.querySelectorAll("[data-demo-state]")];
+      setPressed(buttons, name, "demoState");
+      if (userInitiated) clearTimeout(demoTimer);
+    }
+
+    function startDemoAuto() {
+      const states = ["assistant", "dual-path", "research-graph", "academic-results"];
+      let index = 0;
+      clearTimeout(demoTimer);
+      if (reduceMotion.matches) { setDemoState("academic-results"); return; }
+      const advance = () => {
+        setDemoState(states[index]);
+        index += 1;
+        if (index < states.length) demoTimer = setTimeout(advance, 2400);
+      };
+      advance();
+    }
+
+    function setComparisonState(name, userInitiated = false) {
+      const shell = document.getElementById("comparisonShell");
+      if (!shell) return;
+      shell.dataset.comparisonState = name;
+      const buttons = [...document.querySelectorAll("[data-comparison-state]")];
+      setPressed(buttons, name, "comparisonState");
+      if (userInitiated) {
+        comparisonTimers.forEach(clearTimeout);
+        comparisonTimers = [];
+      }
+    }
+
+    function startComparisonAuto() {
+      comparisonTimers.forEach(clearTimeout);
+      comparisonTimers = [];
+      if (reduceMotion.matches) { setComparisonState("verdict"); return; }
+      const sequence = [["overview",0],["work",1800],["ifind",4400],["chatgpt",7600],["verdict",10100]];
+      sequence.forEach(([state, delay]) => comparisonTimers.push(setTimeout(() => setComparisonState(state), delay)));
+    }
+
+    function setReportState(name, userInitiated = false) {
+      const report = document.getElementById("reportMain");
+      if (!report) return;
+      report.dataset.reportState = name;
+      const buttons = [...document.querySelectorAll("[data-report-state]")];
+      setPressed(buttons, name, "reportState");
+      if (userInitiated) clearTimeout(reportTimer);
+    }
+
+    function startReportAuto() {
+      clearTimeout(reportTimer);
+      if (reduceMotion.matches) { setReportState("sources"); return; }
+      setReportState("p1");
+      reportTimer = setTimeout(() => {
+        setReportState("p2");
+        reportTimer = setTimeout(() => setReportState("sources"), 2600);
+      }, 2600);
+    }
+
+    function resetSlideMotion(slide) {
+      slide.classList.add("replaying");
+      void slide.offsetWidth;
+      requestAnimationFrame(() => slide.classList.remove("replaying"));
+    }
+
+    function showSlide(index, updateHash = true) {
+      clearInnerTimers();
+      const previous = current;
+      current = (index + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === current);
+        slide.classList.toggle("exit-left", i < current);
+        slide.setAttribute("aria-hidden", String(i !== current));
+      });
+      counter.textContent = String(current + 1).padStart(2, "0") + " / " + slides.length;
+      if (updateHash) history.replaceState(null, "", "#" + (current + 1));
+      if (previous === current) resetSlideMotion(slides[current]);
+      if (current === 4) startDemoAuto();
+      if (current === 7) startComparisonAuto();
+      if (current === 8) startReportAuto();
+    }
+
+    function changeSlide(delta) {
+      if (document.body.classList.contains("overview")) return;
+      showSlide(current + delta);
+    }
+
+    document.getElementById("prev").addEventListener("click", () => changeSlide(-1));
+    document.getElementById("next").addEventListener("click", () => changeSlide(1));
+    document.getElementById("replay").addEventListener("click", () => {
+      resetSlideMotion(slides[current]);
+      if (current === 4) startDemoAuto();
+      if (current === 7) startComparisonAuto();
+      if (current === 8) startReportAuto();
+    });
+    document.getElementById("overview").addEventListener("click", () => {
+      document.body.classList.toggle("overview");
+      slides.forEach((slide) => slide.setAttribute("aria-hidden", "false"));
+      fitDeck();
+    });
+    document.getElementById("fullscreen").addEventListener("click", () => {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    });
+
+    document.querySelectorAll("[data-demo-state]").forEach((button) => button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setDemoState(button.dataset.demoState, true);
+    }));
+    document.querySelectorAll("[data-comparison-state]").forEach((button) => button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setComparisonState(button.dataset.comparisonState, true);
+    }));
+    document.querySelectorAll("[data-report-state]").forEach((button) => button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setReportState(button.dataset.reportState, true);
+    }));
+
+    slides.forEach((slide, index) => slide.addEventListener("click", () => {
+      if (document.body.classList.contains("overview")) {
+        document.body.classList.remove("overview");
+        showSlide(index);
+        fitDeck();
+      }
+    }));
+
+    addEventListener("keydown", (event) => {
+      if (["ArrowRight","PageDown"].includes(event.key) || event.key === " ") { event.preventDefault(); changeSlide(1); }
+      if (["ArrowLeft","PageUp"].includes(event.key)) { event.preventDefault(); changeSlide(-1); }
+      if (event.key.toLowerCase() === "o") document.getElementById("overview").click();
+      if (event.key.toLowerCase() === "r") document.getElementById("replay").click();
+      if (event.key.toLowerCase() === "f") document.getElementById("fullscreen").click();
+      if (event.key === "Escape" && document.body.classList.contains("overview")) document.getElementById("overview").click();
+    });
+    addEventListener("wheel", (event) => {
+      if (document.body.classList.contains("overview") || wheelLock || Math.abs(event.deltaY) < 18) return;
+      wheelLock = true;
+      changeSlide(event.deltaY > 0 ? 1 : -1);
+      setTimeout(() => { wheelLock = false; }, 650);
+    }, { passive: true });
+    addEventListener("touchstart", (event) => { touchStartX = event.changedTouches[0].clientX; }, { passive: true });
+    addEventListener("touchend", (event) => {
+      const delta = event.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(delta) > 44) changeSlide(delta < 0 ? 1 : -1);
+    }, { passive: true });
+    addEventListener("hashchange", () => {
+      const index = Number(location.hash.replace("#", "")) - 1;
+      if (Number.isFinite(index)) showSlide(index, false);
+    });
+    addEventListener("resize", fitDeck);
+    reduceMotion.addEventListener?.("change", () => showSlide(current, false));
+
+    fitDeck();
+    showSlide(current, false);
+  </script>
+</body>
+</html>
