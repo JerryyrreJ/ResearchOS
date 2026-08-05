@@ -87,7 +87,7 @@ Reduced motion is a first-class device preference. It suppresses non-essential t
 
 ## Product identity
 
-The ResearchOS sigil combines an editorial `R` with two connected evidence nodes. It appears in the favicon, authentication threshold, settings identity, and compact product marks. Object identity remains separate: Thesis, Evidence, Source, Validation, Model Run, and Version use their own typed markers and never borrow third-party logos.
+The ResearchOS sigil is the **Evidence Fold**: two observations converge through a third highlighted node and a short structural spine. It represents evidence becoming a bounded claim without falling back to a generic atom, brain, sparkle, or network-cloud symbol. The single-color silhouette remains legible from a 16 px favicon to the larger identity panel. It appears in the favicon, authentication threshold, sidebar, settings identity, and compact product marks. Object identity remains separate: Thesis, Evidence, Source, Validation, Model Run, and Version use their own typed markers and never borrow third-party logos.
 
 ## Extension center
 

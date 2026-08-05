@@ -71,6 +71,8 @@ test("provides token-driven themes, accessibility preferences, and an honest ext
   assert.match(css, /data-theme="dark"/);
   assert.match(css, /data-reduced-motion="true"/);
   assert.match(favicon, /#183F37/i);
+  assert.match(page, /researchos-mark/);
+  assert.match(favicon, /circle cx="23" cy="16"/);
 });
 
 test("exposes honest delivery modes and visible asynchronous failure states", async () => {
