@@ -79,7 +79,7 @@ test("exposes honest delivery modes and visible asynchronous failure states", as
     assert.match(page, new RegExp(label, "i"));
   }
   assert.match(page, /last successful result is marked stale and is not reused/i);
-  assert.match(page, /Waiting for A \/ B \/ C/);
+  assert.match(page, /Waiting for producer APIs/);
   assert.match(page, /QRCodeSVG/);
 });
 

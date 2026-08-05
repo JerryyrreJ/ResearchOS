@@ -4,11 +4,26 @@ import { useEffect, useMemo, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { QRCodeSVG } from "qrcode.react";
 import { localeNames, tx, type Locale } from "./i18n";
+import RealWorkspace from "./real-workspace";
+import type { WorkspaceSource } from "../lib/api-client";
 
 type View = "thesis" | "workspace" | "validation" | "macrotrace" | "recompile" | "versions";
 type Theme = "light" | "dark" | "system" | "contrast";
 type RuntimeMode = "fixture" | "offline" | "real";
 type DemoScenario = "complete" | "queued" | "running" | "partial" | "failed" | "cancelled" | "permission" | "timeout" | "unknown";
+type SourceItem = {
+  type: string;
+  name: string;
+  id: string;
+  version: string;
+  state: string;
+  origin?: "fixture" | "api";
+  formatKind?: string;
+  sizeBytes?: number;
+  fragmentCount?: number;
+  versionCount?: number;
+  updatedAt?: string;
+};
 
 const nav: { id: View; icon: string; label: string; meta?: string }[] = [
   { id: "workspace", icon: "⌘", label: "Workspace", meta: "12" },
@@ -19,11 +34,11 @@ const nav: { id: View; icon: string; label: string; meta?: string }[] = [
   { id: "versions", icon: "⑂", label: "Version Diff", meta: "v2" },
 ];
 
-const sources = [
-  { type: "DATASET", name: "10-year Treasury yield demo snapshot", id: "DATA_US_TREASURY_10Y", version: "VER_DEMO_20260804", state: "CONFIRMED" },
-  { type: "DOCUMENT", name: "Fiscal supply definition notes", id: "DOC_PRODUCT_V2", version: "v2", state: "AI_PROPOSED" },
-  { type: "THESIS", name: "US fiscal expansion and 10Y yield", id: "THESIS_DEMO_001", version: "v2", state: "CONFIRMED" },
-  { type: "EVIDENCE", name: "MacroTrace associational bundle", id: "EVIDENCE_DEMO_001", version: "0.1.0", state: "CONFIRMED" },
+const sources: SourceItem[] = [
+  { type: "DATASET", name: "10-year Treasury yield demo snapshot", id: "DATA_US_TREASURY_10Y", version: "VER_DEMO_20260804", state: "CONFIRMED", origin: "fixture" },
+  { type: "DOCUMENT", name: "Fiscal supply definition notes", id: "DOC_PRODUCT_V2", version: "v2", state: "AI_PROPOSED", origin: "fixture" },
+  { type: "THESIS", name: "US fiscal expansion and 10Y yield", id: "THESIS_DEMO_001", version: "v2", state: "CONFIRMED", origin: "fixture" },
+  { type: "EVIDENCE", name: "MacroTrace associational bundle", id: "EVIDENCE_DEMO_001", version: "0.1.0", state: "CONFIRMED", origin: "fixture" },
 ];
 
 function Badge({ children, tone = "neutral" }: { children: React.ReactNode; tone?: "neutral" | "green" | "amber" | "red" | "blue" | "purple" }) {
@@ -39,7 +54,7 @@ function Topbar({ title, subtitle, onCommand, onInspector, onSettings, locale, o
     <header className="topbar">
       <div className="breadcrumbs"><span>{tx(locale,"Fiscal transmission study")}</span><i>/</i><strong>{tx(locale,title)}</strong></div>
       <div className="top-actions">
-        <button className="mode-trigger" onClick={onSettings}><Badge tone={mode==="offline"?"blue":"amber"}>{mode==="offline"?"OFFLINE REPLAY":mode==="real"?"REAL API":"FIXTURE MODE"}</Badge></button>
+        <button className="mode-trigger" onClick={onSettings}><Badge tone={mode==="offline"?"blue":mode==="real"?"green":"amber"}>{mode==="offline"?"OFFLINE REPLAY":mode==="real"?"REAL API · M1":"FIXTURE MODE"}</Badge></button>
         <LocaleSwitcher locale={locale} onChange={onLocale} compact/>
         <button className="command-trigger" onClick={onCommand}><span>{tx(locale,"Search or command")}</span><kbd>⌘ K</kbd></button>
         <button className="inspector-trigger" onClick={onInspector} aria-label={tx(locale,"Inspector")}>⌘</button>
@@ -50,27 +65,28 @@ function Topbar({ title, subtitle, onCommand, onInspector, onSettings, locale, o
   );
 }
 
-function Inspector({ selectedSource, locale }: { selectedSource?: typeof sources[number]; locale: Locale }) {
+function Inspector({ selectedSource, locale }: { selectedSource?: SourceItem; locale: Locale }) {
   const item = selectedSource ?? sources[2];
+  const isApi = item.origin === "api";
   return (
     <aside className="inspector">
       <div className="inspector-head"><span>{tx(locale,"Inspector")}</span><button aria-label="Close inspector">×</button></div>
       <section className="inspector-section">
         <div className="object-mark">{item.type.slice(0, 2)}</div>
         <h3>{item.name}</h3><p className="mono quiet">{item.id}</p>
-        <div className="inspector-badges"><Badge tone={item.state === "AI_PROPOSED" ? "purple" : "green"}>{item.state}</Badge><Badge>{item.type}</Badge></div>
+        <div className="inspector-badges"><Badge tone={isApi ? "blue" : item.state === "AI_PROPOSED" ? "purple" : "green"}>{item.state}</Badge><Badge>{item.type}</Badge></div>
       </section>
       <section className="inspector-section properties">
         <h4>{tx(locale,"Properties")}</h4>
-        <dl><dt>Version</dt><dd>{item.version}</dd><dt>As of</dt><dd>Aug 04, 2026</dd><dt>Access</dt><dd>Workspace</dd><dt>Contract</dt><dd>0.1.0-frozen</dd></dl>
+        <dl><dt>Version</dt><dd>{item.version}</dd><dt>Updated</dt><dd>{item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : "Aug 04, 2026"}</dd><dt>Access</dt><dd>Workspace</dd><dt>Contract</dt><dd>{isApi ? "0.1.0-m1" : "0.1.0-frozen"}</dd></dl>
       </section>
-      <section className="inspector-section"><h4>{tx(locale,"Traceability")}</h4><div className="trace-stack"><div><i className="trace-dot source"/><span>Source object</span><small>Version pinned</small></div><div><i className="trace-line"/><span>Evidence bundle</span><small>Associational</small></div><div><i className="trace-dot thesis"/><span>Compiled thesis</span><small>Language weakened</small></div></div></section>
-      <section className="inspector-section"><h4>{tx(locale,"Provenance")}</h4><button className="source-link"><span>↗</span><div><b>{tx(locale,"Open frozen fixture")}</b><small>sample_thesis_build.json</small></div></button></section>
+      <section className="inspector-section"><h4>{tx(locale,"Traceability")}</h4><div className="trace-stack"><div><i className="trace-dot source"/><span>Source object</span><small>{isApi ? `${item.versionCount ?? 1} version(s) · ${item.formatKind ?? "UNKNOWN"}` : "Version pinned"}</small></div>{isApi ? <div><i className="trace-line"/><span>Parsed fragments</span><small>{item.fragmentCount ?? 0} deterministic fragments</small></div> : <><div><i className="trace-line"/><span>Evidence bundle</span><small>Associational</small></div><div><i className="trace-dot thesis"/><span>Compiled thesis</span><small>Language weakened</small></div></>}</div></section>
+      <section className="inspector-section"><h4>{tx(locale,"Provenance")}</h4><button className="source-link"><span>↗</span><div><b>{isApi ? "Open live asset details" : tx(locale,"Open frozen fixture")}</b><small>{isApi ? "M1 object projection" : "sample_thesis_build.json"}</small></div></button></section>
     </aside>
   );
 }
 
-function InspectorDrawer({ open, onOpenChange, selectedSource, locale }: { open: boolean; onOpenChange: (open: boolean) => void; selectedSource?: typeof sources[number]; locale: Locale }) {
+function InspectorDrawer({ open, onOpenChange, selectedSource, locale }: { open: boolean; onOpenChange: (open: boolean) => void; selectedSource?: SourceItem; locale: Locale }) {
   return <Dialog.Root open={open} onOpenChange={onOpenChange}><Dialog.Portal><Dialog.Overlay className="drawer-overlay"/><Dialog.Content className="drawer-content"><Dialog.Title className="sr-only">{tx(locale,"Inspector")}</Dialog.Title><Dialog.Close className="drawer-close" aria-label="Close">×</Dialog.Close><Inspector selectedSource={selectedSource} locale={locale}/></Dialog.Content></Dialog.Portal></Dialog.Root>;
 }
 
@@ -87,7 +103,7 @@ function SettingsCenter({ open, onOpenChange, theme, onTheme, locale, onLocale, 
   return <Dialog.Root open={open} onOpenChange={onOpenChange}><Dialog.Portal><Dialog.Overlay className="settings-overlay"/><Dialog.Content className="settings-center"><Dialog.Title className="settings-title">Settings</Dialog.Title><Dialog.Description className="settings-description">Workspace preferences, demo controls, and registered extensions</Dialog.Description><Dialog.Close className="settings-close" aria-label="Close">×</Dialog.Close><div className="settings-layout"><nav className="settings-nav"><div className="settings-brand"><div className="brand-mark"><i/><i/><i/></div><span><b>ResearchOS</b><small>Workspace settings</small></span></div>{([['appearance','Appearance','◐'],['demo','Demo & status','▷'],['extensions','Extensions','⌘'],['about','About','◇']] as const).map(([id,label,icon])=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><i>{icon}</i>{label}{id==='extensions'&&<em>4</em>}</button>)}</nav><section className="settings-content">
     {tab==="appearance"&&<><div className="settings-head"><span>INTERFACE</span><h2>Appearance</h2><p>Choose how ResearchOS looks and behaves on this device.</p></div><div className="setting-block"><div><h3>Color theme</h3><p>System follows your operating-system preference.</p></div><div className="theme-grid">{themes.map(item=><button key={item.id} className={`theme-choice theme-${item.id} ${theme===item.id?'selected':''}`} onClick={()=>onTheme(item.id)} aria-pressed={theme===item.id}><span><i/><i/><i/></span><b>{item.label}</b><em>{theme===item.id?'✓':''}</em></button>)}</div></div><div className="setting-row"><div><h3>Language</h3><p>简体中文、繁體中文 and English.</p></div><LocaleSwitcher locale={locale} onChange={onLocale}/></div><div className="setting-row"><div><h3>Reduce motion</h3><p>Limits non-essential transitions and pulses.</p></div><button className={`switch ${reducedMotion?'on':''}`} onClick={()=>onReducedMotion(!reducedMotion)} role="switch" aria-checked={reducedMotion}><i/></button></div></>}
     {tab==="extensions"&&<><div className="settings-head"><span>REGISTERED CAPABILITIES</span><h2>Extension Center</h2><p>Extensions declare capabilities; installation never changes frozen research contracts.</p></div><div className="extension-notice"><i>◇</i><span><b>Catalog preview</b><small>Only MacroTrace is active. Other connectors require a reviewed integration contract.</small></span></div><div className="extension-list">{extensions.map(ext=><div className="extension-row" key={ext.name}><span className="extension-mark">{ext.mark}</span><span><b>{ext.name}</b><small>{ext.detail}</small></span><Badge tone={ext.tone}>{ext.state}</Badge><button disabled={ext.state!=="ENABLED"}>{ext.state==="ENABLED"?'Manage':'Request'}</button></div>)}</div></>}
-    {tab==="demo"&&<><div className="settings-head"><span>DELIVERY CONTROL</span><h2>Demo & status</h2><p>Switch between honest data modes and verify every asynchronous failure state.</p></div><div className="mode-grid"><button className={mode==="fixture"?"selected":""} onClick={()=>onMode("fixture")}><Badge tone="amber">FIXTURE</Badge><b>Frozen contracts</b><small>Deterministic golden project</small></button><button className={mode==="offline"?"selected":""} onClick={()=>onMode("offline")}><Badge tone="blue">OFFLINE REPLAY</Badge><b>Cached fixture replay</b><small>No live API claims</small></button><button disabled><Badge>REAL API</Badge><b>Integration unavailable</b><small>Waiting for A / B / C</small></button></div><div className="scenario-block"><h3>Async state simulator</h3><p>Visible QA controls; these never alter contract fixtures.</p><div className="scenario-grid">{scenarios.map(item=><button key={item.id} className={scenario===item.id?"active":""} onClick={()=>onScenario(item.id)}>{item.label}</button>)}</div></div><div className="demo-tools"><div className="qr-card"><QRCodeSVG value="https://researchos-evidence-workspace.ztian9080.chatgpt.site/" size={92} bgColor="transparent" fgColor="currentColor" level="M"/><span><b>Mobile demo entry</b><small>Scan to open the private production route.</small></span></div><button className="button secondary" onClick={onReset}>↻ Reset golden project</button></div></>}
+    {tab==="demo"&&<><div className="settings-head"><span>DELIVERY CONTROL</span><h2>Demo & status</h2><p>Switch between honest data modes and verify every asynchronous failure state.</p></div><div className="mode-grid"><button className={mode==="fixture"?"selected":""} onClick={()=>onMode("fixture")}><Badge tone="amber">FIXTURE</Badge><b>Frozen contracts</b><small>Deterministic golden project</small></button><button className={mode==="offline"?"selected":""} onClick={()=>onMode("offline")}><Badge tone="blue">OFFLINE REPLAY</Badge><b>Cached fixture replay</b><small>No live API claims</small></button><button className={mode==="real"?"selected":""} onClick={()=>onMode("real")}><Badge tone="green">REAL API</Badge><b>A M1 asset API</b><small>Live upload, objects, versions and structural graph</small></button></div><p className="integration-note"><b>Waiting for producer APIs:</b> Thesis Compiler, MacroTrace, and Recompile remain fixture-backed until their A / B / C contracts are available.</p><div className="scenario-block"><h3>Async state simulator</h3><p>Visible QA controls; these never alter contract fixtures.</p><div className="scenario-grid">{scenarios.map(item=><button key={item.id} className={scenario===item.id?"active":""} onClick={()=>onScenario(item.id)}>{item.label}</button>)}</div></div><div className="demo-tools"><div className="qr-card"><QRCodeSVG value="https://researchos-evidence-workspace.ztian9080.chatgpt.site/" size={92} bgColor="transparent" fgColor="currentColor" level="M"/><span><b>Mobile demo entry</b><small>Scan to open the private production route.</small></span></div><button className="button secondary" onClick={onReset}>↻ Reset golden project</button></div></>}
     {tab==="about"&&<><div className="settings-head"><span>PRODUCT IDENTITY</span><h2>Evidence becomes structure.</h2><p>ResearchOS is an evidence-driven research IDE, not a conversational dashboard.</p></div><div className="identity-card"><div className="identity-sigil"><span>R</span><i/><i/></div><div><b>研构 · ResearchOS</b><small>Contract fixture · 0.1.0-frozen</small></div></div><dl className="about-list"><dt>Workspace</dt><dd>Fiscal transmission study</dd><dt>Object model</dt><dd>Thesis · Evidence · Source · Validation · Model Run · Version</dd><dt>Build</dt><dd className="mono">D-FRONTEND / 2026.08</dd></dl></>}
   </section></div></Dialog.Content></Dialog.Portal></Dialog.Root>;
 }
@@ -134,7 +150,7 @@ function ThesisView({ locale }: { locale: Locale }) {
   </div>;
 }
 
-function WorkspaceView({ onSelect }: { onSelect: (item: typeof sources[number]) => void }) {
+function WorkspaceView({ onSelect }: { onSelect: (item: SourceItem) => void }) {
   return <div className="workspace-scroll"><div className="summary-strip"><div><span>Research objects</span><b>12</b></div><div><span>Relations</span><b>18</b></div><div><span>Open conflicts</span><b className="amber-text">2</b></div><div><span>Context packs</span><b>4</b></div></div>
     <section className="table-section"><div className="section-title"><div><h2>Research objects</h2><p>Versioned sources, claims, and evidence in this workspace.</p></div><div className="segmented"><button className="active">Objects</button><button>Relations</button><button>Conflicts</button></div></div>
       <div className="filter-row"><button>All types⌄</button><button>All states⌄</button><span className="table-search">⌕ Filter objects…</span><button className="button primary small">＋ Add source</button></div>
@@ -204,7 +220,7 @@ function LoginScreen({ onEnter, locale, onLocale }: { onEnter: () => void; local
 export default function Home() {
   const [view, setView] = useState<View>("thesis");
   const [commandOpen, setCommandOpen] = useState(false);
-  const [selectedSource, setSelectedSource] = useState<typeof sources[number]>();
+  const [selectedSource, setSelectedSource] = useState<SourceItem>();
   const [entered, setEntered] = useState(false);
   const [locale, setLocale] = useState<Locale>("zh-CN");
   const [inspectorOpen, setInspectorOpen] = useState(false);
@@ -213,15 +229,26 @@ export default function Home() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [mode, setMode] = useState<RuntimeMode>("fixture");
   const [scenario, setScenario] = useState<DemoScenario>("complete");
+  const [liveObjectCount, setLiveObjectCount] = useState(0);
   useEffect(()=>{ const key=(e:KeyboardEvent)=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();setCommandOpen(v=>!v)} if(e.key==="Escape")setCommandOpen(false)}; addEventListener("keydown",key);return()=>removeEventListener("keydown",key)},[]);
   useEffect(()=>{const media=window.matchMedia("(prefers-color-scheme: dark)");const apply=()=>{const resolved=theme==="system"?(media.matches?"dark":"light"):theme;document.documentElement.dataset.theme=resolved;document.documentElement.style.colorScheme=resolved==="dark"?"dark":"light"};apply();media.addEventListener("change",apply);return()=>media.removeEventListener("change",apply)},[theme]);
   useEffect(()=>{document.documentElement.dataset.reducedMotion=reducedMotion?"true":"false"},[reducedMotion]);
-  const current = useMemo(()=>nav.find(n=>n.id===view)!,[view]);
-  const subtitles: Record<View,string> = { thesis:"Compile a research claim against frozen definitions and evidence policy.",workspace:"Shared research state, versioned objects, and traceable relations.",validation:"A continuous protocol from question to evidence-bounded conclusion.",macrotrace:"Registered empirical execution, diagnostics, and evidence output.",recompile:"Review how evidence constrains the language of the thesis.",versions:"Understand incremental changes, recomputation, and reuse."};
-  if (!entered) return <LoginScreen onEnter={()=>{setEntered(true);requestAnimationFrame(()=>window.scrollTo({top:0,behavior:"auto"}))}} locale={locale} onLocale={setLocale}/>;
+  const current = useMemo(() => nav.find((n) => n.id === view)!, [view]);
+  const subtitles: Record<View, string> = {
+    thesis: "Compile a research claim against frozen definitions and evidence policy.",
+    workspace: "Shared research state, versioned objects, and traceable relations.",
+    validation: "A continuous protocol from question to evidence-bounded conclusion.",
+    macrotrace: "Registered empirical execution, diagnostics, and evidence output.",
+    recompile: "Review how evidence constrains the language of the thesis.",
+    versions: "Understand incremental changes, recomputation, and reuse.",
+  };
+  const runtimeMode: RuntimeMode = view === "workspace" ? mode : mode === "real" ? "fixture" : mode;
+  const workspaceMeta = mode === "real" ? String(liveObjectCount) : "12";
+  const projectSummary = mode === "real" ? `${liveObjectCount} objects · M1 API` : tx(locale, "4 sources · 1 thesis");
+  if (!entered) return <LoginScreen onEnter={() => { setEntered(true); requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" })); }} locale={locale} onLocale={setLocale} />;
   return <main className="app-shell" lang={locale} data-locale={locale}>
-    <aside className="sidebar"><div className="brand"><div className="brand-mark"><i/><i/><i/></div><div><b>ResearchOS</b><span>{tx(locale,"Evidence workspace")}</span></div><button>⌄</button></div><button className="new-thesis">＋ <span>{tx(locale,"New thesis")}</span><kbd>N</kbd></button><nav><span className="nav-label">{tx(locale,"Research")}</span>{nav.map(item=><button key={item.id} className={view===item.id?"active":""} onClick={()=>setView(item.id)}><i>{item.icon}</i><span>{tx(locale,item.label)}</span>{item.meta&&<em>{item.meta}</em>}</button>)}</nav><div className="sidebar-project"><span className="nav-label">{tx(locale,"Active project")}</span><div className="project-card"><div className="project-icon">FT</div><div><b>{tx(locale,"Fiscal transmission")}</b><span>{tx(locale,"4 sources · 1 thesis")}</span></div><button>···</button></div></div><div className="sidebar-bottom"><button><i>⌁</i><span>{tx(locale,"Activity")}</span><em>3</em></button><button><i>?</i><span>{tx(locale,"Help & shortcuts")}</span></button><div className="sync-state"><span className="status-dot green"/><div><b>{tx(locale,"Workspace synced")}</b><small>{tx(locale,"Just now")}</small></div></div></div></aside>
-    <section className="main-frame"><Topbar title={current.label} subtitle={subtitles[view]} onCommand={()=>setCommandOpen(true)} onInspector={()=>setInspectorOpen(true)} onSettings={()=>setSettingsOpen(true)} locale={locale} onLocale={setLocale} mode={mode}/><RuntimeNotice mode={mode} scenario={scenario} onRetry={()=>setScenario("running")} onReset={()=>setScenario("complete")}/><div className="content-frame">{view==="thesis"&&<ThesisView locale={locale}/>}{view==="workspace"&&<WorkspaceView onSelect={(item)=>{setSelectedSource(item);setInspectorOpen(true)}}/>} {view==="validation"&&<ValidationView/>}{view==="macrotrace"&&<MacroTraceView/>}{view==="recompile"&&<RecompileView/>}{view==="versions"&&<VersionView/>}<Inspector selectedSource={selectedSource} locale={locale}/></div></section>
+    <aside className="sidebar"><div className="brand"><div className="brand-mark"><i/><i/><i/></div><div><b>ResearchOS</b><span>{tx(locale,"Evidence workspace")}</span></div><button>⌄</button></div><button className="new-thesis">＋ <span>{tx(locale,"New thesis")}</span><kbd>N</kbd></button><nav><span className="nav-label">{tx(locale,"Research")}</span>{nav.map(item=><button key={item.id} className={view===item.id?"active":""} onClick={()=>setView(item.id)}><i>{item.icon}</i><span>{tx(locale,item.label)}</span>{(item.id === "workspace" ? workspaceMeta : item.meta)&&<em>{item.id === "workspace" ? workspaceMeta : item.meta}</em>}</button>)}</nav><div className="sidebar-project"><span className="nav-label">{tx(locale,"Active project")}</span><div className="project-card"><div className="project-icon">FT</div><div><b>{tx(locale,"Fiscal transmission")}</b><span>{projectSummary}</span></div><button>···</button></div></div><div className="sidebar-bottom"><button><i>⌁</i><span>{tx(locale,"Activity")}</span><em>3</em></button><button><i>?</i><span>{tx(locale,"Help & shortcuts")}</span></button><div className="sync-state"><span className="status-dot green"/><div><b>{tx(locale,"Workspace synced")}</b><small>{tx(locale,"Just now")}</small></div></div></div></aside>
+    <section className="main-frame"><Topbar title={current.label} subtitle={subtitles[view]} onCommand={()=>setCommandOpen(true)} onInspector={()=>setInspectorOpen(true)} onSettings={()=>setSettingsOpen(true)} locale={locale} onLocale={setLocale} mode={runtimeMode}/>{view !== "workspace" && <RuntimeNotice mode={runtimeMode} scenario={scenario} onRetry={()=>setScenario("running")} onReset={()=>setScenario("complete")}/>}<div className="content-frame">{view==="thesis"&&<ThesisView locale={locale}/>} {view==="workspace"&&(mode === "real" ? <RealWorkspace onSelect={(item: WorkspaceSource)=>{setSelectedSource(item);setInspectorOpen(true)}} onObjectCount={setLiveObjectCount}/> : <WorkspaceView onSelect={(item)=>{setSelectedSource(item);setInspectorOpen(true)}}/>)} {view==="validation"&&<ValidationView/>}{view==="macrotrace"&&<MacroTraceView/>}{view==="recompile"&&<RecompileView/>}{view==="versions"&&<VersionView/>}<Inspector selectedSource={selectedSource} locale={locale}/></div></section>
     <InspectorDrawer open={inspectorOpen} onOpenChange={setInspectorOpen} selectedSource={selectedSource} locale={locale}/>
     <SettingsCenter open={settingsOpen} onOpenChange={setSettingsOpen} theme={theme} onTheme={setTheme} locale={locale} onLocale={setLocale} reducedMotion={reducedMotion} onReducedMotion={setReducedMotion} mode={mode} onMode={setMode} scenario={scenario} onScenario={setScenario} onReset={()=>{setView("thesis");setSelectedSource(undefined);setMode("fixture");setScenario("complete");setSettingsOpen(false)}}/>
     {commandOpen&&<div className="command-overlay" onMouseDown={()=>setCommandOpen(false)}><div className="command" onMouseDown={e=>e.stopPropagation()}><div className="command-input"><span>⌕</span><input autoFocus placeholder={`${tx(locale,"Search or command")}…`}/><kbd>ESC</kbd></div><span className="command-label">Navigate</span>{nav.map(n=><button key={n.id} onClick={()=>{setView(n.id);setCommandOpen(false)}}><i>{n.icon}</i><span>{tx(locale,n.label)}</span><kbd>↵</kbd></button>)}</div></div>}

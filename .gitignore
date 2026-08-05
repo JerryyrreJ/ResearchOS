@@ -12,6 +12,7 @@ __pycache__/
 
 # Dependencies and build outputs
 /node_modules/
+**/node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -20,15 +21,21 @@ __pycache__/
 !.yarn/releases
 !.yarn/versions
 /.next/
+**/.next/
 /.vinext/
+**/.vinext/
 /.vite/
+**/.vite/
 /.wrangler/
+**/.wrangler/
 /out/
 /dist/
+**/dist/
 /coverage/
 /outputs/
 /work/
 /.vercel/
+/var/
 
 # Environment and debug files
 .env*
@@ -46,3 +53,4 @@ yarn-error.log*
 *.csv
 .DS_Store
 next-env.d.ts
+**/tsconfig.tsbuildinfo

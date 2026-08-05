@@ -14,6 +14,10 @@ class Settings:
     blob_root: Path = Path("./var/blobs")
     max_upload_bytes: int = 100 * 1024 * 1024
     inline_jobs: bool = True
+    cors_origins: tuple[str, ...] = (
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    )
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -26,4 +30,12 @@ class Settings:
             blob_root=Path(os.getenv("RESEARCHOS_BLOB_ROOT", "./var/blobs")),
             max_upload_bytes=int(os.getenv("RESEARCHOS_MAX_UPLOAD_BYTES", str(100 * 1024 * 1024))),
             inline_jobs=_as_bool(os.getenv("RESEARCHOS_INLINE_JOBS", "true")),
+            cors_origins=tuple(
+                origin.strip()
+                for origin in os.getenv(
+                    "RESEARCHOS_CORS_ORIGINS",
+                    "http://localhost:3000,http://127.0.0.1:3000",
+                ).split(",")
+                if origin.strip()
+            ),
         )
