@@ -86,6 +86,9 @@ test("provides token-driven themes, accessibility preferences, and an honest ext
   assert.match(page, /High contrast/);
   assert.match(css, /data-theme="dark"/);
   assert.match(css, /data-reduced-motion="true"/);
+  assert.match(css, /ResearchOS Archive Instrument/);
+  assert.match(css, /--surface:#fcfbf7/);
+  assert.match(css, /background:#17221f/);
   assert.match(favicon, /#183F37/i);
   assert.match(page, /researchos-mark/);
   assert.match(favicon, /circle cx="23" cy="16"/);
