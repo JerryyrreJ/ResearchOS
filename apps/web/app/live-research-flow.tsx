@@ -13,18 +13,17 @@ import type { Locale } from "./i18n";
 type LiveView = "thesis" | "validation" | "macrotrace" | "recompile" | "versions";
 type Phase = "idle" | "creating" | "compiling" | "running" | "verifying" | "complete" | "failed";
 
-const THESIS_ID = "THESIS_DEMO_001";
-
-const thesisPayload = {
+export function buildThesisPayload(thesisId: string, rawClaim: string, languageLevel = "CAUSAL") {
+  return {
   contract_version: "0.1.0-frozen",
-  thesis_id: THESIS_ID,
+  thesis_id: thesisId,
   project_id: "PROJ_DEMO",
   version_id: "THESIS_VER_001",
   parent_version_id: null,
-  raw_claim: "美国财政扩张正在持续推高10年期美债收益率。",
-  normalized_claim: "美国财政供给扩张对10年期美债收益率存在持续正向因果影响。",
+  raw_claim: rawClaim,
+  normalized_claim: rawClaim,
   as_of_date: "2026-08-04",
-  language_level: "CAUSAL",
+  language_level: languageLevel,
   scope: { subject: "US fiscal supply and 10-year Treasury yield", geography: "United States", start_date: null, end_date: "2026-08-04", horizon_text: "持续，尚未定义" },
   definitions: [
     { term: "财政扩张", definition: null, status: "AMBIGUOUS", source_refs: [] },
@@ -41,13 +40,14 @@ const thesisPayload = {
     lineage_refs: ["SRC_PUBLIC_DEMO"], metadata: { fixture_only: true },
   }],
   metadata: { fixture_only: true },
-};
+  };
+}
 
 function statusTone(status: string) {
   return status === "COMPLETE" || status === "SUCCESS" || status === "PASS" ? "green" : status === "WARNING" || status === "PARTIAL" ? "amber" : "red";
 }
 
-export default function LiveResearchFlow({ view, locale }: { view: LiveView; locale: Locale }) {
+export default function LiveResearchFlow({ view, locale, thesisId = "THESIS_DEMO_001", claim = "美国财政扩张正在持续推高10年期美债收益率。", languageLevel = "CAUSAL" }: { view: LiveView; locale: Locale; thesisId?: string; claim?: string; languageLevel?: string }) {
   const zh = locale !== "en";
   const [phase, setPhase] = useState<Phase>("idle");
   const [compiled, setCompiled] = useState<CompileEnvelope>();
@@ -58,6 +58,7 @@ export default function LiveResearchFlow({ view, locale }: { view: LiveView; loc
   const [artifactCount, setArtifactCount] = useState(0);
   const [graphNodeCount, setGraphNodeCount] = useState(0);
   const [error, setError] = useState<string>();
+  const thesisPayload = buildThesisPayload(thesisId, claim, languageLevel);
 
   const runFlow = async () => {
     setError(undefined);
@@ -65,7 +66,7 @@ export default function LiveResearchFlow({ view, locale }: { view: LiveView; loc
       setPhase("creating");
       await researchosApi.createThesis(thesisPayload);
       setPhase("compiling");
-      const first = await researchosApi.compileThesis(THESIS_ID);
+      const first = await researchosApi.compileThesis(thesisId);
       setCompiled(first);
       setPhase("running");
       const toolRun = await researchosApi.runMacroTrace(first.tool_request);
@@ -77,9 +78,9 @@ export default function LiveResearchFlow({ view, locale }: { view: LiveView; loc
       setGraphNodeCount(Array.isArray(graph.nodes) ? graph.nodes.length : 0);
       setArtifactCount(artifacts.items.length);
       setPhase("verifying");
-      const verification = await researchosApi.verifyThesis(THESIS_ID, toolRun.evidence_bundle);
+      const verification = await researchosApi.verifyThesis(thesisId, toolRun.evidence_bundle);
       setVerified(verification.compile_result);
-      const nextVersions = await researchosApi.listThesisVersions(THESIS_ID);
+      const nextVersions = await researchosApi.listThesisVersions(thesisId);
       setVersions(nextVersions);
       if (nextVersions.length >= 2) {
         setDiff(await researchosApi.getVersionDiff(nextVersions[0].build_id, nextVersions[nextVersions.length - 1].build_id));
@@ -96,7 +97,7 @@ export default function LiveResearchFlow({ view, locale }: { view: LiveView; loc
   const progress = <div className="live-progress" aria-label="Workflow progress">{["creating", "compiling", "running", "verifying", "complete"].map((step, index) => <span key={step} className={phase === "complete" || ["creating", "compiling", "running", "verifying", "complete"].indexOf(phase) >= index ? "done" : ""}>{index + 1}<small>{["Thesis", "Compile", "MacroTrace", "Verify", "Diff"][index]}</small></span>)}</div>;
 
   let body;
-  if (view === "thesis") body = <><section className="live-thesis"><span className="eyebrow">THESIS · CAUSAL REQUEST</span><h1>美国财政扩张正在持续推高<br/>10年期美债收益率。</h1><p>{verified?.compiled_claim ?? compiled?.compile_result.compiled_claim ?? (zh ? "尚未编译。运行验证后，证据会约束这里的语言。" : "Not compiled yet. Evidence will constrain this language after validation.")}</p></section><section className="live-issue-list">{(verified ?? compiled?.compile_result)?.issues.map(issue => <div key={issue.code}><span className={`badge badge-${issue.blocking ? "red" : "amber"}`}>{issue.code}</span><b>{issue.message}</b><small>{issue.suggested_actions[0]}</small></div>) ?? <div className="api-empty">{zh ? "等待真实编译结果。" : "Waiting for a live compile result."}</div>}</section></>;
+  if (view === "thesis") body = <><section className="live-thesis"><span className="eyebrow">THESIS · {languageLevel} REQUEST</span><h1>{claim}</h1><p>{verified?.compiled_claim ?? compiled?.compile_result.compiled_claim ?? (zh ? "尚未编译。运行验证后，证据会约束这里的语言。" : "Not compiled yet. Evidence will constrain this language after validation.")}</p></section><section className="live-issue-list">{(verified ?? compiled?.compile_result)?.issues.map(issue => <div key={issue.code}><span className={`badge badge-${issue.blocking ? "red" : "amber"}`}>{issue.code}</span><b>{issue.message}</b><small>{issue.suggested_actions[0]}</small></div>) ?? <div className="api-empty">{zh ? "等待真实编译结果。" : "Waiting for a live compile result."}</div>}</section></>;
   if (view === "validation") body = <section className="live-protocol">{(verified ?? compiled?.compile_result)?.validation_plan.map((step, index) => <div key={step.step_id}><i>{String(index + 1).padStart(2, "0")}</i><span><b>{step.label}</b><small className="mono">{step.step_id}</small></span><em className={`badge badge-${statusTone(step.status)}`}>{step.status}</em></div>) ?? <div className="api-empty">{zh ? "运行后载入后端生成的验证计划。" : "Run the flow to load the backend validation plan."}</div>}</section>;
   if (view === "macrotrace") body = run ? <><section className="result-primary"><div><span className="eyebrow">ENGINE EVIDENCE · {run.mode}</span><h2>{run.evidence_bundle.engine_claim ?? "No engine claim"}</h2><p className="mono">{run.tool_run_id}</p></div><div className="evidence-grade"><span>Evidence type</span><b>{run.evidence_bundle.evidence_type}</b><small>Coverage</small><strong>{run.evidence_bundle.coverage}</strong></div></section><div className="technical-grid"><section><div className="section-kicker"><span>Model runs</span><span className={`badge badge-${statusTone(run.status)}`}>{run.status}</span></div>{run.evidence_bundle.model_runs.map(model => <div className="metric-line" key={model.model_run_id}><span>{model.model_recipe_id}</span><b>{model.status}</b></div>)}</section><section><div className="section-kicker"><span>Diagnostics</span><span className="badge badge-blue">{graphNodeCount} nodes · {artifactCount} artifacts</span></div>{run.evidence_bundle.diagnostics.map(item => <div className="diag-line" key={item.diagnostic_id}><span>{item.interpretation}</span><b>{item.status}</b></div>)}</section></div><section className="limitations"><div className="limit-icon">!</div><div><h3>Evidence boundary</h3><ul>{run.evidence_bundle.limitations.map(item => <li key={item}>{item}</li>)}</ul></div></section></> : <div className="api-empty">{zh ? "尚无 MacroTrace 运行。" : "No MacroTrace run yet."}</div>;
   if (view === "recompile") body = <section className="semantic-diff"><div><span>Before</span><p>{compiled?.compile_result.original_claim ?? thesisPayload.raw_claim}</p></div><i>→</i><div className="after"><span>After · {verified?.language_policy.allowed_level ?? "PENDING"}</span><p>{verified?.compiled_claim ?? (zh ? "等待 EvidenceBundle…" : "Waiting for EvidenceBundle…")}</p></div></section>;

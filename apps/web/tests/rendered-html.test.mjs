@@ -111,3 +111,23 @@ test("serves a non-cached web health endpoint", async () => {
   assert.equal(response.headers.get("cache-control"), "no-store");
   assert.deepEqual(await response.json(), { status: "ok", service: "researchos-web", mode: "fixture", contract: "0.1.0-frozen" });
 });
+
+test("connects deployed UI to same-origin durable APIs and creates real theses", async () => {
+  const [page, flow, client, worker, hosting] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/live-research-flow.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../lib/api-client.ts", import.meta.url), "utf8"),
+    readFile(new URL("../worker/researchos-api.ts", import.meta.url), "utf8"),
+    readFile(new URL("../../../.openai/hosting.json", import.meta.url), "utf8"),
+  ]);
+  assert.match(client, /window\.location\.origin.*\/api\/v1/);
+  assert.match(page, /newThesisOpen/);
+  assert.match(page, /createThesis\(buildThesisPayload/);
+  assert.match(page, /thesisId=\{activeThesis/);
+  assert.match(flow, /buildThesisPayload/);
+  for (const route of ["/workspaces", "/theses", "/tool-runs/macrotrace", "/verify", "thesis-versions"]) assert.match(worker, new RegExp(route.replaceAll("/", "\\/")));
+  assert.match(worker, /env\.DB/);
+  assert.match(worker, /env\.UPLOADS\.put/);
+  assert.match(hosting, /"d1"\s*:\s*"DB"/);
+  assert.match(hosting, /"r2"\s*:\s*"UPLOADS"/);
+});

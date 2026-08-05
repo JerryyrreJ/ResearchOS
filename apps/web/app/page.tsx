@@ -5,8 +5,9 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { QRCodeSVG } from "qrcode.react";
 import { localeNames, tx, type Locale } from "./i18n";
 import RealWorkspace from "./real-workspace";
-import LiveResearchFlow from "./live-research-flow";
+import LiveResearchFlow, { buildThesisPayload } from "./live-research-flow";
 import type { WorkspaceSource } from "../lib/api-client";
+import { researchosApi } from "../lib/api-client";
 
 type View = "thesis" | "workspace" | "validation" | "macrotrace" | "recompile" | "versions";
 type Theme = "light" | "dark" | "system" | "contrast";
@@ -240,6 +241,11 @@ export default function Home() {
   const [liveObjectCount, setLiveObjectCount] = useState(0);
   const [actionNotice, setActionNotice] = useState<string>();
   const [inspectorVisible, setInspectorVisible] = useState(true);
+  const [newThesisOpen, setNewThesisOpen] = useState(false);
+  const [draftClaim, setDraftClaim] = useState("");
+  const [draftLanguage, setDraftLanguage] = useState("CAUSAL");
+  const [creatingThesis, setCreatingThesis] = useState(false);
+  const [activeThesis, setActiveThesis] = useState<{ id: string; claim: string; languageLevel: string }>();
   useEffect(()=>{ const key=(e:KeyboardEvent)=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();setCommandOpen(v=>!v)} if(e.key==="Escape")setCommandOpen(false)}; addEventListener("keydown",key);return()=>removeEventListener("keydown",key)},[]);
   useEffect(()=>{const media=window.matchMedia("(prefers-color-scheme: dark)");const apply=()=>{const resolved=theme==="system"?(media.matches?"dark":"light"):theme;document.documentElement.dataset.theme=resolved;document.documentElement.style.colorScheme=resolved==="dark"?"dark":"light"};apply();media.addEventListener("change",apply);return()=>media.removeEventListener("change",apply)},[theme]);
   useEffect(()=>{document.documentElement.dataset.reducedMotion=reducedMotion?"true":"false"},[reducedMotion]);
@@ -256,6 +262,25 @@ export default function Home() {
   const workspaceMeta = mode === "real" ? String(liveObjectCount) : "12";
   const projectSummary = mode === "real" ? `${liveObjectCount} objects · M1 API` : tx(locale, "4 sources · 1 thesis");
   const notify = (message: string) => { setActionNotice(message); window.setTimeout(() => setActionNotice(undefined), 3200); };
+  const createThesis = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const claim = draftClaim.trim();
+    if (!claim) return;
+    setCreatingThesis(true);
+    try {
+      const thesisId = `THESIS_${crypto.randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase()}`;
+      await researchosApi.createThesis(buildThesisPayload(thesisId, claim, draftLanguage));
+      setActiveThesis({ id: thesisId, claim, languageLevel: draftLanguage });
+      setNewThesisOpen(false);
+      setDraftClaim("");
+      setView("thesis");
+      notify(locale === "en" ? "Thesis created and saved" : "论题已创建并保存");
+    } catch (caught) {
+      notify(caught instanceof Error ? caught.message : "论题创建失败");
+    } finally {
+      setCreatingThesis(false);
+    }
+  };
   const runPrimaryFlow = () => { setView("thesis"); window.setTimeout(() => (document.querySelector(".live-flow-header .button") as HTMLButtonElement | null)?.click(), 0); };
   const downloadDiff = () => { const blob = new Blob([JSON.stringify({ thesis: "THESIS_DEMO_001", from: "THESIS_VER_001", to: "THESIS_VER_002", evidence: "ASSOCIATIONAL" }, null, 2)], { type: "application/json" }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "researchos-version-diff.json"; link.click(); URL.revokeObjectURL(link.href); notify("Version diff exported"); };
   const handleShellClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -265,7 +290,7 @@ export default function Home() {
     if (label === "分享" || label === "Share") { void navigator.clipboard.writeText(window.location.href).then(() => notify("Workspace link copied")); }
     else if (label.includes("编译论题") || label.includes("Compile thesis")) runPrimaryFlow();
     else if (label === "×" && button.getAttribute("aria-label") === "Close inspector") setInspectorVisible(false);
-    else if (label.includes("New thesis") || label.includes("新建论题")) { setView("thesis"); notify("New thesis workspace ready"); }
+    else if (label.includes("New thesis") || label.includes("新建论题")) setNewThesisOpen(true);
     else if (label === "⌄") setSettingsOpen(true);
     else if (label === "···") { setSettingsOpen(true); notify("Project controls opened"); }
     else if (label.includes("Activity") || label.includes("活动")) notify("3 recent events · compile, evidence, and version update");
@@ -293,10 +318,11 @@ export default function Home() {
   };
   if (!entered) return <LoginScreen onEnter={() => { setEntered(true); requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" })); }} locale={locale} onLocale={setLocale} />;
   return <main className="app-shell" lang={locale} data-locale={locale} onClickCapture={handleShellClick}>
-    <aside className="sidebar"><div className="brand"><BrandMark/><div><b>ResearchOS</b><span>{tx(locale,"Evidence workspace")}</span></div><button>⌄</button></div><button className="new-thesis">＋ <span>{tx(locale,"New thesis")}</span><kbd>N</kbd></button><nav><span className="nav-label">{tx(locale,"Research")}</span>{nav.map(item=><button key={item.id} className={view===item.id?"active":""} onClick={()=>setView(item.id)}><i>{item.icon}</i><span>{tx(locale,item.label)}</span>{(item.id === "workspace" ? workspaceMeta : item.meta)&&<em>{item.id === "workspace" ? workspaceMeta : item.meta}</em>}</button>)}</nav><div className="sidebar-project"><span className="nav-label">{tx(locale,"Active project")}</span><div className="project-card"><div className="project-icon">FT</div><div><b>{tx(locale,"Fiscal transmission")}</b><span>{projectSummary}</span></div><button>···</button></div></div><div className="sidebar-bottom"><button><i>⌁</i><span>{tx(locale,"Activity")}</span><em>3</em></button><button><i>?</i><span>{tx(locale,"Help & shortcuts")}</span></button><div className="sync-state"><span className="status-dot green"/><div><b>{tx(locale,"Workspace synced")}</b><small>{tx(locale,"Just now")}</small></div></div></div></aside>
-    <section className="main-frame"><Topbar title={current.label} subtitle={subtitles[view]} onCommand={()=>setCommandOpen(true)} onInspector={()=>setInspectorVisible(value=>!value)} onSettings={()=>setSettingsOpen(true)} locale={locale} onLocale={setLocale} mode={runtimeMode}/>{view !== "workspace" && mode !== "real" && <RuntimeNotice mode={runtimeMode} scenario={scenario} onRetry={()=>setScenario("running")} onReset={()=>setScenario("complete")}/>}<div className={`content-frame ${inspectorVisible ? "" : "inspector-hidden"}`}>{view!=="workspace"&&mode==="real"&&<LiveResearchFlow view={view} locale={locale}/>} {view==="thesis"&&mode!=="real"&&<ThesisView locale={locale}/>} {view==="workspace"&&(mode === "real" ? <RealWorkspace onSelect={(item: WorkspaceSource)=>{setSelectedSource(item);setInspectorOpen(true)}} onObjectCount={setLiveObjectCount}/> : <WorkspaceView onSelect={(item)=>{setSelectedSource(item);setInspectorOpen(true)}}/>)} {view==="validation"&&mode!=="real"&&<ValidationView/>}{view==="macrotrace"&&mode!=="real"&&<MacroTraceView/>}{view==="recompile"&&mode!=="real"&&<RecompileView/>}{view==="versions"&&mode!=="real"&&<VersionView/>}{inspectorVisible&&<Inspector selectedSource={selectedSource} locale={locale}/>}</div></section>
+    <aside className="sidebar"><div className="brand"><BrandMark/><div><b>ResearchOS</b><span>{tx(locale,"Evidence workspace")}</span></div><button>⌄</button></div><button className="new-thesis" onClick={()=>setNewThesisOpen(true)}>＋ <span>{tx(locale,"New thesis")}</span><kbd>N</kbd></button><nav><span className="nav-label">{tx(locale,"Research")}</span>{nav.map(item=><button key={item.id} className={view===item.id?"active":""} onClick={()=>setView(item.id)}><i>{item.icon}</i><span>{tx(locale,item.label)}</span>{(item.id === "workspace" ? workspaceMeta : item.id === "thesis" && activeThesis ? "1" : item.meta)&&<em>{item.id === "workspace" ? workspaceMeta : item.id === "thesis" && activeThesis ? "1" : item.meta}</em>}</button>)}</nav><div className="sidebar-project"><span className="nav-label">{tx(locale,"Active project")}</span><div className="project-card"><div className="project-icon">FT</div><div><b>{tx(locale,"Fiscal transmission")}</b><span>{projectSummary}</span></div><button>···</button></div></div><div className="sidebar-bottom"><button><i>⌁</i><span>{tx(locale,"Activity")}</span><em>3</em></button><button><i>?</i><span>{tx(locale,"Help & shortcuts")}</span></button><div className="sync-state"><span className="status-dot green"/><div><b>{tx(locale,"Workspace synced")}</b><small>{tx(locale,"Just now")}</small></div></div></div></aside>
+    <section className="main-frame"><Topbar title={current.label} subtitle={subtitles[view]} onCommand={()=>setCommandOpen(true)} onInspector={()=>setInspectorVisible(value=>!value)} onSettings={()=>setSettingsOpen(true)} locale={locale} onLocale={setLocale} mode={runtimeMode}/>{view !== "workspace" && mode !== "real" && <RuntimeNotice mode={runtimeMode} scenario={scenario} onRetry={()=>setScenario("running")} onReset={()=>setScenario("complete")}/>}<div className={`content-frame ${inspectorVisible ? "" : "inspector-hidden"}`}>{view!=="workspace"&&mode==="real"&&<LiveResearchFlow view={view} locale={locale} thesisId={activeThesis?.id} claim={activeThesis?.claim} languageLevel={activeThesis?.languageLevel}/>} {view==="thesis"&&mode!=="real"&&<ThesisView locale={locale}/>} {view==="workspace"&&(mode === "real" ? <RealWorkspace onSelect={(item: WorkspaceSource)=>{setSelectedSource(item);setInspectorOpen(true)}} onObjectCount={setLiveObjectCount}/> : <WorkspaceView onSelect={(item)=>{setSelectedSource(item);setInspectorOpen(true)}}/>)} {view==="validation"&&mode!=="real"&&<ValidationView/>}{view==="macrotrace"&&mode!=="real"&&<MacroTraceView/>}{view==="recompile"&&mode!=="real"&&<RecompileView/>}{view==="versions"&&mode!=="real"&&<VersionView/>}{inspectorVisible&&<Inspector selectedSource={selectedSource} locale={locale}/>}</div></section>
     <InspectorDrawer open={inspectorOpen} onOpenChange={setInspectorOpen} selectedSource={selectedSource} locale={locale}/>
     <SettingsCenter open={settingsOpen} onOpenChange={setSettingsOpen} theme={theme} onTheme={setTheme} locale={locale} onLocale={setLocale} reducedMotion={reducedMotion} onReducedMotion={setReducedMotion} mode={mode} onMode={setMode} scenario={scenario} onScenario={setScenario} onReset={()=>{setView("thesis");setSelectedSource(undefined);setMode("fixture");setScenario("complete");setSettingsOpen(false)}}/>
+    <Dialog.Root open={newThesisOpen} onOpenChange={setNewThesisOpen}><Dialog.Portal><Dialog.Overlay className="thesis-dialog-overlay"/><Dialog.Content className="thesis-dialog"><Dialog.Title>{locale === "en" ? "Create thesis" : locale === "zh-TW" ? "建立論題" : "新建论题"}</Dialog.Title><Dialog.Description>{locale === "en" ? "Define the claim first. Evidence will constrain its language during compilation." : "先定义可验证的研究主张，证据将在编译时约束其语言强度。"}</Dialog.Description><form onSubmit={createThesis}><label><span>{locale === "en" ? "Research claim" : "研究主张"}</span><textarea autoFocus required value={draftClaim} onChange={event=>setDraftClaim(event.target.value)} placeholder={locale === "en" ? "e.g. Fiscal expansion is associated with higher 10-year Treasury yields." : "例如：财政扩张与10年期美债收益率上升相关。"}/></label><label><span>{locale === "en" ? "Requested language" : "请求语言强度"}</span><select value={draftLanguage} onChange={event=>setDraftLanguage(event.target.value)}><option value="CAUSAL">CAUSAL · 因果</option><option value="ASSOCIATIONAL">ASSOCIATIONAL · 关联</option><option value="DESCRIPTIVE">DESCRIPTIVE · 描述</option></select></label><div className="thesis-dialog-note"><i>◇</i><span>{locale === "en" ? "The original claim is versioned. Recompile creates a new immutable build." : "原始主张将被版本化；重新编译会生成新的不可变构建。"}</span></div><div className="thesis-dialog-actions"><Dialog.Close type="button" className="button secondary">{locale === "en" ? "Cancel" : "取消"}</Dialog.Close><button className="button primary" disabled={creatingThesis || !draftClaim.trim()}>{creatingThesis ? (locale === "en" ? "Saving…" : "正在保存…") : (locale === "en" ? "Create thesis" : "创建论题")}</button></div></form></Dialog.Content></Dialog.Portal></Dialog.Root>
     {commandOpen&&<div className="command-overlay" onMouseDown={()=>setCommandOpen(false)}><div className="command" onMouseDown={e=>e.stopPropagation()}><div className="command-input"><span>⌕</span><input autoFocus placeholder={`${tx(locale,"Search or command")}…`}/><kbd>ESC</kbd></div><span className="command-label">Navigate</span>{nav.map(n=><button key={n.id} onClick={()=>{setView(n.id);setCommandOpen(false)}}><i>{n.icon}</i><span>{tx(locale,n.label)}</span><kbd>↵</kbd></button>)}</div></div>}
     {actionNotice&&<div className="action-toast" role="status"><i>✓</i><span>{actionNotice}</span></div>}
   </main>;
