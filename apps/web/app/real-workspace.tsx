@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   researchosApi,
+  type ObjectDetail,
   type ObjectSummary,
   type OntologyGraph,
   type ProjectState,
@@ -87,6 +88,7 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
   const [workspaceTab, setWorkspaceTab] = useState<"objects" | "relations" | "network" | "conflicts">("objects");
   const [category, setCategory] = useState<LibraryCategory>("ALL");
   const [selectedObjectId, setSelectedObjectId] = useState<string>();
+  const [, setSelectedDetail] = useState<ObjectDetail>();
   const [loading, setLoading] = useState(true);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string>();
@@ -140,6 +142,17 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
     window.addEventListener("researchos:choose-files", choose);
     return () => window.removeEventListener("researchos:choose-files", choose);
   }, []);
+
+  useEffect(() => {
+    if (!selectedObjectId) { setSelectedDetail(undefined); return; }
+    let cancelled = false;
+    void researchosApi.getObject(selectedObjectId).then(detail => {
+      if (!cancelled) setSelectedDetail(detail);
+    }).catch(() => {
+      if (!cancelled) setSelectedDetail(undefined);
+    });
+    return () => { cancelled = true; };
+  }, [selectedObjectId]);
 
   const acceptFiles = async (incoming: File[]) => {
     if (!workspaceId || incoming.length === 0) return;

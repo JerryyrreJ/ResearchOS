@@ -126,6 +126,10 @@ test("connects deployed UI to same-origin durable APIs and creates real theses",
   assert.match(page, /thesisId=\{activeThesis/);
   assert.match(flow, /buildThesisPayload/);
   for (const route of ["/workspaces", "/theses", "/tool-runs/macrotrace", "/verify", "thesis-versions"]) assert.match(worker, new RegExp(route.replaceAll("/", "\\/")));
+  for (const method of ["getBatch", "listObjectVersions", "getAssetVersion", "getThesis", "getToolRun", "getJobEvents"]) assert.match(client, new RegExp(method));
+  for (const route of ["ingest-batches", "object_id", "asset-versions", "jobs", "text/event-stream"]) assert.match(worker, new RegExp(route));
+  assert.match(flow, /getJobEvents/);
+  assert.match(flow, /getToolRun/);
   assert.match(worker, /env\.DB/);
   assert.match(worker, /env\.UPLOADS\.put/);
   assert.match(worker, /INSERT INTO assets VALUES \(\?, \?, \?, \?, \?, \?, \?, \?, \?, \?, \?, \?\)/);
