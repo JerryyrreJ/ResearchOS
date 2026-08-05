@@ -11,14 +11,24 @@ type SourceTab = "all" | "web" | "data" | "local";
 type RealWorkspaceProps = { onSelect:(item:WorkspaceSource)=>void; onObjectCount:(count:number)=>void };
 
 const publicSources = [
-  {id:"WEB_01",kind:"web" as const,mark:"FED",title:"美联储 · 货币政策与数据发布",detail:"官方政策与数据发布",meta:"公开 · 官方",url:"https://www.federalreserve.gov/"},
-  {id:"WEB_02",kind:"web" as const,mark:"BLS",title:"美国劳工统计局 · CPI",detail:"通胀数据与发布时间表",meta:"公开 · 官方",url:"https://www.bls.gov/cpi/"},
-  {id:"WEB_03",kind:"web" as const,mark:"新闻",title:"美股上涨集中度与市场宽度讨论",detail:"新闻与市场观点聚类",meta:"12 个相关链接",url:"#"},
+  {id:"WEB_01",kind:"web" as const,mark:"FED",title:"美联储 · 货币政策与数据发布",detail:"官方政策、声明与会议纪要",meta:"公开 · 官方",url:"https://www.federalreserve.gov/"},
+  {id:"WEB_02",kind:"web" as const,mark:"BLS",title:"美国劳工统计局 · 就业与通胀",detail:"CPI、就业、工资与失业数据",meta:"公开 · 官方",url:"https://www.bls.gov/bls/newsrels.htm"},
+  {id:"WEB_04",kind:"web" as const,mark:"EIA",title:"美国能源信息署 · 原油与天然气",detail:"原油库存、天然气价格与能源市场",meta:"公开 · 官方",url:"https://www.eia.gov/todayinenergy/"},
+  {id:"WEB_05",kind:"web" as const,mark:"NYFED",title:"纽约联储 · 金融条件与市场运行",detail:"自由街经济学 · 宏观与金融研究",meta:"公开 · 研究",url:"https://libertystreeteconomics.newyorkfed.org/"},
+  {id:"WEB_06",kind:"web" as const,mark:"SEC",title:"美国证交会 · 监管与公司披露",detail:"资本市场监管动态与政策",meta:"公开 · 官方",url:"https://www.sec.gov/newsroom"},
+  {id:"WEB_07",kind:"web" as const,mark:"CENSUS",title:"美国人口普查局 · 经济指标",detail:"零售、住房、制造业、贸易调查",meta:"公开 · 官方",url:"https://www.census.gov/economic-indicators/"},
+  {id:"WEB_08",kind:"web" as const,mark:"CFTC",title:"美国商品期货交易委员会",detail:"期货、掉期、衍生品监管与市场",meta:"公开 · 官方",url:"https://www.cftc.gov/PressRoom"},
+  {id:"WEB_09",kind:"web" as const,mark:"财政部",title:"美国财政部 · 债务与财政数据",detail:"未偿债务、财政收支与融资",meta:"公开 · 官方",url:"https://fiscaldata.treasury.gov/"},
+  {id:"WEB_03",kind:"web" as const,mark:"ATL",title:"亚特兰大联储 · GDPNow 即时预测",detail:"美国实际GDP增长即时预测更新",meta:"公开 · 研究",url:"https://www.atlantafed.org/cqer/research/gdpnow"},
+  {id:"WEB_10",kind:"web" as const,mark:"STLFED",title:"圣路易斯联储 · 经济研究",detail:"美国通胀、就业与金融市场研究",meta:"公开 · 研究",url:"https://www.stlouisfed.org/on-the-economy"},
 ];
 const dataSources = [
-  {id:"DATA_01",kind:"data" as const,mark:"接口",title:"标普 500 与成分股贡献",detail:"指数收益、权重与贡献率",meta:"截止 2024-01-12",url:"#"},
-  {id:"DATA_02",kind:"data" as const,mark:"FRED",title:"10 年期美国国债固定期限利率",detail:"DGS10 · 日频",meta:"已固定版本",url:"https://fred.stlouisfed.org/series/DGS10"},
-  {id:"DATA_03",kind:"data" as const,mark:"模型",title:"MacroTrace · 市场宽度模型设定",detail:"回归设定、诊断与稳健性检查",meta:"待运行",url:"#"},
+  {id:"DATA_01",kind:"data" as const,mark:"就业",title:"非农就业与失业率",detail:"BLS CES/LNS · 月度",meta:"已固定版本",url:"#"},
+  {id:"DATA_02",kind:"data" as const,mark:"利率",title:"国债收益率曲线与利差",detail:"FRED · DGS2/DGS10/BAA10Y",meta:"已固定版本",url:"https://fred.stlouisfed.org/series/DGS10"},
+  {id:"DATA_04",kind:"data" as const,mark:"通胀",title:"CPI 与 PCE 价格指数",detail:"BLS/FRED · 月度",meta:"已固定版本",url:"#"},
+  {id:"DATA_05",kind:"data" as const,mark:"能源",title:"WTI 原油与天然气价格",detail:"EIA · 周度",meta:"已固定版本",url:"#"},
+  {id:"DATA_06",kind:"data" as const,mark:"美元",title:"名义广义美元指数",detail:"FRED · 日频",meta:"已固定版本",url:"#"},
+  {id:"DATA_03",kind:"data" as const,mark:"模型",title:"MacroTrace · 实证模型设定",detail:"回归规格、诊断与稳健性检查",meta:"待运行",url:"#"},
 ];
 const samplePrompts = ["本周美股上涨是否主要由少数科技龙头驱动？","近期利率变化对 REITs 二级市场表现有什么影响？","结合政策与数据，寻找本周值得跟踪的宏观研究线索。"];
 

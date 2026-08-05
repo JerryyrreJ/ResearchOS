@@ -63,42 +63,50 @@ DOMAIN_LABELS = {
 
 
 def _directional_headline(question: str, plan: dict[str, Any], aggregation: dict[str, Any], primary: list[str]) -> str:
-    query = plan.get("query") or {}
-    domain = str(query.get("domain") or "MACRO")
-    score = aggregation.get("primary_score")
+    “””Generate a concise, question-anchored headline that directly answers the research question.
+
+    Instead of a structured label like “劳动力市场偏强”, the headline must sound like a
+    researcher's bottom line: it names the object, states the direction, and cites the
+    strongest piece of evidence — in one sentence the reader can quote.
+    “””
+    query = plan.get(“query”) or {}
+    domain = str(query.get(“domain”) or “MACRO”)
+    score = aggregation.get(“primary_score”)
     if not isinstance(score, (int, float)):
-        score = aggregation.get("ordinal_score")
-    stem = _question_stem(question, 68)
-    if domain == "MACRO" and primary:
-        evidence = "；".join(primary[:2])
-        if re.search(r"是否|是不是|能否|会不会|有没有", question):
-            if isinstance(score, (int, float)) and score < 0:
-                verdict = "较不支持该观点成立"
-            elif isinstance(score, (int, float)) and score > 0:
-                verdict = "较支持该观点成立"
-            else:
-                stance = str(aggregation.get("stance") or "")
-                verdict = "较不支持该观点成立" if "DOWNSIDE" in stance or "NEGATIVE" in stance else "较支持该观点成立" if "UPSIDE" in stance or "POSITIVE" in stance else "尚不足以确认该观点成立"
-            return f"对“{stem}”，当前证据{verdict}：{evidence}"
-        return f"对“{stem}”，当前证据更支持：{evidence}"
-    if isinstance(score, (int, float)):
-        # Binary market questions need a usable side even when the registered
-        # edge is small. Preserve the weak-evidence distinction in the wording
-        # instead of collapsing every modest score into a neutral headline.
-        if score >= 0.08:
-            direction = "偏向上涨"
-        elif score > 0:
-            direction = "边际偏向上涨，但方向优势较弱"
-        elif score <= -0.08:
-            direction = "偏向下跌"
-        elif score < 0:
-            direction = "边际偏向下跌，但方向优势较弱"
+        score = aggregation.get(“ordinal_score”)
+    stem = _question_stem(question, 80)
+    top_evidence = primary[0] if primary else “”
+    second_evidence = primary[1] if len(primary) > 1 else “”
+
+    if re.search(r”是否|是不是|能否|会不会|有没有”, question):
+        if isinstance(score, (int, float)) and score < 0:
+            verdict = “证据较不支持这一判断”
+        elif isinstance(score, (int, float)) and score > 0:
+            verdict = “证据较支持这一判断”
         else:
-            direction = "暂时没有可辨认的方向优势"
-    else:
-        stance = str(aggregation.get("stance") or "")
-        direction = "偏上行" if "UPSIDE" in stance or "POSITIVE" in stance else "偏下行" if "DOWNSIDE" in stance or "NEGATIVE" in stance else "接近中性"
-    return f"对“{stem}”，当前可执行证据给出的方向判断为{direction}"
+            stance = str(aggregation.get(“stance”) or “”)
+            verdict = “证据较不支持” if “DOWNSIDE” in stance or “NEGATIVE” in stance else “证据较支持” if “UPSIDE” in stance or “POSITIVE” in stance else “现有证据尚不足以确认”
+        if top_evidence:
+            return f”针对”{stem}”，{verdict}。核心信号来自{top_evidence}”
+        return f”针对”{stem}”，{verdict}”
+
+    if top_evidence:
+        if isinstance(score, (int, float)):
+            if score >= 0.08:
+                return f”{top_evidence}指向偏强方向——针对”{stem}”，数据整体支持这一判断”
+            elif score > 0:
+                return f”针对”{stem}”，{top_evidence}提供边际支持，但方向优势尚弱”
+            elif score <= -0.08:
+                return f”{top_evidence}指向偏弱方向——针对”{stem}”，数据整体支持这一判断”
+            elif score < 0:
+                return f”针对”{stem}”，{top_evidence}提供边际偏弱信号，但方向优势尚弱”
+            else:
+                return f”针对”{stem}”，当前可执行数据未形成可辨认的方向优势”
+        else:
+            stance = str(aggregation.get(“stance”) or “”)
+            direction = “上行” if “UPSIDE” in stance or “POSITIVE” in stance else “下行” if “DOWNSIDE” in stance or “NEGATIVE” in stance else “中性”
+            return f”针对”{stem}”，{top_evidence}指向{second_evidence if second_evidence else ''}方向为{direction}”
+    return f”针对”{stem}”，当前可执行证据{score:+d if isinstance(score,(int,float)) else '缺少明确方向'}”
 
 
 def _safe_get(registry: RegistryStore, registry_name: str, object_id: str) -> dict[str, Any]:
@@ -216,34 +224,44 @@ def build_research_report(
     evidence_state = aggregation.get("evidence_state")
     answerability = aggregation.get("answerability")
 
-    domain = str((plan.get("query") or {}).get("domain") or "MACRO")
-    domain_label = DOMAIN_LABELS.get(domain, "综合研究")
+    domain = str((plan.get(“query”) or {}).get(“domain”) or “MACRO”)
+    domain_label = DOMAIN_LABELS.get(domain, “综合研究”)
     if primary:
         headline = _directional_headline(question, plan, aggregation, primary)
-        direct_text = f"{headline}。"
-        if aggregation.get("conflicts_retained"):
-            direct_text += "不同证据之间仍有分歧，因此这是一项有条件的方向判断，而不是确定性预测。"
-        if evidence_state == "ASSOCIATIONAL_ONLY":
-            direct_text += "这一立场来自预测、时序与系统关联证据；严格因果效应及其幅度仍需独立识别。"
-    elif answerability == "UNSUPPORTED":
-        headline = f"对“{question_text}”，当前证据倾向中性，暂不支持强方向押注"
+        # Direct answer: respond to the question head-on, not with a structured label.
+        direct_text = f”{headline}。”
+        if len(primary) >= 2:
+            direct_text += f” 主要依据：{primary[0]}；{primary[1]}。”
+        elif primary:
+            direct_text += f” 主要依据：{primary[0]}。”
+        if aggregation.get(“conflicts_retained”):
+            direct_text += “不同证据之间仍有分歧，结论为有条件的方向判断。”
+        if evidence_state == “ASSOCIATIONAL_ONLY”:
+            direct_text += “当前证据等级为关联性，尚未达到因果识别标准。”
+    elif answerability == “UNSUPPORTED”:
+        headline = f”针对”{question_text}”，当前可执行数据不足以形成方向性判断”
         direct_text = (
-            "中性是本轮的明确立场：现有可执行数据与模型没有形成足以支持上行或下行的稳定合力。"
-            "这不等于问题没有答案，而是当前最符合证据的答案是不做强方向押注。"
+            “现有已注册数据与模型没有形成足以支持上行或下行的稳定合力。”
+            “这不等于问题无解，而是目前最符合证据的答案是暂不做强方向押注。”
         )
     else:
-        headline = f"对“{question_text}”，当前证据倾向中性"
-        direct_text = "现有分析没有形成足够强的一致方向，但可执行证据已被保留为条件性判断。"
+        headline = f”针对”{question_text}”，当前证据倾向中性”
+        direct_text = “现有分析没有形成足够强的一致方向，可执行证据已被保留为条件性判断。”
 
-    successful = [item for item in results if item.get("status") in {"SUCCESS", "WARNING"}]
+    successful = [item for item in results if item.get(“status”) in {“SUCCESS”, “WARNING”}]
+    # Build abstract that synthesizes evidence into a natural-language answer.
     abstract_points = primary + context[:2]
     abstract_text = direct_text
     abstract_text += (
-        f" 本轮实际完成 {len(successful)} 个数据或计量规格，覆盖度为 {aggregation.get('coverage')}，"
-        f"综合置信度为 {aggregation.get('confidence')}。"
+        f” 本轮实际运行 {len(successful)} 个实证规格，覆盖度为 {aggregation.get('coverage')}，”
+        f”综合置信度为 {aggregation.get('confidence')}。”
     )
     if context:
-        abstract_text += " 作为背景证据，" + "；".join(context[:2]) + "。"
+        abstract_text += “ 背景证据：” + “；”.join(context[:2]) + “。”
+    # Append a one-line “bottom line” that the reader can skim.
+    if primary:
+        bottom = “综合判断：” + “；”.join(primary[:3])
+        abstract_text += f” {bottom}。”
 
     result_nodes_by_research: dict[str, list[str]] = {}
     for result in successful:
@@ -299,16 +317,42 @@ def build_research_report(
         specification = result.get("specification") or {}
         factor_ids = list(result.get("factor_ids") or [])
         factor_descriptions = _factor_descriptions(registry, factor_ids)
+        # Build a question-aware purpose: why this model matters for the research question.
+        method_label = METHOD_LABELS.get(recipe_id, result.get("method") or recipe_id)
+        role_label = ROLE_LABELS.get(str(result.get("specification_role", "CORE")), str(result.get("specification_role", "CORE")))
+        target_var = factor_descriptions[0] if factor_descriptions else "主要宏观指标"
+        if role_label == "主要分析":
+            purpose = (
+                f"针对"{_question_stem(question, 50)}"，核心任务是检验{target_var}的方向与显著性。"
+                f"如果{target_var}在此规格中显著，则它构成回答原问题的主要实证依据。"
+            )
+        elif role_label == "稳健性检验":
+            purpose = (
+                f"为检验主要分析结论是否对模型设定敏感，使用{method_label}重新估计{target_var}的效应。"
+                f"如果结论与主要分析一致，则说明结果对规格选择具有稳健性。"
+            )
+        elif role_label == "基准比较":
+            purpose = (
+                f"使用{method_label}建立{target_var}的基准预测，"
+                f"为更复杂模型提供比较锚点。"
+            )
+        elif role_label == "反证规格":
+            purpose = (
+                f"如果{target_var}在此反证规格下不再显著或方向反转，"
+                f"则主要分析的结论需要限制适用范围或降级置信度。"
+            )
+        else:
+            purpose = f"通过{method_label}估计{target_var}，为"{_question_stem(question, 40)}"提供{role_label}证据。"
         empirical.append(
             {
                 "node_id": node_id,
-                "title": f"{METHOD_LABELS.get(recipe_id, result.get('method') or recipe_id)}：{factor_descriptions[0] if factor_descriptions else '主要宏观指标'}",
-                "method": result.get("method") or METHOD_LABELS.get(recipe_id, recipe_id),
-                "role": ROLE_LABELS.get(str(result.get("specification_role", "CORE")), str(result.get("specification_role", "CORE"))),
-                "question_addressed": specification.get("estimand") or "检验该组数据对原问题相关经济状态的方向性证据。",
+                "title": f"{method_label}：{target_var}",
+                "method": result.get("method") or method_label,
+                "role": role_label,
+                "question_addressed": purpose,
                 "data_and_sample": _sample_text(result.get("sample")),
                 "variables": factor_descriptions,
-                "specification": specification.get("formula") or f"使用预注册的 {METHOD_LABELS.get(recipe_id, recipe_id)} 规格。",
+                "specification": specification.get("formula") or f"使用预注册的 {method_label} 规格。",
                 "finding": result.get("summary") or "模型完成运行，但没有返回简明结果摘要。",
                 "implication": _result_implication(result, contribution),
                 "diagnostics": _diagnostic_text(result.get("diagnostics")),
@@ -326,7 +370,7 @@ def build_research_report(
     source_node_ids = [str(item.get("node_id")) for item in successful]
     return {
         "schema_version": "0.3.0",
-        "title": f"{domain_label}实证研究报告",
+        "title": f"实证研究报告：{_question_stem(question, 40)}",
         "research_context": {
             "domain": domain,
             "domain_label": domain_label,
@@ -348,9 +392,11 @@ def build_research_report(
         "economic_mechanisms": mechanisms,
         "empirical_evidence": empirical,
         "method_summary": {
+            "purpose": f"针对"{question_text}"，依次完成经济机制拆解、计量规格配置、模型执行、诊断与证据综合。每个模型都回答原问题的一个侧面，而非独立的技术演示。",
             "successful_runs": len(successful),
             "highlighted_runs": len(empirical),
             "additional_runs": max(0, len(successful) - len(empirical)),
+            "pipeline": "机制 → 规格 → 执行 → 诊断 → 证据综合",
         },
         "conclusion": {
             "title": "总结",
