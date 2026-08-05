@@ -40,7 +40,7 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+extend-exclude = ["docs/ResearchOS_Handoff_A_Data_Ontology_v1.1"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
-
