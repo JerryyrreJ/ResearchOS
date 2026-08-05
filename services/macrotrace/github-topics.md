@@ -1,0 +1,10 @@
+macro-economics
+econometrics
+economic-research
+fastapi
+duckdb
+time-series
+research-tools
+data-visualization
+llm
+python

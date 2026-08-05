@@ -1,0 +1,379 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CW05.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "GDPNow objective",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The explainer describes a mechanical estimate of current-quarter real GDP growth that updates as source releases arrive rather than relying on discretionary judgment.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW05",
+        "MR.CW05.GDP_COMPONENT_NOWCAST"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW05.02",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Dynamic factor, bridge, and BVAR stages",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "A dynamic factor model fills missing monthly observations, while bridge equations and Bayesian vector autoregressions forecast thirteen GDP subcomponents.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW05",
+        "MR.CW05.GDP_COMPONENT_NOWCAST"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW05.03",
+      "extraction_confidence": 0.9,
+      "kind": "AGGREGATION",
+      "locator_label": "NIPA accounting aggregation",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Forecasted subcomponents are combined using national-income accounting identities and contribution arithmetic to produce the top-line GDP nowcast.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW05",
+        "MR.CW05.GDP_COMPONENT_NOWCAST"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW05.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Real-time forecast error",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The estimate can change materially with new releases and revisions, and a transparent mechanical nowcast can still have substantial error relative to later GDP estimates.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW05",
+        "MR.CW05.GDP_COMPONENT_NOWCAST"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "Atlanta Fed GDPNow is a component-level nowcast system rather than one black-box GDP regression. It fills missing monthly indicators with a dynamic factor model, maps them into thirteen NIPA GDP subcomponents using bridge equations and Bayesian VARs, and aggregates those forecasts through national-accounts identities. MacroTrace should reproduce that visible DAG, real-time release updates, and accounting reconciliation.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "component forecasts aggregate by registered NIPA identities, never LLM weights",
+      "control_variable_ids": [],
+      "dependent_variable_ids": [
+        "V.CW05.GDP",
+        "V.CW05.COMP"
+      ],
+      "diagnostic_requirements": [
+        "component accounting add-up",
+        "news contribution reconciliation",
+        "ragged-edge availability audit",
+        "rolling real-time RMSE and revision decomposition"
+      ],
+      "downstream_refs": [],
+      "estimand": "current-quarter real GDP growth implied by information available at each release-time vintage",
+      "evidence_ids": [
+        "EV.CW05.01",
+        "EV.CW05.02",
+        "EV.CW05.03",
+        "EV.CW05.04"
+      ],
+      "formula": "monthly panel -> DFM ragged-edge estimates -> bridge/BVAR component forecasts -> NIPA contribution sum = GDP nowcast",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "predictive mixed-frequency system with accounting aggregation; no causal interpretation",
+      "identifying_assumptions": [
+        "every release is time-stamped and stored by vintage",
+        "monthly-to-quarterly mappings and component identities are fixed by recipe",
+        "parameters are estimated only on data available at each historical origin"
+      ],
+      "independent_variable_ids": [
+        "V.CW05.MONTH",
+        "V.CW05.FACTOR",
+        "V.CW05.NEWS"
+      ],
+      "lane_ref": "US.ACTIVITY",
+      "mechanism_ref": "MECH.ACTIVITY.EXPENDITURE_ACCOUNTING",
+      "method_family": "ragged-edge DFM plus component bridge equations and BVARs",
+      "method_route_id": "MR.CW05.GDP_COMPONENT_NOWCAST",
+      "node_ref": "N.CANDIDATE.ACTIVITY.GDPNOW_COMPONENT_DAG",
+      "research_question_id": "Q.CW05",
+      "robustness_requirements": [
+        "bridge-only and autoregressive benchmarks",
+        "alternative factor counts and lag orders",
+        "leave-one-release-family-out nowcasts",
+        "advance versus later GDP-vintage targets"
+      ],
+      "sample_definition": "real-time U.S. source releases and NIPA vintages available at each intraquarter update",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CW05",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CW05.01"
+      ],
+      "horizon_text": "current quarter and next released GDP estimate",
+      "question_id": "Q.CW05",
+      "question_text": "How can incoming mixed-frequency U.S. releases be converted into a real-time, component-consistent nowcast of current-quarter real GDP growth?",
+      "target_variables": [
+        "V.CW05.GDP"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "FORECAST"
+      ]
+    }
+  ],
+  "record_id": "REV.B7D11586108C8C79.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "WORKFLOW.ACTIVITY.GDP_COMPONENT_NOWCAST",
+          "MODEL.NOWCAST.GDPNOW_STYLE.V1",
+          "AGGREGATOR.NIPA.COMPONENT_IDENTITY",
+          "EVIDENCE.RELEASE_NEWS.CONTRIBUTION"
+        ],
+        "category": "METHOD_WEB",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of Atlanta",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 1,
+        "publication_date": null,
+        "report_id": "RC.B7D11586108C",
+        "review_status": "reviewed",
+        "source_catalog_id": "CW05",
+        "source_sha256": "b7d11586108c8c79228e2d9f04b9464d321843dae4e82b41b67eeb1e968dd4f5",
+        "source_url": "https://www.atlantafed.org/research-and-data/data/gdpnow/explainer",
+        "status": "reviewed",
+        "title": "GDPNow Model Explainer"
+      },
+      "change_id": "CH.CW05.REPORT",
+      "evidence_ids": [
+        "EV.CW05.01",
+        "EV.CW05.02",
+        "EV.CW05.03",
+        "EV.CW05.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CW05.GDP_COMPONENT_NOWCAST"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.B7D11586108C",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.B7D11586108C",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:15.649421Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CW05.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CW05",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CW05.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 8452,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of Atlanta",
+    "jurisdiction_tags": [
+      "US",
+      "gdp_nowcast",
+      "bridge_equations",
+      "dynamic_factor",
+      "bvar",
+      "news_updates"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "text/plain",
+    "page_count": 1,
+    "publication_date": null,
+    "source_file": "LOCAL_SNAPSHOT:CW05",
+    "source_id": "SRC.B7D11586108C8C79",
+    "source_sha256": "b7d11586108c8c79228e2d9f04b9464d321843dae4e82b41b67eeb1e968dd4f5",
+    "title": "GDPNow Model Explainer"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.290636Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:32.711668Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CW05",
+      "at": "2026-07-15T11:22:15.666421Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW05",
+      "at": "2026-07-15T11:22:15.693997Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW05",
+      "at": "2026-07-15T11:22:15.722084Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Model-implied current-quarter annualized growth in real gross domestic product.",
+      "evidence_ids": [
+        "EV.CW05.01",
+        "EV.CW05.03",
+        "EV.CW05.04"
+      ],
+      "frequency": "quarterly with intraquarter updates",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "real GDP growth nowcast",
+      "provider": "U.S. Bureau of Economic Analysis and Federal Reserve Bank of Atlanta",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "annualized percent",
+      "variable_id": "V.CW05.GDP",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Forecasts for thirteen expenditure and inventory components that add up to real GDP growth.",
+      "evidence_ids": [
+        "EV.CW05.02",
+        "EV.CW05.03"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "GDP subcomponent forecasts",
+      "provider": "U.S. Bureau of Economic Analysis",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "levels, growth rates, and contribution percentage points",
+      "variable_id": "V.CW05.COMP",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Mixed-frequency activity, spending, housing, trade, inventory, production, and price releases used before the quarter is complete.",
+      "evidence_ids": [
+        "EV.CW05.01",
+        "EV.CW05.02"
+      ],
+      "frequency": "monthly/weekly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "monthly source indicators",
+      "provider": "official U.S. statistical agencies",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "series specific",
+      "variable_id": "V.CW05.MONTH",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Latent factors used to fill ragged-edge gaps in the monthly source panel.",
+      "evidence_ids": [
+        "EV.CW05.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "estimated monthly factors",
+      "provider": "model output",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized index",
+      "variable_id": "V.CW05.FACTOR",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Difference between a newly observed release and its prior model expectation, propagated through the component DAG.",
+      "evidence_ids": [
+        "EV.CW05.01",
+        "EV.CW05.04"
+      ],
+      "frequency": "release event",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "release news",
+      "provider": "real-time model calculation",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "series specific",
+      "variable_id": "V.CW05.NEWS",
+      "vintage_rule": null
+    }
+  ]
+}

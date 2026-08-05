@@ -1,0 +1,82 @@
+{
+  "contract_version": "0.1.0-frozen",
+  "bundle_id": "EVIDENCE_FIXTURE_COMPLETE",
+  "request_id": "TOOL_REQ_FIXTURE_COMPLETE",
+  "research_job_id": "JOB_FIXTURE_COMPLETE",
+  "status": "COMPLETE",
+  "coverage": "FULL",
+  "evidence_type": "ASSOCIATIONAL",
+  "engine_claim": "Fixture only: the registered bridge and panel routes provide directionally consistent associational evidence.",
+  "model_runs": [
+    {
+      "model_run_id": "RUN_FIXTURE_BRIDGE",
+      "model_recipe_id": "M.BRIDGE_OLS.V1",
+      "status": "SUCCESS",
+      "evidence_type": "ASSOCIATIONAL",
+      "summary": "Contract fixture only; no real empirical value is asserted.",
+      "result_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "model_run_id": "RUN_FIXTURE_PANEL",
+      "model_recipe_id": "M.PANEL_FE.V1",
+      "status": "SUCCESS",
+      "evidence_type": "ASSOCIATIONAL",
+      "summary": "Contract fixture only; fixed effects and coefficients are illustrative.",
+      "result_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+    }
+  ],
+  "diagnostics": [
+    {
+      "diagnostic_id": "DIAG_FIXTURE_SPECIFICATION",
+      "status": "PASS",
+      "blocking": false,
+      "interpretation": "Fixture only: registered specification validation passed."
+    },
+    {
+      "diagnostic_id": "DIAG_FIXTURE_STABILITY",
+      "status": "WARNING",
+      "blocking": false,
+      "interpretation": "Fixture only: one window is less stable; the warning remains visible."
+    }
+  ],
+  "robustness": [
+    {
+      "check_id": "ROBUST_FIXTURE_WINDOW",
+      "status": "PASS",
+      "summary": "Illustrative alternative-window check."
+    }
+  ],
+  "evidence_items": [
+    {
+      "evidence_id": "ITEM_FIXTURE_COMPLETE",
+      "direction": "POSITIVE",
+      "source_model_run_ids": ["RUN_FIXTURE_BRIDGE", "RUN_FIXTURE_PANEL"]
+    }
+  ],
+  "falsifiers": [],
+  "limitations": [
+    "This is a deterministic contract fixture, not a live empirical result.",
+    "Associational evidence cannot support causal wording."
+  ],
+  "input_object_refs": [],
+  "registry_version": "macrotrace-fixture-0.1.0",
+  "result_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+  "artifacts": [
+    {
+      "artifact_id": "GRAPH_FIXTURE_COMPLETE",
+      "artifact_type": "RESEARCH_GRAPH",
+      "uri": "fixtures/evidence/artifacts/graph_complete.json",
+      "sha256": "f21fdcbb9c2ac52df88f04291e777a8edb69545033b4f413b57000b41a0c6217"
+    },
+    {
+      "artifact_id": "TABLE_FIXTURE_COMPLETE",
+      "artifact_type": "REGRESSION_TABLE",
+      "uri": "fixtures/evidence/artifacts/table_complete.json",
+      "sha256": "44512ae1e469d9ceeb0725770897524dffc3020e9ad7cc9b75a10735ae256eb1"
+    }
+  ],
+  "trace_ref": "TRACE_FIXTURE_COMPLETE",
+  "metadata": {
+    "fixture_only": true
+  }
+}

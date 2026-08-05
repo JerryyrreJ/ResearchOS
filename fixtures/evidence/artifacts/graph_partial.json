@@ -1,0 +1,10 @@
+{
+  "fixture_only": true,
+  "status": "PARTIAL",
+  "nodes": [
+    {"node_id": "QUESTION_FIXTURE", "node_type": "QUESTION", "status": "SUCCESS"},
+    {"node_id": "RUN_FIXTURE_DFM", "node_type": "MODEL_RUN", "status": "SUCCESS"},
+    {"node_id": "RUN_FIXTURE_GAR", "node_type": "MODEL_RUN", "status": "FAILED"},
+    {"node_id": "EVIDENCE_FIXTURE_PARTIAL", "node_type": "EVIDENCE", "status": "PARTIAL"}
+  ]
+}

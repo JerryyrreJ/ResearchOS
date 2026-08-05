@@ -1,0 +1,165 @@
+{
+  "schema_version": "1.0.0",
+  "record_id": "REV.EXAMPLE00000001.V1",
+  "batch_id": "BATCH.EXAMPLE.001",
+  "report_id": "RC.EXAMPLE00001",
+  "state": "CANDIDATE",
+  "source": {
+    "source_id": "SRC.EXAMPLE00000001",
+    "source_file": "<private-report-path>/example.pdf",
+    "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "byte_size": 1,
+    "media_type": "application/pdf",
+    "page_count": 1,
+    "title": "Example macroeconomic research report",
+    "institution": "Example institution",
+    "publication_date": null,
+    "jurisdiction_tags": ["US"],
+    "license_status": "PRIVATE_RESEARCH_INPUT",
+    "copied_into_repository": false
+  },
+  "produced_by": {
+    "producer_type": "CODEX",
+    "producer_name": "codex",
+    "producer_run_id": "example-extraction-pass",
+    "model_name": null,
+    "prompt_version": "report-reverse-v1"
+  },
+  "executive_summary": "This example shows the minimum page-grounded structure for a predictive activity route without claiming causal identification.",
+  "jurisdiction_fit": "US_DIRECT",
+  "questions": [
+    {
+      "question_id": "Q.EXAMPLE.ACTIVITY",
+      "question_text": "Does the activity indicator improve the near-term growth forecast?",
+      "task_types": ["FORECAST"],
+      "horizon_text": "one quarter",
+      "as_of_text": null,
+      "target_variables": ["V.EXAMPLE.GROWTH"],
+      "evidence_ids": ["EV.EXAMPLE.QUESTION"]
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "EV.EXAMPLE.QUESTION",
+      "kind": "RESEARCH_QUESTION",
+      "page_start": 1,
+      "page_end": 1,
+      "page_basis": "PDF_FILE_PAGE",
+      "statement_status": "EXPLICIT",
+      "locator_label": "Introduction",
+      "paraphrase": "The report asks whether the activity indicator improves a near-term growth forecast.",
+      "verbatim_quote": null,
+      "supports": ["Q.EXAMPLE.ACTIVITY", "MR.EXAMPLE.AR"],
+      "extraction_confidence": 0.95,
+      "reviewer_verified": false
+    },
+    {
+      "evidence_id": "EV.EXAMPLE.SPEC",
+      "kind": "MODEL_SPECIFICATION",
+      "page_start": 1,
+      "page_end": 1,
+      "page_basis": "PDF_FILE_PAGE",
+      "statement_status": "EXPLICIT",
+      "locator_label": "Method",
+      "paraphrase": "The method is a predictive autoregression evaluated with a time-ordered holdout.",
+      "verbatim_quote": null,
+      "supports": ["MR.EXAMPLE.AR"],
+      "extraction_confidence": 0.9,
+      "reviewer_verified": false
+    }
+  ],
+  "variables": [
+    {
+      "variable_id": "V.EXAMPLE.GROWTH",
+      "name": "Real growth",
+      "role": "DEPENDENT",
+      "definition": "Near-term real activity growth outcome.",
+      "unit": "percent",
+      "frequency": "quarterly",
+      "provider": null,
+      "table_or_series": null,
+      "release_lag": null,
+      "vintage_rule": "as available at forecast origin",
+      "transformation": "annualized growth",
+      "lag": null,
+      "mapped_factor_id": "F.ACTIVITY.REAL_GDP",
+      "evidence_ids": ["EV.EXAMPLE.SPEC"]
+    },
+    {
+      "variable_id": "V.EXAMPLE.INDICATOR",
+      "name": "Activity indicator",
+      "role": "EXPOSURE",
+      "definition": "Lagged activity indicator used only for prediction.",
+      "unit": "index",
+      "frequency": "monthly",
+      "provider": null,
+      "table_or_series": null,
+      "release_lag": null,
+      "vintage_rule": "as available at forecast origin",
+      "transformation": "monthly growth",
+      "lag": "one to three months",
+      "mapped_factor_id": "F.ACTIVITY.INDPRO",
+      "evidence_ids": ["EV.EXAMPLE.SPEC"]
+    }
+  ],
+  "method_routes": [
+    {
+      "method_route_id": "MR.EXAMPLE.AR",
+      "research_question_id": "Q.EXAMPLE.ACTIVITY",
+      "lane_ref": "US.ACTIVITY",
+      "mechanism_ref": "MECH.ACTIVITY.PRODUCTION",
+      "node_ref": "N.ACTIVITY.PRODUCTION",
+      "method_family": "predictive autoregression",
+      "estimand": "out-of-sample conditional mean forecast",
+      "dependent_variable_ids": ["V.EXAMPLE.GROWTH"],
+      "independent_variable_ids": ["V.EXAMPLE.INDICATOR"],
+      "control_variable_ids": [],
+      "identification_strategy": "predictive design; no causal estimand claimed",
+      "identifying_assumptions": ["time ordering", "stable release convention"],
+      "sample_definition": "Observations available at each forecast origin",
+      "formula": "growth_t = alpha + sum(beta_l * indicator_{t-l}) + error_t",
+      "diagnostic_requirements": ["residual Ljung-Box", "rolling out-of-sample RMSE"],
+      "robustness_requirements": ["alternative lag windows", "autoregressive benchmark"],
+      "upstream_refs": [],
+      "downstream_refs": [],
+      "aggregation_role": "candidate predictive node",
+      "free_data_feasibility": "AVAILABLE",
+      "evidence_ids": ["EV.EXAMPLE.QUESTION", "EV.EXAMPLE.SPEC"]
+    }
+  ],
+  "registry_changes": [],
+  "reproduction": {
+    "status": "NOT_STARTED",
+    "code_artifact": null,
+    "synthetic_test_ids": [],
+    "real_data_smoke_test_ids": [],
+    "data_snapshot": null,
+    "result_hash": null,
+    "notes": []
+  },
+  "reviews": [],
+  "blockers": [],
+  "state_history": [
+    {
+      "from_state": null,
+      "to_state": "INGESTED",
+      "at": "2026-07-15T00:00:00Z",
+      "actor": "intake-v1",
+      "reason": "Source fingerprinted."
+    },
+    {
+      "from_state": "INGESTED",
+      "to_state": "EXTRACTED",
+      "at": "2026-07-15T00:01:00Z",
+      "actor": "extractor-v1",
+      "reason": "Private page map extracted."
+    },
+    {
+      "from_state": "EXTRACTED",
+      "to_state": "CANDIDATE",
+      "at": "2026-07-15T00:02:00Z",
+      "actor": "candidate-validator-v1",
+      "reason": "Minimum structured route contract passed."
+    }
+  ]
+}

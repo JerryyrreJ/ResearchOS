@@ -54,3 +54,6 @@ yarn-error.log*
 .DS_Store
 next-env.d.ts
 **/tsconfig.tsbuildinfo
+.venv/
+*.egg-info/
+.pytest_cache/

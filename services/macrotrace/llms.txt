@@ -1,0 +1,16 @@
+# MacroTrace
+
+MacroTrace is a local-first, registry-constrained white-box US macro research compiler.
+
+Canonical repository: https://github.com/ZhenyuanPAN822/macrotrace
+English documentation: /README.md
+Chinese documentation: /README.zh-CN.md
+Architecture: /docs/04_architecture_v02.md
+Report reverse workflow: /docs/08_report_ingestion_workflow_v1.md
+API schema: /schemas/research_job.schema.json
+
+Important boundaries:
+- LLMs route and interpret registered evidence; Python performs numeric analysis.
+- The runtime must not generate or modify statistical code.
+- Predictive or associational evidence must not be described as identified causality.
+- Credentials, user research history, raw private reports, and local databases are excluded from source control.

@@ -1,0 +1,21 @@
+[project]
+name = "macrotrace"
+version = "0.4.0"
+description = "A registry-constrained, white-box US macro research compiler."
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.34,<1",
+  "httpx>=0.28,<1",
+  "duckdb>=1.2,<2",
+  "pandas>=2.2,<3",
+  "numpy==1.26.3",
+  "scipy>=1.12,<1.15",
+  "statsmodels>=0.14,<1",
+  "pypdf>=5,<7",
+  "jsonschema>=4.21,<5",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

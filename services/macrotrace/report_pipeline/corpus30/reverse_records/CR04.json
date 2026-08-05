@@ -1,0 +1,384 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CR04.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Release summary",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 3,
+      "page_start": 1,
+      "paraphrase": "The release reports payroll employment, unemployment, participation, earnings, hours, industry changes, and prior-month revisions as separate signals of current labor conditions.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR04",
+        "MR.CR04.LABOR_RELEASE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR04.02",
+      "extraction_confidence": 0.9,
+      "kind": "DATA_SOURCE",
+      "locator_label": "Summary tables and survey FAQ",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 8,
+      "page_start": 4,
+      "paraphrase": "CPS measures people and labor-force status, while CES measures jobs, hours, and earnings at establishments; their concepts, coverage, and sampling frames differ.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR04",
+        "MR.CR04.LABOR_RELEASE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR04.03",
+      "extraction_confidence": 0.9,
+      "kind": "DIAGNOSTIC",
+      "locator_label": "Technical note",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 10,
+      "page_start": 8,
+      "paraphrase": "Sampling error, seasonal adjustment, population controls, business births/deaths, revisions, and annual benchmarking determine how month-to-month changes should be interpreted.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR04",
+        "MR.CR04.LABOR_RELEASE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR04.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "FAQ and technical note",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 10,
+      "page_start": 6,
+      "paraphrase": "Differences between the two surveys are not automatically contradictions, preliminary payrolls are revised, and short-run changes require uncertainty and benchmark context.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR04",
+        "MR.CR04.LABOR_RELEASE"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The June 2026 Employment Situation jointly reports the household survey (CPS) and establishment survey (CES), explains why they measure different concepts, and documents seasonal adjustment, sampling error, birth-death adjustment, revisions, and benchmark procedures. It should become a labor measurement subgraph with payroll, unemployment, participation, employment-population, hours, and earnings nodes rather than one headline employment number.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "core labor lane with survey-specific evidence preserved",
+      "control_variable_ids": [],
+      "dependent_variable_ids": [
+        "V.CR04.PAYROLL",
+        "V.CR04.UR",
+        "V.CR04.AHE"
+      ],
+      "diagnostic_requirements": [
+        "payroll revision distribution",
+        "CPS-CES divergence",
+        "seasonal-adjustment sensitivity",
+        "industry breadth",
+        "sampling-error-aware change flags"
+      ],
+      "downstream_refs": [],
+      "estimand": "current direction and breadth of U.S. labor demand and slack conditional on release uncertainty",
+      "evidence_ids": [
+        "EV.CR04.01",
+        "EV.CR04.02",
+        "EV.CR04.03",
+        "EV.CR04.04"
+      ],
+      "formula": "labor_state = synthesis(payroll growth, unemployment, participation, earnings, hours, breadth, claims) with survey-specific uncertainty",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "descriptive measurement synthesis; no causal shock identified",
+      "identifying_assumptions": [
+        "CPS and CES concepts are kept distinct",
+        "preliminary and revised vintages are not mixed",
+        "seasonal and population-control breaks are recorded"
+      ],
+      "independent_variable_ids": [
+        "V.CR04.PART",
+        "V.CR04.REV"
+      ],
+      "lane_ref": "US.LABOR",
+      "mechanism_ref": "MECH.LABOR.PAYROLL_STATE",
+      "method_family": "vintage-aware CPS/CES measurement reconciliation and labor-state nowcast",
+      "method_route_id": "MR.CR04.LABOR_RELEASE",
+      "node_ref": "N.CANDIDATE.LABOR.CPS_CES_RECONCILIATION",
+      "research_question_id": "Q.CR04",
+      "robustness_requirements": [
+        "three- and six-month payroll averages",
+        "household employment alternative",
+        "private versus government payrolls",
+        "hours and aggregate weekly payroll cross-check"
+      ],
+      "sample_definition": "monthly CPS and CES releases available at each as-of date, including revision history",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CR04",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": "2026-07-02 release vintage",
+      "evidence_ids": [
+        "EV.CR04.01"
+      ],
+      "horizon_text": "current month with revision history",
+      "question_id": "Q.CR04",
+      "question_text": "What do the June 2026 household and establishment surveys jointly imply about U.S. labor demand, labor supply, earnings, and employment breadth, after accounting for measurement and revision differences?",
+      "target_variables": [
+        "V.CR04.PAYROLL",
+        "V.CR04.UR"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "DRIVER"
+      ]
+    }
+  ],
+  "record_id": "REV.D7B56ADA97D09358.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "NODE.LABOR.CPS_CES_RECONCILIATION",
+          "FACTOR.LABOR.PARTICIPATION",
+          "FACTOR.LABOR.HOURS",
+          "FACTOR.LABOR.PAYROLL_REVISIONS",
+          "DIAGNOSTIC.LABOR.BENCHMARK_VINTAGE"
+        ],
+        "category": "INSTITUTIONAL_REPORT_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "U.S. Bureau of Labor Statistics",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 39,
+        "publication_date": "2026-07-02",
+        "report_id": "RC.D7B56ADA97D0",
+        "review_status": "reviewed",
+        "source_catalog_id": "CR04",
+        "source_sha256": "d7b56ada97d093582421828c89ff02aa6b53ee4d33172a6da5dd8965c7027abb",
+        "source_url": "https://www.bls.gov/news.release/archives/empsit_07022026.pdf",
+        "status": "reviewed",
+        "title": "The Employment Situation, June 2026"
+      },
+      "change_id": "CH.CR04.REPORT",
+      "evidence_ids": [
+        "EV.CR04.01",
+        "EV.CR04.02",
+        "EV.CR04.03",
+        "EV.CR04.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CR04.LABOR_RELEASE"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.D7B56ADA97D0",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.D7B56ADA97D0",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:14.498597Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CR04.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CR04",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CR04.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 581508,
+    "copied_into_repository": false,
+    "institution": "U.S. Bureau of Labor Statistics",
+    "jurisdiction_tags": [
+      "US",
+      "payrolls",
+      "unemployment",
+      "participation",
+      "earnings",
+      "hours",
+      "industry_employment",
+      "revisions"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 39,
+    "publication_date": "2026-07-02",
+    "source_file": "LOCAL_SNAPSHOT:CR04",
+    "source_id": "SRC.D7B56ADA97D09358",
+    "source_sha256": "d7b56ada97d093582421828c89ff02aa6b53ee4d33172a6da5dd8965c7027abb",
+    "title": "The Employment Situation, June 2026"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.160524Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:07.625351Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CR04",
+      "at": "2026-07-15T11:22:14.518937Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR04",
+      "at": "2026-07-15T11:22:14.545815Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR04",
+      "at": "2026-07-15T11:22:14.575811Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "CES estimate of jobs on nonfarm establishment payrolls.",
+      "evidence_ids": [
+        "EV.CR04.01",
+        "EV.CR04.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": "F.LABOR.PAYROLL",
+      "name": "total nonfarm payroll employment",
+      "provider": "U.S. Bureau of Labor Statistics CES",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "thousands of jobs",
+      "variable_id": "V.CR04.PAYROLL",
+      "vintage_rule": null
+    },
+    {
+      "definition": "CPS unemployed persons as a share of the civilian labor force.",
+      "evidence_ids": [
+        "EV.CR04.01",
+        "EV.CR04.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": "F.LABOR.UNEMPLOYMENT",
+      "name": "unemployment rate",
+      "provider": "U.S. Bureau of Labor Statistics CPS",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CR04.UR",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Civilian labor force as a share of the civilian noninstitutional population.",
+      "evidence_ids": [
+        "EV.CR04.01",
+        "EV.CR04.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "labor force participation rate",
+      "provider": "U.S. Bureau of Labor Statistics",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CR04.PART",
+      "vintage_rule": null
+    },
+    {
+      "definition": "CES average hourly earnings for private payroll employees.",
+      "evidence_ids": [
+        "EV.CR04.01",
+        "EV.CR04.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": "F.LABOR.WAGES",
+      "name": "average hourly earnings",
+      "provider": "U.S. Bureau of Labor Statistics",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "dollars per hour",
+      "variable_id": "V.CR04.AHE",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Difference between preliminary and subsequently revised CES payroll estimates.",
+      "evidence_ids": [
+        "EV.CR04.01",
+        "EV.CR04.03"
+      ],
+      "frequency": "release vintage",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "payroll revision",
+      "provider": "U.S. Bureau of Labor Statistics",
+      "release_lag": null,
+      "role": "OTHER",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "thousands of jobs",
+      "variable_id": "V.CR04.REV",
+      "vintage_rule": null
+    }
+  ]
+}

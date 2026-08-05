@@ -1,0 +1,362 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CF10.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Abstract and identification setup",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 5,
+      "page_start": 2,
+      "paraphrase": "The paper asks whether permanent and transitory disturbances can be separated from output-growth and unemployment dynamics and interpreted as supply and demand shocks.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF10",
+        "MR.CF10.BQ_SVAR"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF10.02",
+      "extraction_confidence": 0.9,
+      "kind": "IDENTIFICATION",
+      "locator_label": "Long-run restriction",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 9,
+      "page_start": 5,
+      "paraphrase": "A reduced-form VAR is inverted to a moving-average representation and structurally identified by orthogonality plus the restriction that the demand disturbance has zero long-run effect on output.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF10",
+        "MR.CF10.BQ_SVAR"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF10.03",
+      "extraction_confidence": 0.9,
+      "kind": "RESULT",
+      "locator_label": "Impulse responses and decompositions",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 25,
+      "page_start": 13,
+      "paraphrase": "Demand shocks generate hump-shaped temporary output and unemployment responses, while supply effects on output accumulate; historical and forecast-error variance decompositions quantify contributions with substantial uncertainty.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF10",
+        "MR.CF10.BQ_SVAR"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF10.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Interpretation and alternative restrictions",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 13,
+      "page_start": 7,
+      "paraphrase": "Calling the shocks demand and supply is conditional on the long-run restrictions and the small information set; alternative permanent effects and omitted disturbances can change magnitudes.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF10",
+        "MR.CF10.BQ_SVAR"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "Blanchard and Quah identify demand and supply disturbances in a bivariate output-growth/unemployment VAR using a long-run restriction: demand shocks have no permanent effect on output, while neither shock has a long-run effect on unemployment. The paper illustrates structural VAR identification, impulse responses, historical decompositions, and variance decompositions, while explicitly warning that labels and magnitudes are sensitive to low-dimensional specification and long-run assumptions.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "structural shock-decomposition evidence with assumption-visible confidence",
+      "control_variable_ids": [],
+      "dependent_variable_ids": [
+        "V.CF10.DY",
+        "V.CF10.U"
+      ],
+      "diagnostic_requirements": [
+        "VAR stability",
+        "residual autocorrelation and normality as descriptive",
+        "long-run impact matrix conditioning",
+        "bootstrap IRF/FEVD intervals"
+      ],
+      "downstream_refs": [],
+      "estimand": "impulse responses and forecast-error variance shares of output and unemployment attributable to orthogonal demand and supply shocks",
+      "evidence_ids": [
+        "EV.CF10.01",
+        "EV.CF10.02",
+        "EV.CF10.03",
+        "EV.CF10.04"
+      ],
+      "formula": "X_t=sum_j C_j epsilon_{t-j}; long-run impact C(1) satisfies C_DY,demand(1)=0",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "long-run zero restriction on the cumulative output response to the demand shock plus shock orthogonality",
+      "identifying_assumptions": [
+        "bivariate VAR is dynamically adequate",
+        "demand shocks have no permanent output effect",
+        "structural shocks are mutually orthogonal and labels are economically defensible"
+      ],
+      "independent_variable_ids": [
+        "V.CF10.ED",
+        "V.CF10.ES"
+      ],
+      "lane_ref": "US.ACTIVITY",
+      "mechanism_ref": "MECH.CANDIDATE.DEMAND_SUPPLY_DECOMPOSITION",
+      "method_family": "structural VAR with Blanchard-Quah long-run restrictions",
+      "method_route_id": "MR.CF10.BQ_SVAR",
+      "node_ref": "N.CANDIDATE.SVAR.LONG_RUN",
+      "research_question_id": "Q.CF10",
+      "robustness_requirements": [
+        "alternative lag orders",
+        "alternative output and labor measures",
+        "subsample stability",
+        "short-run or sign-restriction comparison",
+        "allow small permanent demand effect"
+      ],
+      "sample_definition": "quarterly U.S. real output growth and unemployment with a registered sample and lag order",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CF10",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CF10.01"
+      ],
+      "horizon_text": "quarterly impulse responses through the long run",
+      "question_id": "Q.CF10",
+      "question_text": "Can aggregate demand and supply disturbances be separated from U.S. output and unemployment dynamics using economically motivated long-run restrictions?",
+      "target_variables": [
+        "V.CF10.DY",
+        "V.CF10.U"
+      ],
+      "task_types": [
+        "DRIVER",
+        "CAUSAL",
+        "SCENARIO"
+      ]
+    }
+  ],
+  "record_id": "REV.CB73C30148C4DD01.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.SVAR.BLANCHARD_QUAH.V1",
+          "MECH.ACTIVITY.DEMAND_SUPPLY_SHOCKS",
+          "DIAGNOSTIC.SVAR.LONG_RUN_RESTRICTION_SENSITIVITY",
+          "ARTIFACT.SVAR.FEVD"
+        ],
+        "category": "FOUNDATION_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "National Bureau of Economic Research / authors",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 39,
+        "publication_date": "1988-10-01",
+        "report_id": "RC.CB73C30148C4",
+        "review_status": "reviewed",
+        "source_catalog_id": "CF10",
+        "source_sha256": "cb73c30148c4dd01a34ed0116eab41853f0f381814888d73b812ba75c9a3ea5b",
+        "source_url": "https://www.nber.org/system/files/working_papers/w2737/w2737.pdf",
+        "status": "reviewed",
+        "title": "The Dynamic Effects of Aggregate Demand and Supply Disturbances"
+      },
+      "change_id": "CH.CF10.REPORT",
+      "evidence_ids": [
+        "EV.CF10.01",
+        "EV.CF10.02",
+        "EV.CF10.03",
+        "EV.CF10.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CF10.BQ_SVAR"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.CB73C30148C4",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.CB73C30148C4",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:14.080805Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CF10.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CF10",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CF10.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 329613,
+    "copied_into_repository": false,
+    "institution": "National Bureau of Economic Research / authors",
+    "jurisdiction_tags": [
+      "US",
+      "svar",
+      "long_run_restrictions",
+      "demand_shocks",
+      "supply_shocks",
+      "variance_decomposition"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 39,
+    "publication_date": "1988-10-01",
+    "source_file": "LOCAL_SNAPSHOT:CF10",
+    "source_id": "SRC.CB73C30148C4DD01",
+    "source_sha256": "cb73c30148c4dd01a34ed0116eab41853f0f381814888d73b812ba75c9a3ea5b",
+    "title": "The Dynamic Effects of Aggregate Demand and Supply Disturbances"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.129593Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:58:56.476559Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CF10",
+      "at": "2026-07-15T11:22:14.096913Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF10",
+      "at": "2026-07-15T11:22:14.122666Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF10",
+      "at": "2026-07-15T11:22:14.150049Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "First difference or growth rate of aggregate real output used in the stationary VAR.",
+      "evidence_ids": [
+        "EV.CF10.01",
+        "EV.CF10.02"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": "F.ACTIVITY.REAL_GDP",
+      "name": "output growth",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CF10.DY",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Stationary labor-market variable jointly modeled with output growth.",
+      "evidence_ids": [
+        "EV.CF10.01",
+        "EV.CF10.02"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": "F.LABOR.UNEMPLOYMENT",
+      "name": "unemployment rate",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CF10.U",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Orthogonal structural innovation restricted to have no permanent effect on output.",
+      "evidence_ids": [
+        "EV.CF10.02",
+        "EV.CF10.03"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "demand disturbance",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "TREATMENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standard deviations",
+      "variable_id": "V.CF10.ED",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Orthogonal structural innovation permitted to have a permanent effect on output.",
+      "evidence_ids": [
+        "EV.CF10.02",
+        "EV.CF10.03"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "supply disturbance",
+      "provider": "National Bureau of Economic Research / authors",
+      "release_lag": null,
+      "role": "TREATMENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standard deviations",
+      "variable_id": "V.CF10.ES",
+      "vintage_rule": null
+    }
+  ]
+}

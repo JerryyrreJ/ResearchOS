@@ -1,0 +1,379 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CR03.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Preface and introduction",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 10,
+      "page_start": 5,
+      "paraphrase": "The report assesses whether the banking system remains able to support economic activity while maintaining safety and soundness.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR03",
+        "MR.CR03.BANK_CONDITIONS"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR03.02",
+      "extraction_confidence": 0.9,
+      "kind": "VARIABLE_DEFINITION",
+      "locator_label": "Banking system conditions",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 18,
+      "page_start": 11,
+      "paraphrase": "CET1 capital, liquidity, profitability, loan growth, delinquencies, charge-offs, commercial real-estate exposure, market leverage, and CDS spreads are defined as complementary condition indicators.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR03",
+        "MR.CR03.BANK_CONDITIONS"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR03.03",
+      "extraction_confidence": 0.9,
+      "kind": "RESULT",
+      "locator_label": "Condition charts and large-bank results",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 18,
+      "page_start": 11,
+      "paraphrase": "Aggregate resilience is evaluated alongside pockets of deterioration and bank-size heterogeneity; strong averages do not erase concentration or borrower-quality risk.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR03",
+        "MR.CR03.BANK_CONDITIONS"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR03.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Scope and aggregation",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 18,
+      "page_start": 9,
+      "paraphrase": "Supervisory aggregates mix bank populations and accounting conventions, so MacroTrace must expose bank-size composition and must not infer economy-wide credit supply from one capital ratio.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR03",
+        "MR.CR03.BANK_CONDITIONS"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The June 2026 Supervision and Regulation Report turns U.S. banking conditions into a balance-sheet monitoring workflow: capital adequacy, liquidity, profitability, loan growth, delinquency and charge-offs, market risk indicators, and commercial real-estate concentration. Regulatory material is context; the reusable macro content is the credit-supply and bank-resilience path, with separate large-bank and community/regional-bank cuts.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "financial-sector resilience node feeding credit and downside-risk lanes",
+      "control_variable_ids": [],
+      "dependent_variable_ids": [
+        "V.CR03.BANK",
+        "V.CR03.CREDIT"
+      ],
+      "diagnostic_requirements": [
+        "bank coverage and cluster counts",
+        "composition shifts",
+        "cross-sectional dispersion",
+        "regulatory-versus-market signal conflicts"
+      ],
+      "downstream_refs": [],
+      "estimand": "direction and breadth of bank resilience and its capacity to sustain credit supply",
+      "evidence_ids": [
+        "EV.CR03.01",
+        "EV.CR03.02",
+        "EV.CR03.03",
+        "EV.CR03.04"
+      ],
+      "formula": "bank_state = registered synthesis(capital, liquidity, earnings, asset quality, market indicators) by bank-size stratum",
+      "free_data_feasibility": "PARTIAL",
+      "identification_strategy": "descriptive bank-condition monitoring; causal credit-supply effects require a separate bank-level panel design",
+      "identifying_assumptions": [
+        "bank population and accounting definitions are stable or reconciled",
+        "capital and asset-quality indicators are lag-aligned",
+        "aggregate results are stratified by bank size and exposure"
+      ],
+      "independent_variable_ids": [
+        "V.CR03.CAPITAL",
+        "V.CR03.LIQ",
+        "V.CR03.QUALITY"
+      ],
+      "lane_ref": "US.FIN_STABILITY",
+      "mechanism_ref": "MECH.CANDIDATE.BANK_CREDIT_SUPPLY",
+      "method_family": "bank balance-sheet condition panel with size-stratified monitoring",
+      "method_route_id": "MR.CR03.BANK_CONDITIONS",
+      "node_ref": "N.CANDIDATE.BANK.RESILIENCE_CREDIT",
+      "research_question_id": "Q.CR03",
+      "robustness_requirements": [
+        "large versus regional/community banks",
+        "exclude acquisition-driven loan growth",
+        "CRE concentration strata",
+        "market CDS versus accounting asset quality"
+      ],
+      "sample_definition": "U.S. regulatory and market data for insured banks and large banking organizations through the report cutoff",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CR03",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CR03.01"
+      ],
+      "horizon_text": "current banking conditions and near-term resilience",
+      "question_id": "Q.CR03",
+      "question_text": "Are U.S. banks sufficiently capitalized, liquid, and profitable to sustain credit supply, and where are asset-quality or concentration risks increasing?",
+      "target_variables": [
+        "V.CR03.BANK"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "DRIVER",
+        "SCENARIO"
+      ]
+    }
+  ],
+  "record_id": "REV.D87DB0CEECADF016.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MECH.BANK.CREDIT_SUPPLY",
+          "NODE.BANK.CAPITAL_LIQUIDITY",
+          "NODE.BANK.ASSET_QUALITY",
+          "FACTOR.BANK.CRE_CONCENTRATION",
+          "POLICY.BANK.SIZE_STRATIFICATION"
+        ],
+        "category": "INSTITUTIONAL_REPORT_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Board of Governors of the Federal Reserve System",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 40,
+        "publication_date": "2026-06-11",
+        "report_id": "RC.D87DB0CEECAD",
+        "review_status": "reviewed",
+        "source_catalog_id": "CR03",
+        "source_sha256": "d87db0ceecadf01644b1d2d7b72c0be975861a9fdab11b9499645c13b1912fa7",
+        "source_url": "https://www.federalreserve.gov/publications/files/202606-supervision-and-regulation-report.pdf",
+        "status": "reviewed",
+        "title": "Supervision and Regulation Report, June 2026"
+      },
+      "change_id": "CH.CR03.REPORT",
+      "evidence_ids": [
+        "EV.CR03.01",
+        "EV.CR03.02",
+        "EV.CR03.03",
+        "EV.CR03.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CR03.BANK_CONDITIONS"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.D87DB0CEECAD",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.D87DB0CEECAD",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:14.393297Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CR03.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CR03",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CR03.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 1984397,
+    "copied_into_repository": false,
+    "institution": "Board of Governors of the Federal Reserve System",
+    "jurisdiction_tags": [
+      "US",
+      "banking_conditions",
+      "capital",
+      "liquidity",
+      "credit_quality",
+      "commercial_real_estate"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 40,
+    "publication_date": "2026-06-11",
+    "source_file": "LOCAL_SNAPSHOT:CR03",
+    "source_id": "SRC.D87DB0CEECADF016",
+    "source_sha256": "d87db0ceecadf01644b1d2d7b72c0be975861a9fdab11b9499645c13b1912fa7",
+    "title": "Supervision and Regulation Report, June 2026"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.156014Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:06.044097Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CR03",
+      "at": "2026-07-15T11:22:14.411326Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR03",
+      "at": "2026-07-15T11:22:14.439096Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR03",
+      "at": "2026-07-15T11:22:14.464700Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Joint assessment of capital, liquidity, earnings, asset quality, and market confidence.",
+      "evidence_ids": [
+        "EV.CR03.01",
+        "EV.CR03.02"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "banking resilience state",
+      "provider": "Board of Governors of the Federal Reserve System",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "ordinal/mixed",
+      "variable_id": "V.CR03.BANK",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Common equity tier 1 capital relative to risk-weighted assets.",
+      "evidence_ids": [
+        "EV.CR03.02"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "CET1 capital ratio",
+      "provider": "Board of Governors of the Federal Reserve System",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CR03.CAPITAL",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Liquid resources and funding structure relative to potential outflows.",
+      "evidence_ids": [
+        "EV.CR03.02"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "liquidity position",
+      "provider": "Board of Governors of the Federal Reserve System",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "ratios/dollars",
+      "variable_id": "V.CR03.LIQ",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Delinquency, noncurrent, and charge-off rates by major loan category.",
+      "evidence_ids": [
+        "EV.CR03.02",
+        "EV.CR03.03"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "loan asset quality",
+      "provider": "Board of Governors of the Federal Reserve System",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CR03.QUALITY",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Growth and composition of bank lending by major category.",
+      "evidence_ids": [
+        "EV.CR03.02",
+        "EV.CR03.03"
+      ],
+      "frequency": "quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "bank loan growth",
+      "provider": "Board of Governors of the Federal Reserve System",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CR03.CREDIT",
+      "vintage_rule": null
+    }
+  ]
+}

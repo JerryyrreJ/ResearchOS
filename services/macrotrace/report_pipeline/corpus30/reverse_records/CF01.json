@@ -1,0 +1,354 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CF01.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Abstract and introduction",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The paper asks whether many predictors can be summarized by a small number of consistently estimated factors and used efficiently in forecasting a target series.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF01",
+        "MR.CF01.PCA_FORECAST"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF01.02",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Factor and forecast equations",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 4,
+      "page_start": 2,
+      "paraphrase": "Predictors follow an approximate factor representation; principal components estimate the latent factors, which enter a target-specific regression together with permitted lags.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF01",
+        "MR.CF01.PCA_FORECAST"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF01.03",
+      "extraction_confidence": 0.9,
+      "kind": "ROBUSTNESS",
+      "locator_label": "Simulation and out-of-sample exercises",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 8,
+      "page_start": 5,
+      "paraphrase": "The method is evaluated under different sample dimensions, factor counts, time variation, and against autoregressive, VAR, and leading-indicator benchmarks using out-of-sample loss.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF01",
+        "MR.CF01.PCA_FORECAST"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF01.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Assumptions",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 4,
+      "page_start": 3,
+      "paraphrase": "Forecast validity depends on large-panel regularity, a stable-enough factor space, time-ordered estimation, and factor-count choices made without test-period leakage.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF01",
+        "MR.CF01.PCA_FORECAST"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "Stock and Watson formalize forecasting with a large macro panel by replacing many correlated predictors with principal-component factors and then estimating a target-specific forecasting regression. The paper supplies consistency conditions, allows time-varying loadings, and evaluates the method by simulation and genuine out-of-sample industrial-production forecasts; it supports a DFM/PCA recipe, not an unrestricted license to choose factors after seeing test results.",
+  "jurisdiction_fit": "US_ADAPTABLE",
+  "method_routes": [
+    {
+      "aggregation_role": "candidate predictive node eligible for time-ordered stacking only after backtest",
+      "control_variable_ids": [
+        "V.CF01.YLAG"
+      ],
+      "dependent_variable_ids": [
+        "V.CF01.Y"
+      ],
+      "diagnostic_requirements": [
+        "factor eigenvalue and loading stability",
+        "residual serial-correlation checks",
+        "rolling out-of-sample RMSE/MAE",
+        "comparison with univariate and equal-information benchmarks"
+      ],
+      "downstream_refs": [],
+      "estimand": "time-ordered conditional-mean forecast of the target at horizon h",
+      "evidence_ids": [
+        "EV.CF01.01",
+        "EV.CF01.02",
+        "EV.CF01.03",
+        "EV.CF01.04"
+      ],
+      "formula": "X_it=lambda_i'F_t+e_it; y_{t+h}=alpha+beta'F_t+gamma(L)y_t+u_{t+h}",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "predictive factor compression; no causal interpretation",
+      "identifying_assumptions": [
+        "predictor panel follows an approximate factor structure",
+        "factors are estimated inside each training window",
+        "factor count and transformations are selected without future observations"
+      ],
+      "independent_variable_ids": [
+        "V.CF01.F"
+      ],
+      "lane_ref": "US.ACTIVITY",
+      "mechanism_ref": "MECH.ACTIVITY.BROAD_STATE",
+      "method_family": "approximate factor model plus principal-component forecast regression",
+      "method_route_id": "MR.CF01.PCA_FORECAST",
+      "node_ref": "N.CANDIDATE.DFM.PCA_FORECAST",
+      "research_question_id": "Q.CF01",
+      "robustness_requirements": [
+        "alternative registered factor counts",
+        "rolling versus expanding windows",
+        "recursive versus fixed standardization",
+        "subsample and loading-drift checks"
+      ],
+      "sample_definition": "expanding or rolling real-time training sample with all predictors available at each forecast origin",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CF01",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CF01.01"
+      ],
+      "horizon_text": "registered target-specific horizons",
+      "question_id": "Q.CF01",
+      "question_text": "How can a single macroeconomic target be forecast from a large number of noisy and correlated predictors without overfitting?",
+      "target_variables": [
+        "V.CF01.Y"
+      ],
+      "task_types": [
+        "FORECAST"
+      ]
+    }
+  ],
+  "record_id": "REV.3CBC87F30BB6E4ED.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.DFM.PCA_FORECAST.V1",
+          "NODE.ACTIVITY.LARGE_PANEL_FACTOR",
+          "DIAGNOSTIC.DFM.LOADING_STABILITY",
+          "POLICY.DFM.NO_TEST_LEAKAGE"
+        ],
+        "category": "FOUNDATION_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Journal of the American Statistical Association / authors",
+        "jurisdiction_fit": "US_ADAPTABLE",
+        "page_count": 15,
+        "publication_date": "2002-12-01",
+        "report_id": "RC.3CBC87F30BB6",
+        "review_status": "reviewed",
+        "source_catalog_id": "CF01",
+        "source_sha256": "3cbc87f30bb6e4ede521e793bdfd53f2ded08672b2656e4d111ddc7d7fd91d8b",
+        "source_url": "https://www.princeton.edu/~mwatson/papers/Stock_Watson_JASA_2002.pdf",
+        "status": "reviewed",
+        "title": "Forecasting Using Principal Components From a Large Number of Predictors"
+      },
+      "change_id": "CH.CF01.REPORT",
+      "evidence_ids": [
+        "EV.CF01.01",
+        "EV.CF01.02",
+        "EV.CF01.03",
+        "EV.CF01.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CF01.PCA_FORECAST"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.3CBC87F30BB6",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.3CBC87F30BB6",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:13.201485Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CF01.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CF01",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CF01.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 554867,
+    "copied_into_repository": false,
+    "institution": "Journal of the American Statistical Association / authors",
+    "jurisdiction_tags": [
+      "US",
+      "approximate_factor_model",
+      "principal_components",
+      "forecasting",
+      "large_n"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 15,
+    "publication_date": "2002-12-01",
+    "source_file": "LOCAL_SNAPSHOT:CF01",
+    "source_id": "SRC.3CBC87F30BB6E4ED",
+    "source_sha256": "3cbc87f30bb6e4ede521e793bdfd53f2ded08672b2656e4d111ddc7d7fd91d8b",
+    "title": "Forecasting Using Principal Components From a Large Number of Predictors"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.076798Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:58:42.793962Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CF01",
+      "at": "2026-07-15T11:22:13.219253Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF01",
+      "at": "2026-07-15T11:22:13.243012Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF01",
+      "at": "2026-07-15T11:22:13.270657Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "A scalar macro target observed after the forecast origin, such as industrial production growth.",
+      "evidence_ids": [
+        "EV.CF01.01",
+        "EV.CF01.02"
+      ],
+      "frequency": "monthly or quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "forecast target",
+      "provider": "Journal of the American Statistical Association / authors",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "target specific",
+      "variable_id": "V.CF01.Y",
+      "vintage_rule": null
+    },
+    {
+      "definition": "A standardized panel of N macroeconomic predictor series available at the forecast origin.",
+      "evidence_ids": [
+        "EV.CF01.02"
+      ],
+      "frequency": "mixed then aligned",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "large predictor panel",
+      "provider": "Journal of the American Statistical Association / authors",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized",
+      "variable_id": "V.CF01.X",
+      "vintage_rule": null
+    },
+    {
+      "definition": "A low-dimensional principal-component summary of the common variation in the predictor panel.",
+      "evidence_ids": [
+        "EV.CF01.02"
+      ],
+      "frequency": "target aligned",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "estimated common factors",
+      "provider": "Journal of the American Statistical Association / authors",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized index",
+      "variable_id": "V.CF01.F",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Registered autoregressive lags of the forecast target.",
+      "evidence_ids": [
+        "EV.CF01.02"
+      ],
+      "frequency": "target frequency",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "target lags",
+      "provider": "Journal of the American Statistical Association / authors",
+      "release_lag": null,
+      "role": "CONTROL",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "target specific",
+      "variable_id": "V.CF01.YLAG",
+      "vintage_rule": null
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # ResearchOS：确定性资产基座与浏览器工作台
 
-ResearchOS converts uploaded research materials into version-pinned, auditable assets and provides a browser workspace for exploring them. The current integration slice connects the Role D web shell to the Role A M1 API for real file ingestion, asset listing, version history and structural graph data.
+ResearchOS converts uploaded research materials into version-pinned, auditable assets and provides a browser workspace for exploring them. The integrated API now combines Role A assets, the Role B MacroTrace adapter, and the Role C Thesis Compiler behind one browser-facing `/api/v1` surface.
 
 ## Backend
 
@@ -40,11 +40,11 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. The workspace upload, asset and version surfaces use the real API. Thesis Build, MacroTrace and Recompile remain explicitly labeled Fixture or Offline Replay surfaces until their producer APIs are available.
+Open http://localhost:3000. Real API mode connects workspace upload and versioning with Thesis creation, compile, MacroTrace execution, evidence verification, semantic recompile, and version diff. The MacroTrace producer currently identifies its execution as `FIXTURE`; the UI preserves that boundary while still exercising real REST calls end to end.
 
-The browser client defaults to `http://127.0.0.1:8000/api/v1`. To point it at another backend, set `NEXT_PUBLIC_RESEARCHOS_API_BASE_URL` before starting the web app. The backend accepts local browser requests from `localhost:3000` and `127.0.0.1:3000` by default; override this with `RESEARCHOS_CORS_ORIGINS`.
+The browser client defaults to `http://127.0.0.1:8000/api/v1`. To point it at another backend, set `NEXT_PUBLIC_RESEARCHOS_API_BASE_URL` before starting the web app. The backend accepts the documented local development ports by default; override them with `RESEARCHOS_CORS_ORIGINS`.
 
-The integration work is on the `integration-ad-real-assets` branch. It intentionally remains separate from the existing `integration` branch so it can be reviewed and merged without rewriting either role branch.
+The integration work is on `role/d-frontend` and preserves the producer-owned A, B, and C implementations as merge history.
 
 ```bash
 cd apps/web

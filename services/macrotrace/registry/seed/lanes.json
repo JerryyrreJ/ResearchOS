@@ -1,0 +1,115 @@
+{
+  "registry_type": "lanes",
+  "registry_version": "0.1.0",
+  "scope": {"jurisdiction": "US", "domain": "MACRO"},
+  "items": [
+    {
+      "lane_id": "US.ACTIVITY",
+      "name_zh": "实体活动与商业周期",
+      "purpose": "判断美国总需求、产出、增长拐点、衰退和复苏状态。",
+      "boundaries": "不单独解释工资、通胀或资产价格；这些通过其他泳道传入。",
+      "primary_outputs": ["activity_direction", "growth_momentum", "recession_risk", "output_gap_regime"],
+      "source_report_ids": ["R04", "R06", "R09", "R10"],
+      "status": "draft"
+    },
+    {
+      "lane_id": "US.LABOR",
+      "name_zh": "劳动力市场与工资",
+      "purpose": "判断就业、失业、参与率、岗位紧张度、裁员和工资压力。",
+      "boundaries": "AI 采用等技术冲击由 AI/Productivity 泳道提供，但劳动结果在此聚合。",
+      "primary_outputs": ["labor_tightness", "employment_momentum", "wage_pressure", "layoff_risk"],
+      "source_report_ids": ["R09", "R11"],
+      "status": "draft"
+    },
+    {
+      "lane_id": "US.INFLATION",
+      "name_zh": "通胀、价格与预期",
+      "purpose": "判断美国通胀水平、动量、广度、黏性、预期与 regime。",
+      "boundaries": "商品冲击来自 Commodity/Energy；政策反应由 Monetary 处理。",
+      "primary_outputs": ["inflation_direction", "inflation_acceleration", "inflation_breadth", "persistence_regime"],
+      "source_report_ids": ["R03", "R07", "R09", "R10"],
+      "status": "draft"
+    },
+    {
+      "lane_id": "US.MONETARY",
+      "name_zh": "货币政策与金融条件",
+      "purpose": "判断 Fed 反应、实际政策立场、金融条件及其向增长和资产的传导。",
+      "boundaries": "财政风险与 Treasury 供给由 Fiscal/Treasury 产生；本泳道处理政策和金融条件响应。",
+      "primary_outputs": ["policy_bias", "policy_path_gap", "financial_conditions", "growth_tail_risk"],
+      "source_report_ids": ["R07", "R08", "R09", "R10"],
+      "status": "draft"
+    },
+    {
+      "lane_id": "US.FISCAL_TREASURY",
+      "name_zh": "财政、主权债务与 Treasury",
+      "purpose": "判断赤字、债务、利息负担、发行结构、财政风险和 Treasury 供给压力。",
+      "boundaries": "市场失灵放大部分由 Financial Stability 处理；Fed 反应由 Monetary 处理。",
+      "primary_outputs": ["fiscal_impulse", "debt_sustainability_pressure", "treasury_supply_pressure", "fiscal_risk_repricing"],
+      "source_report_ids": ["R05", "R07", "R08"],
+      "status": "draft"
+    },
+    {
+      "lane_id": "US.TRADE",
+      "name_zh": "贸易、关税与全球溢出",
+      "purpose": "判断美国进出口量价结构、贸易伙伴、关税和全球需求向美国的传导。",
+      "boundaries": "商品价格本身由 Commodity/Energy 处理；跨境金融流由 Capital Flows/FX 处理。",
+      "primary_outputs": ["net_export_impulse", "tariff_cost_pressure", "external_demand", "trade_diversion"],
+      "source_report_ids": ["R03", "R04", "R06"],
+      "status": "draft"
+    },
+    {
+      "lane_id": "US.COMMODITY_ENERGY",
+      "name_zh": "商品、能源与供给冲击",
+      "purpose": "判断能源、农业、肥料和金属的供需、库存、价格冲击及美国成本传导。",
+      "boundaries": "最终 CPI/PPI 综合信号由 Inflation 处理。",
+      "primary_outputs": ["energy_price_pressure", "commodity_supply_risk", "inventory_tightness", "inflation_pass_through_pressure"],
+      "source_report_ids": ["R03", "R07", "R09"],
+      "status": "draft"
+    },
+    {
+      "lane_id": "US.FIN_STABILITY",
+      "name_zh": "金融稳定与市场结构",
+      "purpose": "判断杠杆、NBFI、流动性错配、margin spiral、市场集中与银行—非银放大器。",
+      "boundaries": "常规金融条件在 Monetary；跨境流动在 Capital Flows/FX。",
+      "primary_outputs": ["market_amplification_risk", "leverage_stress", "liquidity_stress", "bank_nbfi_contagion"],
+      "source_report_ids": ["R07", "R08"],
+      "status": "draft"
+    },
+    {
+      "lane_id": "US.AI_PRODUCTIVITY",
+      "name_zh": "AI、生产率与投资",
+      "purpose": "判断 AI 采用、数据中心/设备资本开支、生产率和长期自然利率机制。",
+      "boundaries": "就业和工资结果交给 Labor；公司融资压力交给 Financial Stability。",
+      "primary_outputs": ["ai_adoption_diffusion", "ai_capex_impulse", "productivity_scenario", "r_star_pressure"],
+      "source_report_ids": ["R07", "R08", "R11"],
+      "status": "draft"
+    },
+    {
+      "lane_id": "US.CLIMATE_NATURE",
+      "name_zh": "气候、自然资本与物理风险",
+      "purpose": "把气候和生态冲击映射到劳动、资本、农业、基础设施、财政与活动。",
+      "boundaries": "首版只允许情景，不输出未经校准的短期概率预测。",
+      "primary_outputs": ["physical_risk_shock", "adaptation_cost", "avoided_loss", "sector_productivity_shock"],
+      "source_report_ids": ["R01", "R02"],
+      "status": "draft"
+    },
+    {
+      "lane_id": "US.CAPITAL_FLOWS_FX",
+      "name_zh": "资本流动与美元",
+      "purpose": "判断全球风险、跨境证券/银行流动、美元和 FX/repo 融资压力。",
+      "boundaries": "贸易流不在本泳道；国内市场放大器交给 Financial Stability。",
+      "primary_outputs": ["capital_flow_pressure", "usd_direction", "cross_border_funding_stress", "global_risk_beta"],
+      "source_report_ids": ["R04", "R05", "R07", "R08"],
+      "status": "draft"
+    },
+    {
+      "lane_id": "US.HOUSING_CONSUMPTION",
+      "name_zh": "住房、消费与家庭资产负债表",
+      "purpose": "判断收入、储蓄、财富、债务偿付和住房条件对消费的影响。",
+      "boundaries": "总活动结果传给 Activity；政策利率来自 Monetary。",
+      "primary_outputs": ["consumption_momentum", "saving_impulse", "housing_pressure", "household_balance_sheet_stress"],
+      "source_report_ids": ["R04", "R09", "R10"],
+      "status": "draft"
+    }
+  ]
+}

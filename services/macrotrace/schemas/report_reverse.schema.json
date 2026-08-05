@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://macrotrace.local/schemas/report_reverse.schema.json",
+  "title": "MacroTrace Report Reverse Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_id",
+    "title",
+    "source_file",
+    "page_count",
+    "jurisdiction_fit",
+    "lane_ids",
+    "workflow_ids",
+    "method_routes",
+    "review_status"
+  ],
+  "properties": {
+    "report_id": {"type": "string", "pattern": "^R[0-9]{2,4}$"},
+    "title": {"type": "string", "minLength": 3},
+    "institution": {"type": "string"},
+    "publication_date": {"type": ["string", "null"], "format": "date"},
+    "source_file": {"type": "string", "minLength": 1},
+    "page_count": {"type": "integer", "minimum": 1},
+    "page_basis": {"enum": ["PDF_FILE_PAGE", "FORM_FEED_PAGE"]},
+    "jurisdiction_fit": {"enum": ["US_DIRECT", "US_ADAPTABLE", "MIXED", "OUT_OF_SCOPE"]},
+    "lane_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^US\\.[A-Z_]+$"}
+    },
+    "workflow_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^US_[A-Z0-9_]+_V[0-9]+$"}
+    },
+    "method_routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "status", "source_pages", "reason"],
+        "properties": {
+          "name": {"type": "string"},
+          "recipe_id": {"type": ["string", "null"]},
+          "status": {
+            "enum": ["EXECUTABLE_CANDIDATE", "ADAPTABLE_RECIPE", "EVIDENCE_ONLY", "DATA_BLOCKED", "OUT_OF_SCOPE_COMPONENT"]
+          },
+          "source_pages": {
+            "type": "array",
+            "items": {"type": "integer", "minimum": 1},
+            "uniqueItems": true
+          },
+          "reason": {"type": "string", "minLength": 3}
+        }
+      }
+    },
+    "paid_dependencies": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string"},
+      "default": []
+    },
+    "review_status": {"enum": ["DRAFT", "REVIEWED", "ACTIVE", "BLOCKED", "DEPRECATED"]}
+  }
+}

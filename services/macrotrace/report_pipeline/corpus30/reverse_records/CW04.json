@@ -1,0 +1,360 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CW04.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Tariffs and inflation components",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The article asks whether tariff increases pass through differently to energy, goods, services, core, and headline consumer-price inflation.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW04",
+        "MR.CW04.TARIFF_PANEL_LP"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW04.02",
+      "extraction_confidence": 0.9,
+      "kind": "DATA_SOURCE",
+      "locator_label": "Cross-country historical sample",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The empirical sample combines annual observations for sixteen countries, largely from the 1980s through 2022, to obtain tariff variation beyond a single episode.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW04",
+        "MR.CW04.TARIFF_PANEL_LP"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW04.03",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Panel response specification",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Horizon-specific inflation responses are estimated with country controls, lagged macro-financial variables, and confidence intervals around the response to a tariff increase.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW04",
+        "MR.CW04.TARIFF_PANEL_LP"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW04.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Historical experiment interpretation",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The displayed ten-percentage-point tariff experiment summarizes historical conditional responses and may not transport to a new episode with different retaliation, exchange rates, expectations, or sector coverage.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW04",
+        "MR.CW04.TARIFF_PANEL_LP"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The San Francisco Fed tariff study uses historical cross-country variation to trace component-level inflation responses after tariff changes. It supports an international panel local-projection node with country effects, macro controls, horizon-specific confidence intervals, and separate energy, goods, services, and core outcomes; the historical average response must remain conditional evidence rather than a mechanical forecast for a new U.S. tariff episode.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "causal-scenario evidence node for tariff price pass-through; transportability warning remains attached",
+      "control_variable_ids": [
+        "V.CW04.MACRO",
+        "V.CW04.COUNTRY"
+      ],
+      "dependent_variable_ids": [
+        "V.CW04.CPI"
+      ],
+      "diagnostic_requirements": [
+        "country-clustered covariance and cluster count",
+        "serial and cross-sectional dependence",
+        "joint confidence bands across horizons",
+        "influence and leave-one-country-out analysis"
+      ],
+      "downstream_refs": [],
+      "estimand": "horizon-specific change in component inflation following a tariff-rate increase, conditional on registered controls",
+      "evidence_ids": [
+        "EV.CW04.01",
+        "EV.CW04.02",
+        "EV.CW04.03",
+        "EV.CW04.04"
+      ],
+      "formula": "Delta_h pi_{i,t+h}=alpha_i^h+tau_t^h+beta_h DeltaTariff_{i,t}+Gamma_h'Controls_{i,t-1}+epsilon_{i,t+h}",
+      "free_data_feasibility": "PARTIAL",
+      "identification_strategy": "historical within-country tariff changes conditional on lags, fixed effects, and registered trends",
+      "identifying_assumptions": [
+        "conditional tariff innovations are not driven by omitted future inflation shocks",
+        "cross-country measurement is comparable",
+        "spillovers and retaliation do not invalidate the registered estimand"
+      ],
+      "independent_variable_ids": [
+        "V.CW04.TAR"
+      ],
+      "lane_ref": "US.PRICES",
+      "mechanism_ref": "MECH.PRICES.TARIFF_PASS_THROUGH",
+      "method_family": "international panel local projections with component outcomes",
+      "method_route_id": "MR.CW04.TARIFF_PANEL_LP",
+      "node_ref": "N.CANDIDATE.PRICES.TARIFF_PANEL_LP",
+      "research_question_id": "Q.CW04",
+      "robustness_requirements": [
+        "headline and component outcomes",
+        "alternative country trends and time effects",
+        "exclude major tariff episodes one at a time",
+        "alternative tariff measures and lag sets"
+      ],
+      "sample_definition": "annual sixteen-country panel, primarily 1980s through 2022, restricted to data available for every registered specification",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CW04",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CW04.01"
+      ],
+      "horizon_text": "impact through registered annual post-tariff horizons",
+      "question_id": "Q.CW04",
+      "question_text": "How do tariff increases affect headline and component inflation over subsequent years, and which price categories carry the response?",
+      "target_variables": [
+        "V.CW04.CPI"
+      ],
+      "task_types": [
+        "CAUSAL",
+        "SCENARIO"
+      ]
+    }
+  ],
+  "record_id": "REV.E9D2FF7AF59D5412.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.PANEL.LOCAL_PROJECTION.TARIFF.V1",
+          "MECH.PRICES.TARIFF_COMPONENT_PASS_THROUGH",
+          "DIAGNOSTIC.PANEL.CROSS_SECTION_DEPENDENCE",
+          "POLICY.CAUSAL.TRANSPORTABILITY_WARNING"
+        ],
+        "category": "METHOD_WEB",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of San Francisco",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 1,
+        "publication_date": "2026-03-30",
+        "report_id": "RC.E9D2FF7AF59D",
+        "review_status": "reviewed",
+        "source_catalog_id": "CW04",
+        "source_sha256": "e9d2ff7af59d5412d4e605428ad191c92832c6825ca428be22e56701bd40468f",
+        "source_url": "https://www.frbsf.org/research-and-insights/publications/economic-letter/2026/03/effects-of-tariffs-on-components-of-inflation/",
+        "status": "reviewed",
+        "title": "The Effects of Tariffs on the Components of Inflation"
+      },
+      "change_id": "CH.CW04.REPORT",
+      "evidence_ids": [
+        "EV.CW04.01",
+        "EV.CW04.02",
+        "EV.CW04.03",
+        "EV.CW04.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CW04.TARIFF_PANEL_LP"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.E9D2FF7AF59D",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.E9D2FF7AF59D",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:15.539742Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CW04.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CW04",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CW04.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 15229,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of San Francisco",
+    "jurisdiction_tags": [
+      "US",
+      "tariffs",
+      "inflation",
+      "international_panel",
+      "local_projections",
+      "sector_components"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "text/plain",
+    "page_count": 1,
+    "publication_date": "2026-03-30",
+    "source_file": "LOCAL_SNAPSHOT:CW04",
+    "source_id": "SRC.E9D2FF7AF59D5412",
+    "source_sha256": "e9d2ff7af59d5412d4e605428ad191c92832c6825ca428be22e56701bd40468f",
+    "title": "The Effects of Tariffs on the Components of Inflation"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.274591Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:32.691669Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CW04",
+      "at": "2026-07-15T11:22:15.558589Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW04",
+      "at": "2026-07-15T11:22:15.587583Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW04",
+      "at": "2026-07-15T11:22:15.619040Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Headline, energy, goods, services, and core consumer-price inflation observed at each post-tariff horizon.",
+      "evidence_ids": [
+        "EV.CW04.01",
+        "EV.CW04.03"
+      ],
+      "frequency": "annual",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "component inflation responses",
+      "provider": "cross-country official price statistics",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percentage points",
+      "variable_id": "V.CW04.CPI",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Change in the applied tariff measure used as the panel policy shock.",
+      "evidence_ids": [
+        "EV.CW04.02",
+        "EV.CW04.03",
+        "EV.CW04.04"
+      ],
+      "frequency": "annual",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "tariff-rate change",
+      "provider": "international tariff data",
+      "release_lag": null,
+      "role": "TREATMENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percentage points",
+      "variable_id": "V.CW04.TAR",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Past unemployment, inflation, real exchange rates, short rates, equity returns, trade balance relative to GDP, and productivity.",
+      "evidence_ids": [
+        "EV.CW04.03"
+      ],
+      "frequency": "annual",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "lagged macro-financial controls",
+      "provider": "international official and market sources",
+      "release_lag": null,
+      "role": "CONTROL",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "mixed",
+      "variable_id": "V.CW04.MACRO",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Country-specific time-invariant heterogeneity and registered country trend or time controls.",
+      "evidence_ids": [
+        "EV.CW04.02",
+        "EV.CW04.03"
+      ],
+      "frequency": "annual",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "country effect",
+      "provider": "model design",
+      "release_lag": null,
+      "role": "CONTROL",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "indicator/trend",
+      "variable_id": "V.CW04.COUNTRY",
+      "vintage_rule": null
+    }
+  ]
+}

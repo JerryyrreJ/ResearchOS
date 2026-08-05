@@ -1,0 +1,360 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CW08.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Underlying inflation objective",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The page motivates a PCE inflation measure that reduces the influence of unusually large positive and negative component price changes each month.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW08",
+        "MR.CW08.TRIMMED_PCE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW08.02",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "Weighted trimming algorithm",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Component price changes are sorted and the weighted lower twenty-four percent and upper thirty-one percent of the distribution are removed before averaging.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW08",
+        "MR.CW08.TRIMMED_PCE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW08.03",
+      "extraction_confidence": 0.9,
+      "kind": "AGGREGATION",
+      "locator_label": "Expenditure-weighted mean",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The remaining component price changes are averaged with PCE expenditure weights, preserving a transparent contribution calculation for the retained mass.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW08",
+        "MR.CW08.TRIMMED_PCE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW08.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Historical trim selection",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The asymmetric trim fractions were selected from historical fit to proxies for underlying inflation, which creates a tuning choice that requires stability and out-of-sample checks.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW08",
+        "MR.CW08.TRIMMED_PCE"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The Dallas Fed trimmed-mean PCE measure is a transparent cross-sectional transform: order monthly PCE component price changes, remove expenditure-weighted tails, and average the remaining mass. The specific lower twenty-four and upper thirty-one percent trims were chosen historically to track underlying inflation, so MacroTrace must preserve component weights, boundary handling, add-up checks, and out-of-sample sensitivity rather than treating the tuning constants as universal truth.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "deterministic factor transform feeding underlying-inflation nodes; no learned cross-lane weight",
+      "control_variable_ids": [
+        "V.CW08.WEIGHT",
+        "V.CW08.CUT"
+      ],
+      "dependent_variable_ids": [
+        "V.CW08.TRIM"
+      ],
+      "diagnostic_requirements": [
+        "weight add-up and retained-mass reconciliation",
+        "boundary-component prorating check",
+        "component contribution audit",
+        "revision and historical normalization checks"
+      ],
+      "downstream_refs": [],
+      "estimand": "monthly underlying PCE price change after removing registered expenditure-weighted tail mass",
+      "evidence_ids": [
+        "EV.CW08.01",
+        "EV.CW08.02",
+        "EV.CW08.03",
+        "EV.CW08.04"
+      ],
+      "formula": "sort component inflation pi_j; trim cumulative weight below 24 percent and above 69 percent; TRIM=sum retained w_j pi_j/sum retained w_j",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "deterministic robust aggregation rather than causal estimation",
+      "identifying_assumptions": [
+        "component prices and expenditures share the same PCE vintage",
+        "weights add to the registered aggregate",
+        "boundary components are handled deterministically"
+      ],
+      "independent_variable_ids": [
+        "V.CW08.PRICE"
+      ],
+      "lane_ref": "US.PRICES",
+      "mechanism_ref": "MECH.PRICES.ROBUST_UNDERLYING_INFLATION",
+      "method_family": "weighted cross-sectional trimmed-mean transform",
+      "method_route_id": "MR.CW08.TRIMMED_PCE",
+      "node_ref": "N.CANDIDATE.PRICES.TRIMMED_MEAN_PCE",
+      "research_question_id": "Q.CW08",
+      "robustness_requirements": [
+        "symmetric and alternative pre-registered trims",
+        "median PCE and core PCE benchmarks",
+        "real-time versus revised PCE tables",
+        "out-of-sample persistence and forecast comparisons"
+      ],
+      "sample_definition": "complete detailed monthly PCE component table for each data vintage",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CW08",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CW08.01"
+      ],
+      "horizon_text": "current month and trailing annual underlying inflation",
+      "question_id": "Q.CW08",
+      "question_text": "What measure of underlying U.S. PCE inflation results when extreme component price changes are removed using expenditure weights each month?",
+      "target_variables": [
+        "V.CW08.TRIM"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "DRIVER"
+      ]
+    }
+  ],
+  "record_id": "REV.1B759BE0DFA18509.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "TRANSFORM.PRICES.TRIMMED_MEAN_PCE.V1",
+          "FACTOR.PRICES.UNDERLYING_TRIMMED_PCE",
+          "DIAGNOSTIC.AGGREGATION.WEIGHT_ADDUP",
+          "POLICY.TRIM.OUT_OF_SAMPLE_SENSITIVITY"
+        ],
+        "category": "METHOD_WEB",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of Dallas",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 1,
+        "publication_date": null,
+        "report_id": "RC.1B759BE0DFA1",
+        "review_status": "reviewed",
+        "source_catalog_id": "CW08",
+        "source_sha256": "1b759be0dfa18509879448c3b971e9ffb0db6e7dd35920e13f529f3dbbfe1e04",
+        "source_url": "https://www.dallasfed.org/research/pce/descr",
+        "status": "reviewed",
+        "title": "Trimmed Mean PCE Inflation Rate: Description"
+      },
+      "change_id": "CH.CW08.REPORT",
+      "evidence_ids": [
+        "EV.CW08.01",
+        "EV.CW08.02",
+        "EV.CW08.03",
+        "EV.CW08.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CW08.TRIMMED_PCE"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.1B759BE0DFA1",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.1B759BE0DFA1",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:15.955194Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CW08.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CW08",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CW08.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 6208,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of Dallas",
+    "jurisdiction_tags": [
+      "US",
+      "underlying_inflation",
+      "trimmed_mean",
+      "pce_components",
+      "robust_aggregation"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "text/plain",
+    "page_count": 1,
+    "publication_date": null,
+    "source_file": "LOCAL_SNAPSHOT:CW08",
+    "source_id": "SRC.1B759BE0DFA18509",
+    "source_sha256": "1b759be0dfa18509879448c3b971e9ffb0db6e7dd35920e13f529f3dbbfe1e04",
+    "title": "Trimmed Mean PCE Inflation Rate: Description"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.337769Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:32.761126Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CW08",
+      "at": "2026-07-15T11:22:15.970061Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW08",
+      "at": "2026-07-15T11:22:16.000952Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW08",
+      "at": "2026-07-15T11:22:16.028912Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Weighted mean inflation rate of PCE components remaining after registered lower- and upper-tail trims.",
+      "evidence_ids": [
+        "EV.CW08.01",
+        "EV.CW08.02",
+        "EV.CW08.03"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "trimmed-mean PCE inflation",
+      "provider": "Federal Reserve Bank of Dallas",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "annualized percent or twelve-month percent",
+      "variable_id": "V.CW08.TRIM",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Monthly price change for each detailed PCE consumption component before cross-sectional sorting.",
+      "evidence_ids": [
+        "EV.CW08.01",
+        "EV.CW08.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "component price changes",
+      "provider": "U.S. Bureau of Economic Analysis",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "annualized percent change",
+      "variable_id": "V.CW08.PRICE",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Current PCE expenditure share assigned to each price component in the cross-sectional distribution.",
+      "evidence_ids": [
+        "EV.CW08.02",
+        "EV.CW08.03"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "component expenditure weights",
+      "provider": "U.S. Bureau of Economic Analysis",
+      "release_lag": null,
+      "role": "WEIGHT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "share of PCE expenditure",
+      "variable_id": "V.CW08.WEIGHT",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Registered cumulative expenditure cutoffs at the lower and upper tails, including boundary-component prorating rules.",
+      "evidence_ids": [
+        "EV.CW08.02",
+        "EV.CW08.04"
+      ],
+      "frequency": "recipe constant",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "trim boundaries",
+      "provider": "Federal Reserve Bank of Dallas methodology",
+      "release_lag": null,
+      "role": "OTHER",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "weighted percent",
+      "variable_id": "V.CW08.CUT",
+      "vintage_rule": null
+    }
+  ]
+}

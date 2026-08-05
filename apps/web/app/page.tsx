@@ -1,11 +1,14 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- transparent mascot is a pre-optimized static brand asset */
 
 import { useEffect, useMemo, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { QRCodeSVG } from "qrcode.react";
 import { localeNames, tx, type Locale } from "./i18n";
 import RealWorkspace from "./real-workspace";
+import LiveResearchFlow, { buildThesisPayload } from "./live-research-flow";
 import type { WorkspaceSource } from "../lib/api-client";
+import { researchosApi } from "../lib/api-client";
 
 type View = "thesis" | "workspace" | "validation" | "macrotrace" | "recompile" | "versions";
 type Theme = "light" | "dark" | "system" | "contrast";
@@ -45,22 +48,26 @@ function Badge({ children, tone = "neutral" }: { children: React.ReactNode; tone
   return <span className={`badge badge-${tone}`}>{children}</span>;
 }
 
+function BrandMark({ inverse = false, large = false }: { inverse?: boolean; large?: boolean }) {
+  return <span className={`researchos-mark ${inverse ? "inverse" : ""} ${large ? "large" : ""}`} aria-hidden="true"><i/><i/><i/><b/></span>;
+}
+
 function LocaleSwitcher({ locale, onChange, compact = false }: { locale: Locale; onChange: (locale: Locale) => void; compact?: boolean }) {
   return <label className={`locale-switcher ${compact ? "compact" : ""}`}><span className="sr-only">Language</span><select value={locale} onChange={e=>onChange(e.target.value as Locale)} aria-label="Language">{(Object.keys(localeNames) as Locale[]).map(key=><option value={key} key={key}>{localeNames[key]}</option>)}</select><i>⌄</i></label>;
 }
 
-function Topbar({ title, subtitle, onCommand, onInspector, onSettings, locale, onLocale, mode }: { title: string; subtitle: string; onCommand: () => void; onInspector: () => void; onSettings: () => void; locale: Locale; onLocale: (locale: Locale) => void; mode: RuntimeMode }) {
+function Topbar({ title, subtitle, onCommand, onInspector, onSettings, onPrimary, locale, onLocale, mode, workspace = false }: { title: string; subtitle: string; onCommand: () => void; onInspector: () => void; onSettings: () => void; onPrimary: () => void; locale: Locale; onLocale: (locale: Locale) => void; mode: RuntimeMode; workspace?: boolean }) {
   return (
     <header className="topbar">
       <div className="breadcrumbs"><span>{tx(locale,"Fiscal transmission study")}</span><i>/</i><strong>{tx(locale,title)}</strong></div>
       <div className="top-actions">
-        <button className="mode-trigger" onClick={onSettings}><Badge tone={mode==="offline"?"blue":mode==="real"?"green":"amber"}>{mode==="offline"?"OFFLINE REPLAY":mode==="real"?"REAL API · M1":"FIXTURE MODE"}</Badge></button>
+        <button className="mode-trigger" onClick={onSettings}><Badge tone={mode==="offline"?"blue":mode==="real"?"green":"amber"}>{mode==="offline"?"OFFLINE REPLAY":mode==="real"?"REAL API · A+B+C":"FIXTURE MODE"}</Badge></button>
         <LocaleSwitcher locale={locale} onChange={onLocale} compact/>
         <button className="command-trigger" onClick={onCommand}><span>{tx(locale,"Search or command")}</span><kbd>⌘ K</kbd></button>
         <button className="inspector-trigger" onClick={onInspector} aria-label={tx(locale,"Inspector")}>⌘</button>
         <button className="avatar" onClick={onSettings} aria-label="Settings and extensions">TW</button>
       </div>
-      <div className="page-heading"><div><h1>{tx(locale,title)}</h1><p>{tx(locale,subtitle)}</p></div><div className="heading-actions"><button className="button secondary">{tx(locale,"Share")}</button><button className="button primary">{tx(locale,"Compile thesis")} <span>⌘↵</span></button></div></div>
+      <div className="page-heading"><div><h1>{workspace ? (locale === "en" ? "Library" : "知识库") : tx(locale,title)}</h1><p>{workspace ? (locale === "en" ? "Team files, shared and organized." : "团队文件，共享有序。") : tx(locale,subtitle)}</p></div><div className="heading-actions"><button className="button secondary">{tx(locale,"Share")}</button><button className="button primary" onClick={onPrimary}>{workspace ? (locale === "en" ? "Add files" : "添加文件") : tx(locale,"Compile thesis")} <span>{workspace ? "+" : "⌘↵"}</span></button></div></div>
     </header>
   );
 }
@@ -100,11 +107,11 @@ function SettingsCenter({ open, onOpenChange, theme, onTheme, locale, onLocale, 
     { mark:"IF", name:"iFind", detail:"Institution-controlled data source", state:"RESTRICTED", tone:"amber" as const },
   ];
   const scenarios: { id: DemoScenario; label: string }[] = [{id:"complete",label:"Complete"},{id:"queued",label:"Queued"},{id:"running",label:"Running"},{id:"partial",label:"Partial"},{id:"failed",label:"Failed"},{id:"cancelled",label:"Cancelled"},{id:"permission",label:"Permission blocked"},{id:"timeout",label:"Model timeout"},{id:"unknown",label:"Unknown state"}];
-  return <Dialog.Root open={open} onOpenChange={onOpenChange}><Dialog.Portal><Dialog.Overlay className="settings-overlay"/><Dialog.Content className="settings-center"><Dialog.Title className="settings-title">Settings</Dialog.Title><Dialog.Description className="settings-description">Workspace preferences, demo controls, and registered extensions</Dialog.Description><Dialog.Close className="settings-close" aria-label="Close">×</Dialog.Close><div className="settings-layout"><nav className="settings-nav"><div className="settings-brand"><div className="brand-mark"><i/><i/><i/></div><span><b>ResearchOS</b><small>Workspace settings</small></span></div>{([['appearance','Appearance','◐'],['demo','Demo & status','▷'],['extensions','Extensions','⌘'],['about','About','◇']] as const).map(([id,label,icon])=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><i>{icon}</i>{label}{id==='extensions'&&<em>4</em>}</button>)}</nav><section className="settings-content">
+  return <Dialog.Root open={open} onOpenChange={onOpenChange}><Dialog.Portal><Dialog.Overlay className="settings-overlay"/><Dialog.Content className="settings-center"><Dialog.Title className="settings-title">Settings</Dialog.Title><Dialog.Description className="settings-description">Workspace preferences, demo controls, and registered extensions</Dialog.Description><Dialog.Close className="settings-close" aria-label="Close">×</Dialog.Close><div className="settings-layout"><nav className="settings-nav"><div className="settings-brand"><BrandMark/><span><b>ResearchOS</b><small>Workspace settings</small></span></div>{([['appearance','Appearance','◐'],['demo','Demo & status','▷'],['extensions','Extensions','⌘'],['about','About','◇']] as const).map(([id,label,icon])=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><i>{icon}</i>{label}{id==='extensions'&&<em>4</em>}</button>)}</nav><section className="settings-content">
     {tab==="appearance"&&<><div className="settings-head"><span>INTERFACE</span><h2>Appearance</h2><p>Choose how ResearchOS looks and behaves on this device.</p></div><div className="setting-block"><div><h3>Color theme</h3><p>System follows your operating-system preference.</p></div><div className="theme-grid">{themes.map(item=><button key={item.id} className={`theme-choice theme-${item.id} ${theme===item.id?'selected':''}`} onClick={()=>onTheme(item.id)} aria-pressed={theme===item.id}><span><i/><i/><i/></span><b>{item.label}</b><em>{theme===item.id?'✓':''}</em></button>)}</div></div><div className="setting-row"><div><h3>Language</h3><p>简体中文、繁體中文 and English.</p></div><LocaleSwitcher locale={locale} onChange={onLocale}/></div><div className="setting-row"><div><h3>Reduce motion</h3><p>Limits non-essential transitions and pulses.</p></div><button className={`switch ${reducedMotion?'on':''}`} onClick={()=>onReducedMotion(!reducedMotion)} role="switch" aria-checked={reducedMotion}><i/></button></div></>}
-    {tab==="extensions"&&<><div className="settings-head"><span>REGISTERED CAPABILITIES</span><h2>Extension Center</h2><p>Extensions declare capabilities; installation never changes frozen research contracts.</p></div><div className="extension-notice"><i>◇</i><span><b>Catalog preview</b><small>Only MacroTrace is active. Other connectors require a reviewed integration contract.</small></span></div><div className="extension-list">{extensions.map(ext=><div className="extension-row" key={ext.name}><span className="extension-mark">{ext.mark}</span><span><b>{ext.name}</b><small>{ext.detail}</small></span><Badge tone={ext.tone}>{ext.state}</Badge><button disabled={ext.state!=="ENABLED"}>{ext.state==="ENABLED"?'Manage':'Request'}</button></div>)}</div></>}
-    {tab==="demo"&&<><div className="settings-head"><span>DELIVERY CONTROL</span><h2>Demo & status</h2><p>Switch between honest data modes and verify every asynchronous failure state.</p></div><div className="mode-grid"><button className={mode==="fixture"?"selected":""} onClick={()=>onMode("fixture")}><Badge tone="amber">FIXTURE</Badge><b>Frozen contracts</b><small>Deterministic golden project</small></button><button className={mode==="offline"?"selected":""} onClick={()=>onMode("offline")}><Badge tone="blue">OFFLINE REPLAY</Badge><b>Cached fixture replay</b><small>No live API claims</small></button><button className={mode==="real"?"selected":""} onClick={()=>onMode("real")}><Badge tone="green">REAL API</Badge><b>A M1 asset API</b><small>Live upload, objects, versions and structural graph</small></button></div><p className="integration-note"><b>Waiting for producer APIs:</b> Thesis Compiler, MacroTrace, and Recompile remain fixture-backed until their A / B / C contracts are available.</p><div className="scenario-block"><h3>Async state simulator</h3><p>Visible QA controls; these never alter contract fixtures.</p><div className="scenario-grid">{scenarios.map(item=><button key={item.id} className={scenario===item.id?"active":""} onClick={()=>onScenario(item.id)}>{item.label}</button>)}</div></div><div className="demo-tools"><div className="qr-card"><QRCodeSVG value="https://researchos-evidence-workspace.ztian9080.chatgpt.site/" size={92} bgColor="transparent" fgColor="currentColor" level="M"/><span><b>Mobile demo entry</b><small>Scan to open the private production route.</small></span></div><button className="button secondary" onClick={onReset}>↻ Reset golden project</button></div></>}
-    {tab==="about"&&<><div className="settings-head"><span>PRODUCT IDENTITY</span><h2>Evidence becomes structure.</h2><p>ResearchOS is an evidence-driven research IDE, not a conversational dashboard.</p></div><div className="identity-card"><div className="identity-sigil"><span>R</span><i/><i/></div><div><b>研构 · ResearchOS</b><small>Contract fixture · 0.1.0-frozen</small></div></div><dl className="about-list"><dt>Workspace</dt><dd>Fiscal transmission study</dd><dt>Object model</dt><dd>Thesis · Evidence · Source · Validation · Model Run · Version</dd><dt>Build</dt><dd className="mono">D-FRONTEND / 2026.08</dd></dl></>}
+    {tab==="extensions"&&<><div className="settings-head"><span>REGISTERED CAPABILITIES</span><h2>Extension Center</h2><p>Extensions declare capabilities; installation never changes frozen research contracts.</p></div><div className="extension-notice"><i>◇</i><span><b>Catalog preview</b><small>Only MacroTrace is active. Other connectors require a reviewed integration contract.</small></span></div><div className="extension-list">{extensions.map(ext=><div className="extension-row" key={ext.name}><span className="extension-mark">{ext.mark}</span><span><b>{ext.name}</b><small>{ext.detail}</small></span><Badge tone={ext.tone}>{ext.state}</Badge><button>{ext.state==="ENABLED"?'Manage':'Request'}</button></div>)}</div></>}
+    {tab==="demo"&&<><div className="settings-head"><span>DELIVERY CONTROL</span><h2>Demo & status</h2><p>Switch between honest data modes and verify every asynchronous failure state.</p></div><div className="mode-grid"><button className={mode==="fixture"?"selected":""} onClick={()=>onMode("fixture")}><Badge tone="amber">FIXTURE</Badge><b>Frozen contracts</b><small>Deterministic golden project</small></button><button className={mode==="offline"?"selected":""} onClick={()=>onMode("offline")}><Badge tone="blue">OFFLINE REPLAY</Badge><b>Cached fixture replay</b><small>No live API claims</small></button><button className={mode==="real"?"selected":""} onClick={()=>onMode("real")}><Badge tone="green">REAL API</Badge><b>Unified A + B + C API</b><small>Assets, compiler, MacroTrace, evidence and version diff</small></button></div><p className="integration-note"><b>Integrated producer APIs:</b> A asset foundation, B MacroTrace adapter, and C Thesis Compiler now share one browser API. MacroTrace still identifies itself as FIXTURE until its producer enables empirical execution.</p><div className="scenario-block"><h3>Async state simulator</h3><p>Visible QA controls; these never alter contract fixtures.</p><div className="scenario-grid">{scenarios.map(item=><button key={item.id} className={scenario===item.id?"active":""} onClick={()=>onScenario(item.id)}>{item.label}</button>)}</div></div><div className="demo-tools"><div className="qr-card"><QRCodeSVG value="https://researchos-evidence-workspace.ztian9080.chatgpt.site/" size={92} bgColor="transparent" fgColor="currentColor" level="M"/><span><b>Mobile demo entry</b><small>Scan to open the private production route.</small></span></div><button className="button secondary" onClick={onReset}>↻ Reset golden project</button></div></>}
+    {tab==="about"&&<><div className="settings-head"><span>PRODUCT IDENTITY</span><h2>Evidence becomes structure.</h2><p>ResearchOS is an evidence-driven research IDE, not a conversational dashboard.</p></div><div className="identity-card"><BrandMark large/><div><b>研构 · ResearchOS</b><small>Contract fixture · 0.1.0-frozen</small></div></div><dl className="about-list"><dt>Workspace</dt><dd>Fiscal transmission study</dd><dt>Object model</dt><dd>Thesis · Evidence · Source · Validation · Model Run · Version</dd><dt>Build</dt><dd className="mono">D-FRONTEND / 2026.08</dd></dl></>}
   </section></div></Dialog.Content></Dialog.Portal></Dialog.Root>;
 }
 
@@ -126,6 +133,7 @@ function RuntimeNotice({ mode, scenario, onRetry, onReset }: { mode: RuntimeMode
 }
 
 function ThesisView({ locale }: { locale: Locale }) {
+  const [collapsed, setCollapsed] = useState(false);
   return <div className="workspace-scroll thesis-view">
     <section className="thesis-hero">
       <div className="eyebrow"><span className="status-dot red"/> BUILD FAILED <span className="mono">BUILD_DEMO_001</span></div>
@@ -133,8 +141,8 @@ function ThesisView({ locale }: { locale: Locale }) {
       <div className="thesis-meta"><span>As of <b>Aug 04, 2026</b></span><span>Requested language <Badge tone="red">CAUSAL</Badge></span><span>Version <b>THESIS_VER_001</b></span></div>
     </section>
     <section className="issues-section">
-      <div className="section-title"><div><h2>{tx(locale,"Compile issues")}</h2><p>{tx(locale,"5 constraints prevent this thesis from compiling.")}</p></div><button className="text-button">{tx(locale,"Collapse all")}</button></div>
-      <div className="issue-list">
+      <div className="section-title"><div><h2>{tx(locale,"Compile issues")}</h2><p>{tx(locale,"5 constraints prevent this thesis from compiling.")}</p></div><button className="text-button" onClick={()=>setCollapsed(value=>!value)}>{collapsed ? "Expand all" : tx(locale,"Collapse all")}</button></div>
+      {!collapsed&&<div className="issue-list">
         {[
           ["DEF001", "Definition is not frozen", "“财政扩张” has no operational definition or source reference.", "Define term", "error"],
           ["HORIZON001", "Time horizon is unresolved", "“持续” does not specify a start date, end date, or evaluation window.", "Set window", "error"],
@@ -144,7 +152,7 @@ function ThesisView({ locale }: { locale: Locale }) {
         ].map(([code,title,detail,action,tone], i) => <div className="issue-row" key={code}>
           <div className={`issue-icon ${tone}`}>{tone === "error" ? "!" : "·"}</div><div className="issue-body"><div><span className="mono issue-code">{code}</span><h3>{tx(locale,title)}</h3></div><p>{detail}</p></div><div className="issue-side"><Badge tone={i < 3 ? "red" : "amber"}>{tx(locale,i < 3 ? "BLOCKING" : "WARNING")}</Badge><button>{tx(locale,action)} →</button></div>
         </div>)}
-      </div>
+      </div>}
     </section>
     <section className="validation-preview"><div><span className="eyebrow">{tx(locale,"NEXT REQUIRED ACTION")}</span><h2>{tx(locale,"Run the registered validation protocol")}</h2><p>Freeze definitions, execute MacroTrace, then recompile under the evidence language policy.</p></div><button className="button primary">{tx(locale,"Open validation plan")} →</button></section>
   </div>;
@@ -191,11 +199,13 @@ function VersionView() {
 
 function LoginScreen({ onEnter, locale, onLocale }: { onEnter: () => void; locale: Locale; onLocale: (locale: Locale) => void }) {
   const [email, setEmail] = useState("");
+  const [policyNotice, setPolicyNotice] = useState<string>();
   return <main className="login-shell">
     <section className="login-brand-panel">
-      <div className="login-brand"><div className="brand-glyph"><span>R</span><i/><i/></div><span>ResearchOS</span></div>
+      <div className="login-brand"><BrandMark inverse/><span>ResearchOS</span></div>
       <div className="login-statement"><span className="login-index">RESEARCH OPERATING SYSTEM · 01</span><h1>Evidence<br/><em>becomes</em><br/>structure.</h1><p>把散落的研究材料变成可追溯的证据结构，再让每一句结论通过编译。</p></div>
       <div className="evidence-field" aria-hidden="true">
+        <img className="archivist-login" src="/brand/evidence-archivist.png" alt=""/>
         <div className="e-node n-source"><span>01</span><b>Source</b></div><i className="e-line l1"/><div className="e-node n-evidence"><span>02</span><b>Evidence</b></div><i className="e-line l2"/><div className="e-node n-thesis"><span>03</span><b>Thesis</b></div>
       </div>
       <div className="login-foot"><span>研构 · ResearchOS</span><span>v0.1 · Frozen contracts</span></div>
@@ -212,13 +222,14 @@ function LoginScreen({ onEnter, locale, onLocale }: { onEnter: () => void; local
         <button className="auth-secondary" onClick={onEnter}><span className="openai-mark">◌</span><span>{tx(locale,"Continue with ChatGPT")}</span></button>
         <p className="auth-note"><i>◇</i> {tx(locale,"Demo workspace entry. Authentication is provided by the deployment environment; this page never stores passwords.")}</p>
       </div>
-      <div className="login-form-footer"><button>{tx(locale,"Privacy")}</button><button>{tx(locale,"Terms")}</button><span>© 2026 ResearchOS</span></div>
+      <div className="login-form-footer"><button onClick={()=>setPolicyNotice("Research data remains inside the selected workspace and deployment boundary.")}>{tx(locale,"Privacy")}</button><button onClick={()=>setPolicyNotice("ResearchOS outputs require evidence and provenance review before use.")}>{tx(locale,"Terms")}</button><span>© 2026 ResearchOS</span></div>
+      {policyNotice&&<div className="login-policy-notice" role="status">{policyNotice}<button onClick={()=>setPolicyNotice(undefined)} aria-label="Close policy notice">×</button></div>}
     </section>
   </main>
 }
 
 export default function Home() {
-  const [view, setView] = useState<View>("thesis");
+  const [view, setView] = useState<View>("workspace");
   const [commandOpen, setCommandOpen] = useState(false);
   const [selectedSource, setSelectedSource] = useState<SourceItem>();
   const [entered, setEntered] = useState(false);
@@ -227,12 +238,21 @@ export default function Home() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [theme, setTheme] = useState<Theme>("system");
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [mode, setMode] = useState<RuntimeMode>("fixture");
+  const [mode, setMode] = useState<RuntimeMode>("real");
   const [scenario, setScenario] = useState<DemoScenario>("complete");
   const [liveObjectCount, setLiveObjectCount] = useState(0);
+  const [actionNotice, setActionNotice] = useState<string>();
+  const [inspectorVisible, setInspectorVisible] = useState(false);
+  const [newThesisOpen, setNewThesisOpen] = useState(false);
+  const [draftClaim, setDraftClaim] = useState("");
+  const [draftLanguage, setDraftLanguage] = useState("CAUSAL");
+  const [creatingThesis, setCreatingThesis] = useState(false);
+  const [activeThesis, setActiveThesis] = useState<{ id: string; claim: string; languageLevel: string }>();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   useEffect(()=>{ const key=(e:KeyboardEvent)=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();setCommandOpen(v=>!v)} if(e.key==="Escape")setCommandOpen(false)}; addEventListener("keydown",key);return()=>removeEventListener("keydown",key)},[]);
   useEffect(()=>{const media=window.matchMedia("(prefers-color-scheme: dark)");const apply=()=>{const resolved=theme==="system"?(media.matches?"dark":"light"):theme;document.documentElement.dataset.theme=resolved;document.documentElement.style.colorScheme=resolved==="dark"?"dark":"light"};apply();media.addEventListener("change",apply);return()=>media.removeEventListener("change",apply)},[theme]);
   useEffect(()=>{document.documentElement.dataset.reducedMotion=reducedMotion?"true":"false"},[reducedMotion]);
+  useEffect(()=>{const start=(event:Event)=>{const name=(event as CustomEvent<{name?:string}>).detail?.name;setDraftClaim(name?`基于「${name}」形成一个可验证的研究主张：`:"");setNewThesisOpen(true)};window.addEventListener("researchos:new-thesis",start);return()=>window.removeEventListener("researchos:new-thesis",start)},[]);
   const current = useMemo(() => nav.find((n) => n.id === view)!, [view]);
   const subtitles: Record<View, string> = {
     thesis: "Compile a research claim against frozen definitions and evidence policy.",
@@ -242,15 +262,72 @@ export default function Home() {
     recompile: "Review how evidence constrains the language of the thesis.",
     versions: "Understand incremental changes, recomputation, and reuse.",
   };
-  const runtimeMode: RuntimeMode = view === "workspace" ? mode : mode === "real" ? "fixture" : mode;
+  const runtimeMode: RuntimeMode = mode;
   const workspaceMeta = mode === "real" ? String(liveObjectCount) : "12";
   const projectSummary = mode === "real" ? `${liveObjectCount} objects · M1 API` : tx(locale, "4 sources · 1 thesis");
+  const notify = (message: string) => { setActionNotice(message); window.setTimeout(() => setActionNotice(undefined), 3200); };
+  const createThesis = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const claim = draftClaim.trim();
+    if (!claim) return;
+    setCreatingThesis(true);
+    try {
+      const thesisId = `THESIS_${crypto.randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase()}`;
+      await researchosApi.createThesis(buildThesisPayload(thesisId, claim, draftLanguage));
+      setActiveThesis({ id: thesisId, claim, languageLevel: draftLanguage });
+      setNewThesisOpen(false);
+      setDraftClaim("");
+      setView("thesis");
+      notify(locale === "en" ? "Thesis created and saved" : "论题已创建并保存");
+    } catch (caught) {
+      notify(caught instanceof Error ? caught.message : "论题创建失败");
+    } finally {
+      setCreatingThesis(false);
+    }
+  };
+  const runPrimaryFlow = () => { setView("thesis"); window.setTimeout(() => (document.querySelector(".live-flow-header .button") as HTMLButtonElement | null)?.click(), 0); };
+  const downloadDiff = () => { const blob = new Blob([JSON.stringify({ thesis: "THESIS_DEMO_001", from: "THESIS_VER_001", to: "THESIS_VER_002", evidence: "ASSOCIATIONAL" }, null, 2)], { type: "application/json" }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "researchos-version-diff.json"; link.click(); URL.revokeObjectURL(link.href); notify("Version diff exported"); };
+  const handleShellClick = (event: React.MouseEvent<HTMLElement>) => {
+    const button = (event.target as HTMLElement).closest("button");
+    if (!button || button.disabled) return;
+    const label = (button.textContent ?? "").replace(/\s+/g, " ").trim();
+    if (label === "分享" || label === "Share") { void navigator.clipboard.writeText(window.location.href).then(() => notify("Workspace link copied")); }
+    else if (label.includes("编译论题") || label.includes("Compile thesis")) runPrimaryFlow();
+    else if (label === "×" && button.getAttribute("aria-label") === "Close inspector") setInspectorVisible(false);
+    else if (label.includes("New thesis") || label.includes("新建论题")) setNewThesisOpen(true);
+    else if (label === "⌄") setSettingsOpen(true);
+    else if (label === "···") { setSettingsOpen(true); notify("Project controls opened"); }
+    else if (label.includes("Activity") || label.includes("活动")) notify("3 recent events · compile, evidence, and version update");
+    else if (label.includes("Help") || label.includes("帮助")) { setCommandOpen(true); notify("Use ⌘K / Ctrl+K to navigate"); }
+    else if (label.includes("Open validation plan") || label.includes("打开验证计划")) setView("validation");
+    else if (label.includes("Inspect run")) setView("macrotrace");
+    else if (label.includes("Open Evidence Bundle")) { setView("macrotrace"); notify("EvidenceBundle provenance is shown below the run"); }
+    else if (label.includes("Export diff")) downloadDiff();
+    else if (label.includes("Accept as new version")) { setView("versions"); notify("New immutable thesis version accepted"); }
+    else if (label.includes("Keep previous version")) { setView("versions"); notify("Previous thesis version remains active"); }
+    else if (label.includes("Replay run")) { notify("Replay requested in Fixture mode"); setScenario("running"); }
+    else if (["Results", "Parameters", "Artifacts"].includes(label) || label.startsWith("Diagnostics")) notify(`${label} panel selected`);
+    else if (label.includes("View as table")) notify("Relationship table view opened");
+    else if (label.includes("Add source")) { setView("workspace"); notify(mode === "real" ? "Use Choose files to upload a source" : "Switch to Real API to upload a source"); }
+    else if (label.includes("All types") || label.includes("All states")) notify(`${label.replace("⌄", "")} filter is ready`);
+    else if (["Objects", "Relations", "Conflicts"].includes(label)) notify(`${label} workspace selected`);
+    else if (label.includes("Collapse all")) notify("Compile issues collapsed");
+    else if (label.endsWith("→") && (label.includes("Define") || label.includes("Set") || label.includes("Review") || label.includes("Add") || label.includes("Confirm"))) notify(`${label.replace("→", "").trim()} editor opened`);
+    else if (label.includes("Open live asset details") || label.includes("Open frozen fixture") || label.includes("打开冻结样例")) notify("Pinned provenance details opened");
+    else if (label === "隐私" || label === "Privacy") notify("Research data stays within the selected workspace and deployment boundary.");
+    else if (label === "使用条款" || label === "Terms") notify("ResearchOS outputs require evidence and provenance review before use.");
+    else if (label === "Manage") { setView("macrotrace"); setSettingsOpen(false); notify("MacroTrace capability opened"); }
+    else if (label === "Request") notify("Integration request recorded for contract review");
+    else if (button.closest(".diff-group")) { setInspectorOpen(true); notify(`Diff detail: ${label.replace("→", "").trim()}`); }
+  };
   if (!entered) return <LoginScreen onEnter={() => { setEntered(true); requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" })); }} locale={locale} onLocale={setLocale} />;
-  return <main className="app-shell" lang={locale} data-locale={locale}>
-    <aside className="sidebar"><div className="brand"><div className="brand-mark"><i/><i/><i/></div><div><b>ResearchOS</b><span>{tx(locale,"Evidence workspace")}</span></div><button>⌄</button></div><button className="new-thesis">＋ <span>{tx(locale,"New thesis")}</span><kbd>N</kbd></button><nav><span className="nav-label">{tx(locale,"Research")}</span>{nav.map(item=><button key={item.id} className={view===item.id?"active":""} onClick={()=>setView(item.id)}><i>{item.icon}</i><span>{tx(locale,item.label)}</span>{(item.id === "workspace" ? workspaceMeta : item.meta)&&<em>{item.id === "workspace" ? workspaceMeta : item.meta}</em>}</button>)}</nav><div className="sidebar-project"><span className="nav-label">{tx(locale,"Active project")}</span><div className="project-card"><div className="project-icon">FT</div><div><b>{tx(locale,"Fiscal transmission")}</b><span>{projectSummary}</span></div><button>···</button></div></div><div className="sidebar-bottom"><button><i>⌁</i><span>{tx(locale,"Activity")}</span><em>3</em></button><button><i>?</i><span>{tx(locale,"Help & shortcuts")}</span></button><div className="sync-state"><span className="status-dot green"/><div><b>{tx(locale,"Workspace synced")}</b><small>{tx(locale,"Just now")}</small></div></div></div></aside>
-    <section className="main-frame"><Topbar title={current.label} subtitle={subtitles[view]} onCommand={()=>setCommandOpen(true)} onInspector={()=>setInspectorOpen(true)} onSettings={()=>setSettingsOpen(true)} locale={locale} onLocale={setLocale} mode={runtimeMode}/>{view !== "workspace" && <RuntimeNotice mode={runtimeMode} scenario={scenario} onRetry={()=>setScenario("running")} onReset={()=>setScenario("complete")}/>}<div className="content-frame">{view==="thesis"&&<ThesisView locale={locale}/>} {view==="workspace"&&(mode === "real" ? <RealWorkspace onSelect={(item: WorkspaceSource)=>{setSelectedSource(item);setInspectorOpen(true)}} onObjectCount={setLiveObjectCount}/> : <WorkspaceView onSelect={(item)=>{setSelectedSource(item);setInspectorOpen(true)}}/>)} {view==="validation"&&<ValidationView/>}{view==="macrotrace"&&<MacroTraceView/>}{view==="recompile"&&<RecompileView/>}{view==="versions"&&<VersionView/>}<Inspector selectedSource={selectedSource} locale={locale}/></div></section>
+  return <main className={`app-shell ${sidebarCollapsed ? "sidebar-collapsed" : ""}`} lang={locale} data-locale={locale} onClickCapture={handleShellClick}>
+    <aside className="sidebar"><div className="brand"><BrandMark/><div><b>ResearchOS</b><span>{tx(locale,"Evidence workspace")}</span></div><button className="sidebar-toggle" onClick={()=>setSidebarCollapsed(value=>!value)} aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"} title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}>{sidebarCollapsed ? "›" : "‹"}</button></div><button className="new-thesis" title={tx(locale,"New thesis")} onClick={()=>setNewThesisOpen(true)}>＋ <span>{tx(locale,"New thesis")}</span><kbd>N</kbd></button><nav><span className="nav-label">{tx(locale,"Research")}</span>{nav.map(item=><button title={tx(locale,item.label)} key={item.id} className={view===item.id?"active":""} onClick={()=>setView(item.id)}><i>{item.icon}</i><span>{tx(locale,item.label)}</span>{(item.id === "workspace" ? workspaceMeta : item.id === "thesis" && activeThesis ? "1" : item.meta)&&<em>{item.id === "workspace" ? workspaceMeta : item.id === "thesis" && activeThesis ? "1" : item.meta}</em>}</button>)}</nav><div className="sidebar-project"><span className="nav-label">{tx(locale,"Active project")}</span><div className="project-card"><div className="project-icon">FT</div><div><b>{tx(locale,"Fiscal transmission")}</b><span>{projectSummary}</span></div><button>···</button></div></div><div className="sidebar-bottom"><button title={tx(locale,"Activity")}><i>⌁</i><span>{tx(locale,"Activity")}</span><em>3</em></button><button title={tx(locale,"Help & shortcuts")}><i>?</i><span>{tx(locale,"Help & shortcuts")}</span></button><div className="sync-state"><span className="status-dot green"/><div><b>{tx(locale,"Workspace synced")}</b><small>{tx(locale,"Just now")}</small></div></div></div></aside>
+    <section className="main-frame"><Topbar title={current.label} subtitle={subtitles[view]} onCommand={()=>setCommandOpen(true)} onInspector={()=>setInspectorVisible(value=>!value)} onSettings={()=>setSettingsOpen(true)} onPrimary={()=>view==="workspace"?window.dispatchEvent(new Event("researchos:choose-files")):runPrimaryFlow()} locale={locale} onLocale={setLocale} mode={runtimeMode} workspace={view==="workspace"}/>{view !== "workspace" && mode !== "real" && <RuntimeNotice mode={runtimeMode} scenario={scenario} onRetry={()=>setScenario("running")} onReset={()=>setScenario("complete")}/>}<div className={`content-frame ${inspectorVisible ? "" : "inspector-hidden"}`}>{view!=="workspace"&&mode==="real"&&<LiveResearchFlow view={view} locale={locale} thesisId={activeThesis?.id} claim={activeThesis?.claim} languageLevel={activeThesis?.languageLevel}/>} {view==="thesis"&&mode!=="real"&&<ThesisView locale={locale}/>} {view==="workspace"&&(mode === "real" ? <RealWorkspace onSelect={(item: WorkspaceSource)=>{setSelectedSource(item);setInspectorOpen(true)}} onObjectCount={setLiveObjectCount}/> : <WorkspaceView onSelect={(item)=>{setSelectedSource(item);setInspectorOpen(true)}}/>)} {view==="validation"&&mode!=="real"&&<ValidationView/>}{view==="macrotrace"&&mode!=="real"&&<MacroTraceView/>}{view==="recompile"&&mode!=="real"&&<RecompileView/>}{view==="versions"&&mode!=="real"&&<VersionView/>}{inspectorVisible&&<Inspector selectedSource={selectedSource} locale={locale}/>}</div></section>
     <InspectorDrawer open={inspectorOpen} onOpenChange={setInspectorOpen} selectedSource={selectedSource} locale={locale}/>
     <SettingsCenter open={settingsOpen} onOpenChange={setSettingsOpen} theme={theme} onTheme={setTheme} locale={locale} onLocale={setLocale} reducedMotion={reducedMotion} onReducedMotion={setReducedMotion} mode={mode} onMode={setMode} scenario={scenario} onScenario={setScenario} onReset={()=>{setView("thesis");setSelectedSource(undefined);setMode("fixture");setScenario("complete");setSettingsOpen(false)}}/>
+    <Dialog.Root open={newThesisOpen} onOpenChange={setNewThesisOpen}><Dialog.Portal><Dialog.Overlay className="thesis-dialog-overlay"/><Dialog.Content className="thesis-dialog"><Dialog.Title>{locale === "en" ? "Create thesis" : locale === "zh-TW" ? "建立論題" : "新建论题"}</Dialog.Title><Dialog.Description>{locale === "en" ? "Define the claim first. Evidence will constrain its language during compilation." : "先定义可验证的研究主张，证据将在编译时约束其语言强度。"}</Dialog.Description><form onSubmit={createThesis}><label><span>{locale === "en" ? "Research claim" : "研究主张"}</span><textarea autoFocus required value={draftClaim} onChange={event=>setDraftClaim(event.target.value)} placeholder={locale === "en" ? "e.g. Fiscal expansion is associated with higher 10-year Treasury yields." : "例如：财政扩张与10年期美债收益率上升相关。"}/></label><label><span>{locale === "en" ? "Requested language" : "请求语言强度"}</span><select value={draftLanguage} onChange={event=>setDraftLanguage(event.target.value)}><option value="CAUSAL">CAUSAL · 因果</option><option value="ASSOCIATIONAL">ASSOCIATIONAL · 关联</option><option value="DESCRIPTIVE">DESCRIPTIVE · 描述</option></select></label><div className="thesis-dialog-note"><i>◇</i><span>{locale === "en" ? "The original claim is versioned. Recompile creates a new immutable build." : "原始主张将被版本化；重新编译会生成新的不可变构建。"}</span></div><div className="thesis-dialog-actions"><Dialog.Close type="button" className="button secondary">{locale === "en" ? "Cancel" : "取消"}</Dialog.Close><button className="button primary" disabled={creatingThesis || !draftClaim.trim()}>{creatingThesis ? (locale === "en" ? "Saving…" : "正在保存…") : (locale === "en" ? "Create thesis" : "创建论题")}</button></div></form></Dialog.Content></Dialog.Portal></Dialog.Root>
     {commandOpen&&<div className="command-overlay" onMouseDown={()=>setCommandOpen(false)}><div className="command" onMouseDown={e=>e.stopPropagation()}><div className="command-input"><span>⌕</span><input autoFocus placeholder={`${tx(locale,"Search or command")}…`}/><kbd>ESC</kbd></div><span className="command-label">Navigate</span>{nav.map(n=><button key={n.id} onClick={()=>{setView(n.id);setCommandOpen(false)}}><i>{n.icon}</i><span>{tx(locale,n.label)}</span><kbd>↵</kbd></button>)}</div></div>}
+    {actionNotice&&<div className="action-toast" role="status"><i>✓</i><span>{actionNotice}</span></div>}
   </main>;
 }

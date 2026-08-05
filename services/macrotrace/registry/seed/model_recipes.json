@@ -1,0 +1,261 @@
+{
+  "registry_type": "model_recipes",
+  "registry_version": "0.1.0",
+  "global_prohibitions": [
+    "arbitrary_python",
+    "arbitrary_sql",
+    "arbitrary_formula_string",
+    "unregistered_factor_id",
+    "unregistered_url_or_file_path",
+    "runtime_package_install",
+    "diagnostic_override",
+    "future_vintage_in_as_of_run"
+  ],
+  "items": [
+    {
+      "recipe_id": "MOMENTUM_BREADTH_V1",
+      "version": "0.1.0",
+      "method": "固定变换后的动量、扩散、z-score 与方向聚合。",
+      "artifact": "packages/models/momentum_breadth_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "change_windows": [[1, 3, 6], [1, 3, 12], [3, 6, 12]],
+        "standardization": ["NONE", "ROLLING_Z_5Y", "ROLLING_Z_10Y"],
+        "aggregation": ["EQUAL", "REGISTERED_WEIGHTS"],
+        "missing_policy": ["FAIL", "DROP_IF_COVERAGE_GTE_80"]
+      },
+      "validation_gates": ["registered_transforms_only", "minimum_80_percent_factor_coverage", "no_future_observation"],
+      "source_report_ids": ["R03", "R06", "R09", "R11"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "REGISTERED_RULE_SCORE_V1",
+      "version": "0.1.0",
+      "method": "只执行 Registry 中已审核的阈值、方向与布尔规则，并输出贡献分解。",
+      "artifact": "packages/models/registered_rule_score_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "rule_set_id": "REGISTERED_ID_ONLY",
+        "aggregation": ["EQUAL", "REGISTERED_WEIGHTS"],
+        "conflict_policy": ["REPORT_CONFLICT", "DOMINANT_REGISTERED_RULE"]
+      },
+      "validation_gates": ["rule_set_exists", "factor_dependencies_satisfied", "weights_sum_to_one"],
+      "source_report_ids": ["R03", "R07", "R09"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "REGISTERED_IDENTITY_DECOMP_V1",
+      "version": "0.1.0",
+      "method": "执行已注册会计恒等式或分解定义，例如净出口或名义收益率组成。",
+      "artifact": "packages/models/registered_identity_decomp_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "identity_id": "REGISTERED_ID_ONLY",
+        "reconciliation": ["FAIL_ON_GAP", "REPORT_RESIDUAL"]
+      },
+      "validation_gates": ["identity_exists", "unit_compatible", "frequency_aligned", "residual_reported"],
+      "source_report_ids": ["R03", "R04", "R07"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "PANEL_FE_V1",
+      "version": "0.1.0",
+      "method": "固定变量目录下的面板 OLS，允许实体、时间或双向固定效应。",
+      "artifact": "packages/models/panel_fe_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "dependent_factor_id": "ONE_REGISTERED_OUTCOME",
+        "independent_factor_ids": {"min_items": 1, "max_items": 8, "registered_allowlist_only": true},
+        "control_factor_ids": {"max_items": 12, "registered_allowlist_only": true},
+        "fixed_effects": [[], ["ENTITY"], ["TIME"], ["ENTITY", "TIME"]],
+        "covariance": ["NONROBUST", "HC1", "CLUSTER_ENTITY", "CLUSTER_TIME", "CLUSTER_TWO_WAY"],
+        "lags": {"min": 0, "max": 12},
+        "window": "WITHIN_RECIPE_MIN_MAX"
+      },
+      "validation_gates": ["minimum_30_entities_or_recipe_override", "minimum_5_periods", "full_rank", "cluster_count_gte_30_when_clustered", "registered_missing_policy"],
+      "source_report_ids": ["R05", "R08", "R11"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "LOCAL_PROJECTION_FE_V1",
+      "version": "0.1.0",
+      "method": "预注册冲击与结果集合的 Jordà local projection，支持固定效应和聚类标准误。",
+      "artifact": "packages/models/local_projection_fe_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "shock_factor_id": "REGISTERED_SHOCK_ONLY",
+        "outcome_factor_ids": {"min_items": 1, "max_items": 8, "registered_allowlist_only": true},
+        "control_factor_ids": {"max_items": 12, "registered_allowlist_only": true},
+        "horizon": {"min": 0, "max": 24},
+        "lags": {"min": 1, "max": 12},
+        "fixed_effects": [["TIME"], ["ENTITY", "TIME"]],
+        "covariance": ["NEWEY_WEST", "CLUSTER_ENTITY", "CLUSTER_TWO_WAY"]
+      },
+      "validation_gates": ["shock_definition_pre_registered", "minimum_effective_sample", "horizon_support", "confidence_intervals_present"],
+      "source_report_ids": ["R05", "R07"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "LP_AIPW_TREATMENT_V1",
+      "version": "0.1.0",
+      "method": "预注册 treatment 的 local projection augmented inverse probability weighting 双重稳健估计。",
+      "artifact": "packages/models/lp_aipw_treatment_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "treatment_id": "REGISTERED_TREATMENT_ONLY",
+        "outcome_factor_ids": {"min_items": 1, "max_items": 5, "registered_allowlist_only": true},
+        "propensity_covariate_ids": {"min_items": 3, "max_items": 20, "registered_allowlist_only": true},
+        "horizon": {"min": 0, "max": 10},
+        "event_window_pre": {"min": 1, "max": 8},
+        "event_window_post": {"min": 1, "max": 12}
+      },
+      "validation_gates": ["treatment_pre_registered", "overlap_check", "weight_stability", "pretrend_report", "doubly_robust_components_reported"],
+      "source_report_ids": ["R05"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "VAR_BVAR_V1",
+      "version": "0.1.0",
+      "method": "固定变量集合、变换、排序与先验模板的 VAR/BVAR。",
+      "artifact": "packages/models/var_bvar_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "system_id": "REGISTERED_SYSTEM_ONLY",
+        "lags": {"min": 1, "max": 12},
+        "estimator": ["VAR_OLS", "BVAR_MINNESOTA"],
+        "identification": ["REGISTERED_CHOLESKY", "REGISTERED_SIGN_RESTRICTIONS"],
+        "forecast_horizon": {"min": 1, "max": 24}
+      },
+      "validation_gates": ["system_definition_exists", "stationarity_or_registered_transform", "stability_roots", "residual_diagnostics", "identification_reported"],
+      "source_report_ids": ["R04", "R09"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "DYNAMIC_FACTOR_NOWCAST_V1",
+      "version": "0.1.0",
+      "method": "固定发布日历和因子集合的混频动态因子 nowcast。",
+      "artifact": "packages/models/dynamic_factor_nowcast_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "system_id": "REGISTERED_SYSTEM_ONLY",
+        "factor_count": [1, 2, 3],
+        "estimation_window_years": [5, 10, 15],
+        "target_id": "REGISTERED_TARGET_ONLY"
+      },
+      "validation_gates": ["real_time_vintage_required", "release_calendar_required", "minimum_history", "rolling_backtest_required_before_active"],
+      "source_report_ids": ["R04", "R06", "R10"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "SET_BVAR_REGIME_V1",
+      "version": "0.1.0",
+      "method": "固定美国变量集合和 transition variable 的状态依赖 BVAR。",
+      "artifact": "packages/models/set_bvar_regime_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "system_id": "REGISTERED_SYSTEM_ONLY",
+        "transition_factor_id": "REGISTERED_TRANSITION_ONLY",
+        "lags": [2, 4, 6, 12],
+        "regimes": [2],
+        "forecast_horizon": {"min": 1, "max": 24}
+      },
+      "validation_gates": ["transition_definition_exists", "regime_separation", "stability", "rolling_backtest", "state_probabilities_reported"],
+      "source_report_ids": ["R09"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "POLICY_RULE_PATH_V1",
+      "version": "0.1.0",
+      "method": "执行已注册的同期或前瞻 Taylor-type 规则，产生反事实政策路径。",
+      "artifact": "packages/models/policy_rule_path_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "rule_id": "REGISTERED_ID_ONLY",
+        "input_vintage": ["AS_OF_ONLY"],
+        "forecast_horizon": {"min": 1, "max": 12}
+      },
+      "validation_gates": ["coefficients_registry_locked", "gap_definitions_locked", "labeled_counterfactual_not_forecast"],
+      "source_report_ids": ["R09"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "GROWTH_AT_RISK_V1",
+      "version": "0.1.0",
+      "method": "用已注册金融条件与宏观控制估计未来增长的条件分位数/分布。",
+      "artifact": "packages/models/growth_at_risk_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "system_id": "REGISTERED_SYSTEM_ONLY",
+        "quantiles": [[0.05, 0.1, 0.5], [0.05, 0.25, 0.5, 0.75, 0.95]],
+        "forecast_horizon": [4, 8],
+        "estimation_window": ["EXPANDING", "ROLLING_20Y"]
+      },
+      "validation_gates": ["minimum_80_quarters", "quantile_crossing_check", "out_of_sample_backtest", "density_integrity"],
+      "source_report_ids": ["R08"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "FISCAL_RISK_REPRICING_V1",
+      "version": "0.1.0",
+      "method": "按预注册期限与信用匹配规则，从政府债收益率上升且高等级公司债下降的负共动中识别财政风险事件。",
+      "artifact": "packages/models/fiscal_risk_repricing_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "curve_pair_id": "REGISTERED_PAIR_ONLY",
+        "event_threshold_id": "REGISTERED_THRESHOLD_ONLY",
+        "aggregation_frequency": ["D", "W", "M"],
+        "response_recipe_id": ["LOCAL_PROJECTION_FE_V1"]
+      },
+      "validation_gates": ["duration_match", "credit_composition_stability", "event_count_minimum", "alternative_common_shock_diagnostics"],
+      "source_report_ids": ["R07"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "HANK_SAVING_SCENARIO_V1",
+      "version": "0.1.0",
+      "method": "只运行已审核校准的家庭异质性储蓄/消费情景，不允许 AI 修改结构方程。",
+      "artifact": "packages/models/hank_saving_scenario_v1::run",
+      "artifact_status": "blocked",
+      "allowed_parameters": {
+        "calibration_id": "REGISTERED_US_CALIBRATION_ONLY",
+        "scenario_id": "REGISTERED_RISK_AVERSION_SHOCK_ONLY",
+        "forecast_horizon": {"min": 4, "max": 20}
+      },
+      "validation_gates": ["us_calibration_reviewed", "steady_state_check", "resource_constraint", "scenario_not_point_forecast"],
+      "source_report_ids": ["R09"],
+      "status": "blocked"
+    },
+    {
+      "recipe_id": "AI_CAPEX_PRODUCTIVITY_SCENARIO_V1",
+      "version": "0.1.0",
+      "method": "把预注册 AI 采用、资本开支和生产率假设映射为短期需求与长期供给情景。",
+      "artifact": "packages/models/ai_capex_productivity_scenario_v1::run",
+      "artifact_status": "planned",
+      "allowed_parameters": {
+        "scenario_id": "REGISTERED_ID_ONLY",
+        "adoption_path_id": "REGISTERED_ID_ONLY",
+        "productivity_elasticity_id": "REGISTERED_ID_ONLY",
+        "horizon_years": [5, 10, 20]
+      },
+      "validation_gates": ["assumptions_displayed", "sensitivity_cases_required", "scenario_not_forecast"],
+      "source_report_ids": ["R07", "R08", "R11"],
+      "status": "draft"
+    },
+    {
+      "recipe_id": "CLIMATE_IMPACT_ADAPTATION_SCENARIO_V1",
+      "version": "0.1.0",
+      "method": "把预注册物理冲击通道、适应成本和避免损失映射到美国宏观情景。",
+      "artifact": "packages/models/climate_impact_adaptation_scenario_v1::run",
+      "artifact_status": "blocked",
+      "allowed_parameters": {
+        "climate_scenario_id": "REGISTERED_ID_ONLY",
+        "impact_channel_ids": {"min_items": 1, "max_items": 8, "registered_allowlist_only": true},
+        "adaptation_package_id": "REGISTERED_ID_ONLY",
+        "horizon_years": [5, 10, 20, 30]
+      },
+      "validation_gates": ["physical_data_available", "channel_mapping_reviewed", "gross_and_net_effects_separated", "uncertainty_sensitivity_required"],
+      "source_report_ids": ["R01", "R02"],
+      "status": "blocked"
+    }
+  ]
+}
