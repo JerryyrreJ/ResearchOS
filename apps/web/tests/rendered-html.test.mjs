@@ -165,12 +165,17 @@ test("makes the shared knowledge library the primary product workflow", async ()
   assert.match(workspace, /categoryFor/);
   assert.match(workspace, /基础分析/);
   assert.match(workspace, /版本关联/);
+  assert.match(workspace, /关系网络/);
+  assert.match(workspace, /查看完整版本链/);
+  assert.match(workspace, /同一知识库/);
   assert.match(workspace, /NEW_VERSION_OF/);
   assert.match(workspace, /仅展示后端确认的确定性版本关系/);
   assert.match(workspace, /researchos:new-thesis/);
   assert.match(css, /\.knowledge-library/);
   assert.match(css, /\.quick-analysis/);
   assert.match(css, /\.lineage-chain/);
+  assert.match(css, /\.knowledge-network/);
+  assert.match(css, /\.network-node/);
 });
 
 test("integrates the original Evidence Archivist as a restrained product mascot", async () => {
