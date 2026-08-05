@@ -128,6 +128,8 @@ test("connects deployed UI to same-origin durable APIs and creates real theses",
   for (const route of ["/workspaces", "/theses", "/tool-runs/macrotrace", "/verify", "thesis-versions"]) assert.match(worker, new RegExp(route.replaceAll("/", "\\/")));
   assert.match(worker, /env\.DB/);
   assert.match(worker, /env\.UPLOADS\.put/);
+  assert.match(worker, /INSERT INTO assets VALUES \(\?, \?, \?, \?, \?, \?, \?, \?, \?, \?, \?, \?\)/);
+  assert.doesNotMatch(worker, /INSERT INTO assets VALUES \(\?, \?, \?, \?, \?, \?, \?, \?, \?, \?, \?, \?, \?\)/);
   assert.match(hosting, /"d1"\s*:\s*"DB"/);
   assert.match(hosting, /"r2"\s*:\s*"UPLOADS"/);
 });

@@ -158,7 +158,7 @@ export async function handleResearchOSApi(request: Request, env: ResearchOSEnv):
     if (prior?.content_hash === hash) return json({ item_id: id("ITEM"), asset_id: prior.id, version_id: prior.version_id, resolution_status: "EXACT_DUPLICATE", status: "DUPLICATE", error: null }, 201);
     const assetId = prior?.id ?? id("ASSET"); const versionId = id("VER"); const key = `${batch.workspace_id}/${assetId}/${versionId}/${file.name}`;
     await env.UPLOADS.put(key, bytes, { httpMetadata: { contentType: file.type || "application/octet-stream" } });
-    await env.DB.prepare("INSERT INTO assets VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").bind(assetId, batch.workspace_id, file.name, versionId, prior?.version_id ?? null, hash, file.type || "application/octet-stream", formatKind(file.name, file.type), file.size, key, now(), "CONFIRMED").run();
+    await env.DB.prepare("INSERT INTO assets VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").bind(assetId, batch.workspace_id, file.name, versionId, prior?.version_id ?? null, hash, file.type || "application/octet-stream", formatKind(file.name, file.type), file.size, key, now(), "CONFIRMED").run();
     return json({ item_id: id("ITEM"), asset_id: assetId, version_id: versionId, resolution_status: prior ? "NEW_VERSION" : "NEW_ASSET", status: "COMPLETED", error: null }, 201);
   }
   match = path.match(/^\/ingest-batches\/([^/]+)\/finalize$/);
