@@ -41,10 +41,18 @@ function sourceFromObject(item: ObjectSummary): WorkspaceSource {
 }
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat(undefined, { month: "short", day: "2-digit" }).format(
+  return new Intl.DateTimeFormat("zh-CN", { month: "short", day: "2-digit" }).format(
     new Date(value),
   );
 }
+
+const STATUS_LABELS: Record<QueueStatus, string> = {
+  QUEUED: "排队中",
+  UPLOADING: "上传中",
+  COMPLETED: "已完成",
+  DUPLICATE: "重复文件",
+  FAILED: "失败",
+};
 
 export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspaceProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -83,7 +91,7 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
         setLoading(true);
         let workspaces = await researchosApi.listWorkspaces();
         if (workspaces.length === 0) {
-          const created = await researchosApi.createWorkspace("Research workspace");
+          const created = await researchosApi.createWorkspace("研究空间");
           workspaces = [created];
         }
         if (cancelled) return;
@@ -92,7 +100,7 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
         await refresh(id);
       } catch (caught) {
         if (!cancelled) {
-          setError(caught instanceof Error ? caught.message : "Unable to load the API workspace.");
+          setError(caught instanceof Error ? caught.message : "无法加载 API 工作空间。");
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -137,7 +145,7 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
           setQueue((current) =>
             current.map((item) =>
               item.id === itemId
-                ? { ...item, status: "FAILED", detail: caught instanceof Error ? caught.message : "Upload failed" }
+                ? { ...item, status: "FAILED", detail: caught instanceof Error ? caught.message : "上传失败" }
                 : item,
             ),
           );
@@ -146,7 +154,7 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
       await researchosApi.finalizeBatch(batch.id);
       await refresh(workspaceId);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Unable to process the upload batch.");
+      setError(caught instanceof Error ? caught.message : "无法处理上传批次。");
     }
   };
 
@@ -170,11 +178,11 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
     <div className="workspace-scroll">
       <section className="api-workspace-head">
         <div>
-          <div className="eyebrow"><span className="status-dot green" /> REAL API · M1 ASSET FOUNDATION</div>
-          <h2>Live research workspace</h2>
-          <p>Files, versions and parser results below come from the deterministic ResearchOS API.</p>
+          <div className="eyebrow"><span className="status-dot green" /> REAL API · M1 资产基座</div>
+          <h2>实时研究工作区</h2>
+          <p>以下文件、版本和解析结果均来自确定性 ResearchOS API。</p>
         </div>
-        <button className="button secondary" onClick={() => workspaceId && void refresh(workspaceId, query)}>↻ Refresh</button>
+        <button className="button secondary" onClick={() => workspaceId && void refresh(workspaceId, query)}>↻ 刷新</button>
       </section>
 
       <div
@@ -185,37 +193,37 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
         onDrop={onDrop}
       >
         <div className="dropzone-icon">＋</div>
-        <div><b>Drop research files here</b><small>Markdown, DOCX, XLSX, CSV and text PDF · the API determines facts and versions</small></div>
-        <button className="button primary small" onClick={() => inputRef.current?.click()}>Choose files</button>
+        <div><b>拖拽研究文件到此处</b><small>支持 Markdown、DOCX、XLSX、CSV 和文本 PDF · API 负责确定事实和版本</small></div>
+        <button className="button primary small" onClick={() => inputRef.current?.click()}>选择文件</button>
         <input ref={inputRef} type="file" multiple hidden onChange={onInputChange} />
       </div>
 
-      {error && <div className="api-error" role="alert"><b>API unavailable</b><span>{error}</span><button onClick={() => workspaceId && void refresh(workspaceId, query)}>Retry</button></div>}
+      {error && <div className="api-error" role="alert"><b>API 不可用</b><span>{error}</span><button onClick={() => workspaceId && void refresh(workspaceId, query)}>重试</button></div>}
 
       {queue.length > 0 && (
         <section className="upload-queue">
-          <div className="section-title"><div><h2>Upload queue</h2><p>Each file is isolated so one failure does not roll back the batch.</p></div></div>
-          {queue.map((item) => <div className="upload-row" key={item.id}><span className={`upload-state ${item.status.toLowerCase()}`}>{item.status}</span><b>{item.fileName}</b><small>{item.detail ?? ""}</small></div>)}
+          <div className="section-title"><div><h2>上传队列</h2><p>每个文件独立处理，单一失败不会回滚整个批次。</p></div></div>
+          {queue.map((item) => <div className="upload-row" key={item.id}><span className={`upload-state ${item.status.toLowerCase()}`}>{STATUS_LABELS[item.status]}</span><b>{item.fileName}</b><small>{item.detail ?? ""}</small></div>)}
         </section>
       )}
 
       <div className="summary-strip api-summary">
-        <div><span>Research objects</span><b>{loading ? "…" : objects.length}</b></div>
-        <div><span>Versions</span><b>{loading ? "…" : state?.version_count ?? 0}</b></div>
-        <div><span>Parsed fragments</span><b>{loading ? "…" : state?.fragment_count ?? 0}</b></div>
-        <div><span>Semantic relations</span><b className="quiet-value">Not in M1</b></div>
+        <div><span>研究对象</span><b>{loading ? "…" : objects.length}</b></div>
+        <div><span>版本</span><b>{loading ? "…" : state?.version_count ?? 0}</b></div>
+        <div><span>已解析片段</span><b>{loading ? "…" : state?.fragment_count ?? 0}</b></div>
+        <div><span>语义关系</span><b className="quiet-value">M2 开放</b></div>
       </div>
 
       <section className="table-section">
-        <div className="section-title"><div><h2>Research objects</h2><p>Version-pinned source files from the live workspace.</p></div><div className="segmented"><button className={workspaceTab === "objects" ? "active" : ""} onClick={() => setWorkspaceTab("objects")}>Objects</button><button className={workspaceTab === "relations" ? "active" : ""} onClick={() => setWorkspaceTab("relations")}>Relations</button><button className={workspaceTab === "conflicts" ? "active" : ""} onClick={() => setWorkspaceTab("conflicts")}>Conflicts</button></div></div>
+        <div className="section-title"><div><h2>研究对象</h2><p>来自实时工作区的版本锁定源文件。</p></div><div className="segmented"><button className={workspaceTab === "objects" ? "active" : ""} onClick={() => setWorkspaceTab("objects")}>对象</button><button className={workspaceTab === "relations" ? "active" : ""} onClick={() => setWorkspaceTab("relations")}>关系</button><button className={workspaceTab === "conflicts" ? "active" : ""} onClick={() => setWorkspaceTab("conflicts")}>冲突</button></div></div>
         <form className="filter-row" onSubmit={submitSearch}>
-          <span className="table-search"><span>⌕</span><input aria-label="Search objects" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Filter objects…" /></span>
-          <button className="button primary small" type="submit">Search</button>
+          <span className="table-search"><span>⌕</span><input aria-label="搜索对象" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="筛选对象…" /></span>
+          <button className="button primary small" type="submit">搜索</button>
         </form>
-        {workspaceTab === "objects" ? (loading ? <div className="api-empty">Loading the live workspace…</div> : objects.length === 0 ? <div className="api-empty">No assets yet. Drop a research file above to create the first object.</div> : <div className="research-table"><div className="table-head"><span>Name</span><span>Type</span><span>State</span><span>Version</span><span>Updated</span></div>{objects.map((item, index) => { const source = sourceFromObject(item); return <button className="table-row" key={item.object_id} onClick={() => onSelect(source)}><span className="name-cell"><i className={`file-icon f${index % 4}`}>{source.formatKind.slice(0, 1)}</i><span><b>{source.name}</b><small className="mono">{source.id}</small></span></span><span>{source.type}</span><span><span className="badge badge-blue">{source.state}</span></span><span className="mono">{source.version}</span><span>{formatDate(source.updatedAt)}</span></button>; })}</div>) : workspaceTab === "relations" ? <div className="api-empty">{graph?.edges.length ?? 0} deterministic NEW_VERSION_OF relations. Semantic relations arrive in M2.</div> : <div className="api-empty">No unresolved deterministic ingest conflicts. Ambiguous logical identities remain separate assets.</div>}
+        {workspaceTab === "objects" ? (loading ? <div className="api-empty">正在加载实时工作区…</div> : objects.length === 0 ? <div className="api-empty">暂无资产。在上方拖入研究文件以创建第一个对象。</div> : <div className="research-table"><div className="table-head"><span>名称</span><span>类型</span><span>状态</span><span>版本</span><span>更新时间</span></div>{objects.map((item, index) => { const source = sourceFromObject(item); return <button className="table-row" key={item.object_id} onClick={() => onSelect(source)}><span className="name-cell"><i className={`file-icon f${index % 4}`}>{source.formatKind.slice(0, 1)}</i><span><b>{source.name}</b><small className="mono">{source.id}</small></span></span><span>{source.type}</span><span><span className="badge badge-blue">{source.state}</span></span><span className="mono">{source.version}</span><span>{formatDate(source.updatedAt)}</span></button>; })}</div>) : workspaceTab === "relations" ? <div className="api-empty">{graph?.edges.length ?? 0} 条确定性版本关系。语义关系将在 M2 阶段提供。</div> : <div className="api-empty">暂无未解决的确定性导入冲突。</div>}
       </section>
 
-      <section className="relations api-relations"><div className="section-title"><div><h2>Version structure</h2><p>Only deterministic version lineage is shown here. Semantic relations arrive in M2.</p></div><span className="badge badge-blue">{graph?.edges.length ?? 0} system edges</span></div>{graph?.edges.length ? <div className="api-edge-list">{graph.edges.map((edge) => <div className="api-edge" key={edge.edge_id}><span className="mono">{edge.source_ref}</span><b>{edge.relation_type}</b><span className="mono">{edge.target_ref}</span></div>)}</div> : <div className="api-empty">No version lineage edges yet.</div>}</section>
+      <section className="relations api-relations"><div className="section-title"><div><h2>版本结构</h2><p>此处仅显示确定性版本谱系。语义关系将在 M2 阶段提供。</p></div><span className="badge badge-blue">{graph?.edges.length ?? 0} 条系统边</span></div>{graph?.edges.length ? <div className="api-edge-list">{graph.edges.map((edge) => <div className="api-edge" key={edge.edge_id}><span className="mono">{edge.source_ref}</span><b>{edge.relation_type}</b><span className="mono">{edge.target_ref}</span></div>)}</div> : <div className="api-empty">暂无版本谱系边。</div>}</section>
     </div>
   );
 }
