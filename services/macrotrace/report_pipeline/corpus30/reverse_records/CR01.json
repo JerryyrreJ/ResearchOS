@@ -1,0 +1,380 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CR01.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Strategy statement and summary",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 12,
+      "page_start": 5,
+      "paraphrase": "The report evaluates inflation and maximum-employment conditions jointly, recognizes policy lags and uncertainty, and explains the current monetary-policy stance.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR01",
+        "MR.CR01.DUAL_MANDATE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR01.02",
+      "extraction_confidence": 0.9,
+      "kind": "MECHANISM",
+      "locator_label": "Inflation developments",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 23,
+      "page_start": 13,
+      "paraphrase": "Inflation is decomposed across energy, tariffs/imported goods, food, services, input costs, expectations, and wage-related pressure rather than inferred from one aggregate release.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR01",
+        "MR.CR01.DUAL_MANDATE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR01.03",
+      "extraction_confidence": 0.9,
+      "kind": "RESULT",
+      "locator_label": "Labor, activity, and financial developments",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 45,
+      "page_start": 24,
+      "paraphrase": "Payrolls, unemployment, participation, wages, output, consumption, housing, credit, yields, equity prices, and the dollar are used as distinct pieces of the current-state assessment.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR01",
+        "MR.CR01.DUAL_MANDATE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR01.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Policy strategy and uncertainty",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 12,
+      "page_start": 5,
+      "paraphrase": "Policy effects arrive with lags and the outlook is uncertain; the report does not claim that contemporaneous co-movement alone identifies causal transmission.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR01",
+        "MR.CR01.DUAL_MANDATE"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The July 2026 Monetary Policy Report is an official integrated reading of U.S. inflation, labor, activity, financial conditions, and the policy stance. It decomposes price pressure across energy, tariffs, food, market services, expectations, and wages; assesses employment and output jointly; and links the federal funds rate and balance-sheet policy to broader conditions. It should seed multiple evidence nodes and a policy-assessment workflow, but its narrative judgment is not itself an estimated causal model.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "top-level monetary-policy context lane; empirical model nodes remain separately visible",
+      "control_variable_ids": [],
+      "dependent_variable_ids": [
+        "V.CR01.INF",
+        "V.CR01.LABOR"
+      ],
+      "diagnostic_requirements": [
+        "release-vintage audit",
+        "indicator breadth and conflict matrix",
+        "component contribution add-up",
+        "equal-weight and leave-one-node sensitivity"
+      ],
+      "downstream_refs": [],
+      "estimand": "direction and breadth of progress toward price stability and maximum employment conditional on the as-of information set",
+      "evidence_ids": [
+        "EV.CR01.01",
+        "EV.CR01.02",
+        "EV.CR01.03",
+        "EV.CR01.04"
+      ],
+      "formula": "lane_signal = registered synthesis(inflation components, labor balance, activity, financial conditions); no LLM numeric weights",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "state assessment and mechanism triangulation; causal policy effects must come from separate shock-identification nodes",
+      "identifying_assumptions": [
+        "each indicator uses its known release vintage",
+        "headline and underlying inflation are kept distinct",
+        "policy stance and financial conditions are not treated as exogenous without identification"
+      ],
+      "independent_variable_ids": [
+        "V.CR01.STANCE",
+        "V.CR01.FCI",
+        "V.CR01.ENERGY"
+      ],
+      "lane_ref": "US.MONETARY",
+      "mechanism_ref": "MECH.CANDIDATE.MONETARY.DUAL_MANDATE_ASSESSMENT",
+      "method_family": "registered multi-indicator policy assessment with evidence-bound ordinal synthesis",
+      "method_route_id": "MR.CR01.DUAL_MANDATE",
+      "node_ref": "N.CANDIDATE.MPR.INTEGRATED_STATE",
+      "research_question_id": "Q.CR01",
+      "robustness_requirements": [
+        "headline versus core/trimmed inflation",
+        "payroll versus household labor signals",
+        "market-price versus lending-condition measures",
+        "alternative as-of dates"
+      ],
+      "sample_definition": "official U.S. releases available by the report as-of date with series-specific history",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CR01",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": "information available for the July 2026 report",
+      "evidence_ids": [
+        "EV.CR01.01"
+      ],
+      "horizon_text": "current conditions and near-term policy outlook",
+      "question_id": "Q.CR01",
+      "question_text": "What do current U.S. inflation, labor, activity, and financial conditions imply for progress toward maximum employment and price stability and for the appropriate stance of monetary policy?",
+      "target_variables": [
+        "V.CR01.INF",
+        "V.CR01.LABOR",
+        "V.CR01.STANCE"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "DRIVER",
+        "SCENARIO",
+        "ASSET_TRANSMISSION"
+      ]
+    }
+  ],
+  "record_id": "REV.D8109DA697ABD4C5.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "WORKFLOW.MONETARY.DUAL_MANDATE_ASSESSMENT",
+          "NODE.INFLATION.COMPONENT_DECOMPOSITION",
+          "NODE.LABOR.BALANCE_DASHBOARD",
+          "MECH.ENERGY_TARIFF_PRICE_PASS_THROUGH",
+          "POLICY.MPR.NARRATIVE_NOT_CAUSAL"
+        ],
+        "category": "INSTITUTIONAL_REPORT_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Board of Governors of the Federal Reserve System",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 77,
+        "publication_date": "2026-07-10",
+        "report_id": "RC.D8109DA697AB",
+        "review_status": "reviewed",
+        "source_catalog_id": "CR01",
+        "source_sha256": "d8109da697abd4c58a5f1fb074d4b5cbcd197df1baf9e1f6e7620e5812e14a37",
+        "source_url": "https://www.federalreserve.gov/monetarypolicy/files/20260710_mprfullreport.pdf",
+        "status": "reviewed",
+        "title": "Monetary Policy Report, July 2026"
+      },
+      "change_id": "CH.CR01.REPORT",
+      "evidence_ids": [
+        "EV.CR01.01",
+        "EV.CR01.02",
+        "EV.CR01.03",
+        "EV.CR01.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CR01.DUAL_MANDATE"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.D8109DA697AB",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.D8109DA697AB",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:14.176899Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CR01.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CR01",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CR01.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 2299583,
+    "copied_into_repository": false,
+    "institution": "Board of Governors of the Federal Reserve System",
+    "jurisdiction_tags": [
+      "US",
+      "inflation",
+      "labor",
+      "growth",
+      "monetary_policy",
+      "financial_conditions"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 77,
+    "publication_date": "2026-07-10",
+    "source_file": "LOCAL_SNAPSHOT:CR01",
+    "source_id": "SRC.D8109DA697ABD4C5",
+    "source_sha256": "d8109da697abd4c58a5f1fb074d4b5cbcd197df1baf9e1f6e7620e5812e14a37",
+    "title": "Monetary Policy Report, July 2026"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.139791Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:01.286507Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CR01",
+      "at": "2026-07-15T11:22:14.200054Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR01",
+      "at": "2026-07-15T11:22:14.230383Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR01",
+      "at": "2026-07-15T11:22:14.261673Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Headline, core, trimmed, and component-level PCE inflation measures used to assess price stability.",
+      "evidence_ids": [
+        "EV.CR01.02"
+      ],
+      "frequency": "monthly/quarterly",
+      "lag": null,
+      "mapped_factor_id": "F.PCE.HEADLINE",
+      "name": "PCE inflation complex",
+      "provider": "U.S. Bureau of Economic Analysis and Federal Reserve",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CR01.INF",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Joint state of payroll growth, unemployment, participation, vacancies, and wage growth.",
+      "evidence_ids": [
+        "EV.CR01.03"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": "F.LABOR.UNEMPLOYMENT",
+      "name": "labor-market balance",
+      "provider": "U.S. Bureau of Labor Statistics",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "mixed standardized signals",
+      "variable_id": "V.CR01.LABOR",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Federal funds target range and balance-sheet settings relative to assessed inflation and labor conditions.",
+      "evidence_ids": [
+        "EV.CR01.01",
+        "EV.CR01.03"
+      ],
+      "frequency": "meeting/event",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "monetary policy stance",
+      "provider": "Federal Reserve",
+      "release_lag": null,
+      "role": "TREATMENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent and balance-sheet quantities",
+      "variable_id": "V.CR01.STANCE",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Oil and refined-product price pressure affecting headline prices, transportation, and input costs.",
+      "evidence_ids": [
+        "EV.CR01.02"
+      ],
+      "frequency": "daily/monthly",
+      "lag": null,
+      "mapped_factor_id": "F.ENERGY.WTI",
+      "name": "energy price shock",
+      "provider": "Board of Governors of the Federal Reserve System",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent or dollars",
+      "variable_id": "V.CR01.ENERGY",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Joint movement in Treasury yields, credit spreads, equities, lending conditions, and the dollar.",
+      "evidence_ids": [
+        "EV.CR01.03"
+      ],
+      "frequency": "daily to quarterly",
+      "lag": null,
+      "mapped_factor_id": "F.MONETARY.NFCI",
+      "name": "financial conditions",
+      "provider": "Board of Governors of the Federal Reserve System",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "mixed",
+      "variable_id": "V.CR01.FCI",
+      "vintage_rule": null
+    }
+  ]
+}

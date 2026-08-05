@@ -1,0 +1,385 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CR05.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Executive summary and outlook",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 20,
+      "page_start": 7,
+      "paraphrase": "The consultation integrates current conditions, baseline growth and inflation, policy settings, medium-term risks, and recommended responses for the United States.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR05",
+        "MR.CR05.DEBT_SCENARIO"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR05.02",
+      "extraction_confidence": 0.9,
+      "kind": "MECHANISM",
+      "locator_label": "Policy and sector analysis",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 50,
+      "page_start": 21,
+      "paraphrase": "Fiscal demand, debt service, monetary stance, labor supply, trade, productivity, credit, and asset valuations are linked through explicit macro and financial transmission arguments.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR05",
+        "MR.CR05.DEBT_SCENARIO"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR05.03",
+      "extraction_confidence": 0.9,
+      "kind": "AGGREGATION",
+      "locator_label": "Risk assessment and debt/external analysis",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 70,
+      "page_start": 51,
+      "paraphrase": "A risk matrix separates likelihood, impact, transmission, and policy response; debt and external assessments use scenario paths rather than a single unqualified forecast.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR05",
+        "MR.CR05.DEBT_SCENARIO"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR05.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Annexes and methodology",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 90,
+      "page_start": 71,
+      "paraphrase": "Staff projections combine models, assumptions, and judgment; scenario results are conditional on policy and shock definitions and are not realized probabilities without calibration.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR05",
+        "MR.CR05.DEBT_SCENARIO"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The IMF 2026 U.S. Article IV is an integrated surveillance workflow spanning near-term growth and inflation, fiscal and debt dynamics, monetary policy, financial stability, external balance, and risk scenarios. Its value for MacroTrace is the explicit risk matrix and cross-lane consistency: baseline judgments are separated from upside/downside scenarios and policy recommendations. Model outputs and staff judgment must remain distinguishable.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "fiscal lane scenario evidence, kept separate from staff judgment",
+      "control_variable_ids": [
+        "V.CR05.INF"
+      ],
+      "dependent_variable_ids": [
+        "V.CR05.DEBT"
+      ],
+      "diagnostic_requirements": [
+        "debt-identity add-up",
+        "interest-growth differential sensitivity",
+        "gross financing needs",
+        "fan/scenario coverage"
+      ],
+      "downstream_refs": [],
+      "estimand": "conditional path of debt-to-GDP under declared primary balance, effective interest rate, growth, and valuation assumptions",
+      "evidence_ids": [
+        "EV.CR05.01",
+        "EV.CR05.02",
+        "EV.CR05.03",
+        "EV.CR05.04"
+      ],
+      "formula": "d_t=((1+r_t)/(1+g_t))*d_{t-1}-pb_t+sfa_t",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "scenario accounting identity, not causal estimation",
+      "identifying_assumptions": [
+        "interest, growth, and primary-balance paths are explicit",
+        "stock-flow adjustments are recorded",
+        "scenario shocks do not silently alter unrelated parameters"
+      ],
+      "independent_variable_ids": [
+        "V.CR05.PRIMARY",
+        "V.CR05.GDP",
+        "V.CR05.RISK"
+      ],
+      "lane_ref": "US.FISCAL_TREASURY",
+      "mechanism_ref": "MECH.CANDIDATE.FISCAL.DEBT_DYNAMICS",
+      "method_family": "fiscal debt-dynamics accounting with alternative macro scenarios",
+      "method_route_id": "MR.CR05.DEBT_SCENARIO",
+      "node_ref": "N.CANDIDATE.IMF.US_DEBT_SCENARIO",
+      "research_question_id": "Q.CR05",
+      "robustness_requirements": [
+        "higher-rate/lower-growth stress",
+        "primary-balance alternatives",
+        "policy-expiration assumptions",
+        "stock-flow adjustment sensitivity"
+      ],
+      "sample_definition": "historical U.S. fiscal and macro data plus declared projection assumptions",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CR05",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CR05.01"
+      ],
+      "horizon_text": "near-term outlook plus medium-term debt and external paths",
+      "question_id": "Q.CR05",
+      "question_text": "What is the coherent baseline and risk distribution for the U.S. economy across growth, inflation, fiscal, external, and financial channels, and how would major policy or global shocks change it?",
+      "target_variables": [
+        "V.CR05.GDP",
+        "V.CR05.INF",
+        "V.CR05.DEBT"
+      ],
+      "task_types": [
+        "FORECAST",
+        "DRIVER",
+        "SCENARIO",
+        "ASSET_TRANSMISSION"
+      ]
+    }
+  ],
+  "record_id": "REV.BE325951C10F5441.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "WORKFLOW.US.ARTICLE_IV_INTEGRATED",
+          "NODE.FISCAL.DEBT_DYNAMICS",
+          "NODE.EXTERNAL.BALANCE_ASSESSMENT",
+          "NODE.SCENARIO.RISK_MATRIX",
+          "POLICY.SURVEILLANCE.MODEL_JUDGMENT_SEPARATION"
+        ],
+        "category": "INSTITUTIONAL_REPORT_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "International Monetary Fund",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 93,
+        "publication_date": "2026-04-01",
+        "report_id": "RC.BE325951C10F",
+        "review_status": "reviewed",
+        "source_catalog_id": "CR05",
+        "source_sha256": "be325951c10f54419583e55efe9aa7fea165ede4eb4e2465f5c9d0a5ea2c5cab",
+        "source_url": "https://www.imf.org/-/media/files/publications/cr/2026/english/1usaea2026001.pdf",
+        "status": "reviewed",
+        "title": "United States: 2026 Article IV Consultation"
+      },
+      "change_id": "CH.CR05.REPORT",
+      "evidence_ids": [
+        "EV.CR05.01",
+        "EV.CR05.02",
+        "EV.CR05.03",
+        "EV.CR05.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CR05.DEBT_SCENARIO"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.BE325951C10F",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.BE325951C10F",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:14.606804Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CR05.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CR05",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CR05.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 4596812,
+    "copied_into_repository": false,
+    "institution": "International Monetary Fund",
+    "jurisdiction_tags": [
+      "US",
+      "growth",
+      "inflation",
+      "fiscal",
+      "external_sector",
+      "financial_stability",
+      "scenario_analysis"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 93,
+    "publication_date": "2026-04-01",
+    "source_file": "LOCAL_SNAPSHOT:CR05",
+    "source_id": "SRC.BE325951C10F5441",
+    "source_sha256": "be325951c10f54419583e55efe9aa7fea165ede4eb4e2465f5c9d0a5ea2c5cab",
+    "title": "United States: 2026 Article IV Consultation"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.170794Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:11.569747Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CR05",
+      "at": "2026-07-15T11:22:14.625803Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR05",
+      "at": "2026-07-15T11:22:14.655762Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR05",
+      "at": "2026-07-15T11:22:14.684409Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Annual and quarterly U.S. real output growth in baseline and scenario projections.",
+      "evidence_ids": [
+        "EV.CR05.01",
+        "EV.CR05.02"
+      ],
+      "frequency": "quarterly/annual",
+      "lag": null,
+      "mapped_factor_id": "F.ACTIVITY.REAL_GDP",
+      "name": "real GDP growth",
+      "provider": "International Monetary Fund",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CR05.GDP",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Headline and core inflation paths used in the policy assessment.",
+      "evidence_ids": [
+        "EV.CR05.01",
+        "EV.CR05.02"
+      ],
+      "frequency": "quarterly/annual",
+      "lag": null,
+      "mapped_factor_id": "F.PCE.HEADLINE",
+      "name": "PCE inflation",
+      "provider": "International Monetary Fund",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CR05.INF",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Federal public debt relative to GDP under baseline and stress assumptions.",
+      "evidence_ids": [
+        "EV.CR05.02",
+        "EV.CR05.03"
+      ],
+      "frequency": "annual",
+      "lag": null,
+      "mapped_factor_id": "F.FISCAL.DEBT",
+      "name": "federal debt ratio",
+      "provider": "International Monetary Fund",
+      "release_lag": null,
+      "role": "OUTCOME",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent of GDP",
+      "variable_id": "V.CR05.DEBT",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Noninterest fiscal balance driving debt dynamics with growth and interest rates.",
+      "evidence_ids": [
+        "EV.CR05.02",
+        "EV.CR05.03"
+      ],
+      "frequency": "annual",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "primary fiscal balance",
+      "provider": "International Monetary Fund",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent of GDP",
+      "variable_id": "V.CR05.PRIMARY",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Explicit policy, trade, geopolitical, productivity, or financial shock in the risk matrix.",
+      "evidence_ids": [
+        "EV.CR05.03"
+      ],
+      "frequency": "event/path",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "scenario shock vector",
+      "provider": "International Monetary Fund",
+      "release_lag": null,
+      "role": "TREATMENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "scenario specific",
+      "variable_id": "V.CR05.RISK",
+      "vintage_rule": null
+    }
+  ]
+}

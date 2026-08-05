@@ -1,0 +1,378 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CW06.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Inflation nowcasting objective",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The page provides frequently updated model estimates of current-quarter headline and core CPI and PCE inflation before all official observations are released.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW06",
+        "MR.CW06.INFLATION_MIXED_FREQUENCY"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW06.02",
+      "extraction_confidence": 0.9,
+      "kind": "DATA_SOURCE",
+      "locator_label": "Mixed-frequency inputs",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "The system combines daily oil prices, weekly gasoline prices, and monthly CPI and PCE releases in a compact mixed-frequency information set.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW06",
+        "MR.CW06.INFLATION_MIXED_FREQUENCY"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW06.03",
+      "extraction_confidence": 0.9,
+      "kind": "AGGREGATION",
+      "locator_label": "Monthly-to-quarterly construction",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Monthly inflation projections are combined into quarter-over-quarter annualized nowcasts for the corresponding official price indexes.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW06",
+        "MR.CW06.INFLATION_MIXED_FREQUENCY"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CW06.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Missing releases and forecast comparison",
+      "page_basis": "FORM_FEED_PAGE",
+      "page_end": 1,
+      "page_start": 1,
+      "paraphrase": "Disrupted or missing official months require explicit handling, and nowcast quality must be assessed against statistical and survey benchmarks rather than inferred from fit alone.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CW06",
+        "MR.CW06.INFLATION_MIXED_FREQUENCY"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The Cleveland Fed inflation-nowcasting page describes a small, deliberately structured mixed-frequency system for current-quarter CPI and PCE inflation. Daily oil, weekly gasoline, and monthly official price releases update headline and core measures, with monthly forecasts aggregated to quarterly rates. The useful product lesson is release-aware component updating and benchmarked real-time error, not the claim that a few market prices explain all inflation mechanisms.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "inflation-nowcast node with exact temporal aggregation and separate headline/core outputs",
+      "control_variable_ids": [],
+      "dependent_variable_ids": [
+        "V.CW06.INF",
+        "V.CW06.CORE"
+      ],
+      "diagnostic_requirements": [
+        "real-time RMSE and MAE by target",
+        "release-news contribution reconciliation",
+        "residual autocorrelation and parameter stability",
+        "missing-release policy audit"
+      ],
+      "downstream_refs": [],
+      "estimand": "real-time monthly and current-quarter headline/core CPI and PCE inflation conditional on the available release set",
+      "evidence_ids": [
+        "EV.CW06.01",
+        "EV.CW06.02",
+        "EV.CW06.03",
+        "EV.CW06.04"
+      ],
+      "formula": "monthly component bridges(oil,gas,released prices) -> unreleased CPI/PCE months -> exact quarterly compounding",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "predictive release updating; energy-price coefficients are not structural pass-through estimates",
+      "identifying_assumptions": [
+        "input observations use their actual release timestamps",
+        "headline and core equations remain distinct",
+        "monthly-to-quarterly compounding follows the official index definition"
+      ],
+      "independent_variable_ids": [
+        "V.CW06.OIL",
+        "V.CW06.GAS",
+        "V.CW06.PRICE"
+      ],
+      "lane_ref": "US.PRICES",
+      "mechanism_ref": "MECH.PRICES.ENERGY_TO_HEADLINE_NOWCAST",
+      "method_family": "mixed-frequency inflation bridge with component-aware aggregation",
+      "method_route_id": "MR.CW06.INFLATION_MIXED_FREQUENCY",
+      "node_ref": "N.CANDIDATE.PRICES.CLEVELAND_NOWCAST",
+      "research_question_id": "Q.CW06",
+      "robustness_requirements": [
+        "autoregressive and survey benchmarks",
+        "with and without energy-market inputs",
+        "pre-pandemic and post-pandemic windows",
+        "headline, core, CPI, and PCE target separation"
+      ],
+      "sample_definition": "real-time daily, weekly, and monthly information available before each CPI/PCE release",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CW06",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CW06.01"
+      ],
+      "horizon_text": "current month and current quarter",
+      "question_id": "Q.CW06",
+      "question_text": "How can high-frequency energy prices and partial monthly releases update current-quarter U.S. CPI and PCE inflation before the official quarter is complete?",
+      "target_variables": [
+        "V.CW06.INF"
+      ],
+      "task_types": [
+        "NOWCAST",
+        "FORECAST"
+      ]
+    }
+  ],
+  "record_id": "REV.6BF63D8B0520CAB0.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.NOWCAST.INFLATION_MIXED_FREQUENCY.V1",
+          "NODE.PRICES.ENERGY_HEADLINE_BRIDGE",
+          "AGGREGATOR.INFLATION.MONTH_TO_QUARTER",
+          "POLICY.DATA.MISSING_RELEASE"
+        ],
+        "category": "METHOD_WEB",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "Federal Reserve Bank of Cleveland",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 1,
+        "publication_date": null,
+        "report_id": "RC.6BF63D8B0520",
+        "review_status": "reviewed",
+        "source_catalog_id": "CW06",
+        "source_sha256": "6bf63d8b0520cab0b34c8012423ecc79f86a3e2f14ab1a61682810c345bb9b0b",
+        "source_url": "https://www.clevelandfed.org/indicators-and-data/inflation-nowcasting",
+        "status": "reviewed",
+        "title": "Inflation Nowcasting"
+      },
+      "change_id": "CH.CW06.REPORT",
+      "evidence_ids": [
+        "EV.CW06.01",
+        "EV.CW06.02",
+        "EV.CW06.03",
+        "EV.CW06.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CW06.INFLATION_MIXED_FREQUENCY"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.6BF63D8B0520",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.6BF63D8B0520",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:15.754050Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CW06.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CW06",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CW06.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 32755,
+    "copied_into_repository": false,
+    "institution": "Federal Reserve Bank of Cleveland",
+    "jurisdiction_tags": [
+      "US",
+      "cpi_nowcast",
+      "pce_nowcast",
+      "gasoline",
+      "food",
+      "core_inflation"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "text/plain",
+    "page_count": 1,
+    "publication_date": null,
+    "source_file": "LOCAL_SNAPSHOT:CW06",
+    "source_id": "SRC.6BF63D8B0520CAB0",
+    "source_sha256": "6bf63d8b0520cab0b34c8012423ecc79f86a3e2f14ab1a61682810c345bb9b0b",
+    "title": "Inflation Nowcasting"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.301832Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:32.728794Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CW06",
+      "at": "2026-07-15T11:22:15.773460Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW06",
+      "at": "2026-07-15T11:22:15.803984Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CW06",
+      "at": "2026-07-15T11:22:15.830195Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Monthly and quarterly headline and core CPI/PCE inflation estimates for not-yet-released periods.",
+      "evidence_ids": [
+        "EV.CW06.01",
+        "EV.CW06.03",
+        "EV.CW06.04"
+      ],
+      "frequency": "daily update/monthly target/quarterly aggregate",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "CPI and PCE inflation nowcasts",
+      "provider": "U.S. Bureau of Labor Statistics, U.S. Bureau of Economic Analysis, and Federal Reserve Bank of Cleveland",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "monthly or annualized percent",
+      "variable_id": "V.CW06.INF",
+      "vintage_rule": null
+    },
+    {
+      "definition": "High-frequency crude-oil price information used to update energy-related inflation pressure.",
+      "evidence_ids": [
+        "EV.CW06.02"
+      ],
+      "frequency": "daily",
+      "lag": null,
+      "mapped_factor_id": "F.ENERGY.WTI",
+      "name": "daily oil price",
+      "provider": "energy-market data",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "dollars per barrel",
+      "variable_id": "V.CW06.OIL",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Retail gasoline price information carrying near-term energy-component news.",
+      "evidence_ids": [
+        "EV.CW06.02"
+      ],
+      "frequency": "weekly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "weekly gasoline price",
+      "provider": "U.S. Energy Information Administration",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "dollars per gallon",
+      "variable_id": "V.CW06.GAS",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Released monthly headline, core, and component CPI/PCE observations available at the forecast origin.",
+      "evidence_ids": [
+        "EV.CW06.01",
+        "EV.CW06.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "official monthly price releases",
+      "provider": "U.S. Bureau of Labor Statistics and U.S. Bureau of Economic Analysis",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "index and percent change",
+      "variable_id": "V.CW06.PRICE",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Inflation excluding registered volatile components, modeled separately from headline energy effects.",
+      "evidence_ids": [
+        "EV.CW06.01",
+        "EV.CW06.03"
+      ],
+      "frequency": "monthly/quarterly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "core inflation state",
+      "provider": "official price releases and model output",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percent",
+      "variable_id": "V.CW06.CORE",
+      "vintage_rule": null
+    }
+  ]
+}

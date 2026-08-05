@@ -1,0 +1,5 @@
+{
+  "fixture_only": true,
+  "artifact_type": "REGRESSION_TABLE",
+  "note": "Shape-only fixture. Coefficients and diagnostics are intentionally omitted because no empirical model ran."
+}

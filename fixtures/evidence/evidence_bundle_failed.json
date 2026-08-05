@@ -1,0 +1,50 @@
+{
+  "contract_version": "0.1.0-frozen",
+  "bundle_id": "EVIDENCE_FIXTURE_FAILED",
+  "request_id": "TOOL_REQ_FIXTURE_FAILED",
+  "research_job_id": "JOB_FIXTURE_FAILED",
+  "status": "FAILED",
+  "coverage": "UNSUPPORTED",
+  "evidence_type": "ASSOCIATIONAL",
+  "engine_claim": null,
+  "model_runs": [
+    {
+      "model_run_id": "RUN_FIXTURE_FAILED_PANEL",
+      "model_recipe_id": "M.PANEL_FE.V1",
+      "status": "FAILED",
+      "evidence_type": "ASSOCIATIONAL",
+      "summary": "Fixture failure retained: required panel identifiers are unavailable.",
+      "result_hash": null
+    }
+  ],
+  "diagnostics": [
+    {
+      "diagnostic_id": "DIAG_FIXTURE_PANEL_KEYS",
+      "status": "FAIL",
+      "blocking": true,
+      "interpretation": "The registered recipe requires entity and time keys."
+    }
+  ],
+  "robustness": [],
+  "evidence_items": [],
+  "falsifiers": [],
+  "limitations": [
+    "This is a deterministic contract fixture, not a live empirical result.",
+    "No registered model completed; the failure is retained for consumer testing."
+  ],
+  "input_object_refs": [],
+  "registry_version": "macrotrace-fixture-0.1.0",
+  "result_hash": "9999999999999999999999999999999999999999999999999999999999999999",
+  "artifacts": [
+    {
+      "artifact_id": "GRAPH_FIXTURE_FAILED",
+      "artifact_type": "RESEARCH_GRAPH",
+      "uri": "fixtures/evidence/artifacts/graph_failed.json",
+      "sha256": "eb2dab96d9ee6746cade6cb98acb52b7d01547cc0c98a7d84af33491cd52f86d"
+    }
+  ],
+  "trace_ref": "TRACE_FIXTURE_FAILED",
+  "metadata": {
+    "fixture_only": true
+  }
+}

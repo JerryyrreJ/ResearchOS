@@ -1,0 +1,110 @@
+{
+  "registry_type": "scenario_mappings",
+  "registry_version": "0.2.0",
+  "items": [
+    {
+      "scenario_mapping_id": "SM.ENERGY.PRICE.V1",
+      "label": "Energy-price shock",
+      "keywords": ["oil", "wti", "energy", "crude", "油价", "原油", "能源"],
+      "mapping_tier": "DIRECT_DYNAMIC",
+      "shock_factor_ids": ["F.ENERGY.WTI"],
+      "response_factor_ids": ["F.CPI.HEADLINE", "F.CPI.CORE", "F.ACTIVITY.INDPRO", "F.LABOR.UNEMPLOYMENT", "F.RATES.UST10"],
+      "model_recipe_ids": ["M.LOCAL_PROJECTION.V1", "M.VAR_SYSTEM.V1"],
+      "identification_strength": "ASSOCIATIONAL_DYNAMIC",
+      "translation_assumption": "Represent the event as a WTI innovation. The registered local projection estimates dynamic association, not an externally identified oil-supply shock.",
+      "is_fallback": false,
+      "status": "active"
+    },
+    {
+      "scenario_mapping_id": "SM.MONETARY.POLICY.V1",
+      "label": "Monetary-policy and rate shock",
+      "keywords": ["fed", "federal reserve", "rate cut", "rate hike", "interest rate", "降息", "加息", "美联储", "政策利率", "利率"],
+      "mapping_tier": "STRUCTURAL_PROXY",
+      "shock_factor_ids": ["F.RATES.UST2", "F.MONETARY.NFCI"],
+      "response_factor_ids": ["F.RATES.UST10", "F.ACTIVITY.INDPRO", "F.LABOR.UNEMPLOYMENT", "F.CPI.HEADLINE"],
+      "model_recipe_ids": ["M.VAR_SYSTEM.V1", "M.BRIDGE_OLS.V1"],
+      "identification_strength": "STRUCTURAL_PROXY",
+      "translation_assumption": "Translate the policy event into registered short-rate and financial-conditions innovations. Cholesky responses are disclosed as structural proxies rather than causal policy shocks.",
+      "is_fallback": false,
+      "status": "active"
+    },
+    {
+      "scenario_mapping_id": "SM.FINANCIAL.CONDITIONS.V1",
+      "label": "Financial-conditions shock",
+      "keywords": ["financial conditions", "credit spread", "credit shock", "金融条件", "信用利差", "信贷冲击", "金融收紧"],
+      "mapping_tier": "STRUCTURAL_PROXY",
+      "shock_factor_ids": ["F.MONETARY.NFCI", "F.FIN.CREDIT_SPREAD"],
+      "response_factor_ids": ["F.ACTIVITY.INDPRO", "F.LABOR.UNEMPLOYMENT", "F.RATES.UST10"],
+      "model_recipe_ids": ["M.VAR_SYSTEM.V1", "M.BRIDGE_OLS.V1", "M.GROWTH_AT_RISK.V1"],
+      "identification_strength": "STRUCTURAL_PROXY",
+      "translation_assumption": "Represent the event with NFCI and credit-spread innovations and report model-conditional growth and labor sensitivity.",
+      "is_fallback": false,
+      "status": "active"
+    },
+    {
+      "scenario_mapping_id": "SM.PRICE.PRESSURE.V1",
+      "label": "Inflation shock",
+      "keywords": ["inflation shock", "price shock", "cpi shock", "通胀冲击", "价格冲击", "物价上涨"],
+      "mapping_tier": "STRUCTURAL_PROXY",
+      "shock_factor_ids": ["F.CPI.HEADLINE", "F.CPI.CORE"],
+      "response_factor_ids": ["F.RATES.UST10", "F.ACTIVITY.INDPRO", "F.LABOR.UNEMPLOYMENT"],
+      "model_recipe_ids": ["M.VAR_SYSTEM.V1"],
+      "identification_strength": "STRUCTURAL_PROXY",
+      "translation_assumption": "Represent the event with registered headline and core inflation innovations; ordering-based responses are conditional system responses.",
+      "is_fallback": false,
+      "status": "active"
+    },
+    {
+      "scenario_mapping_id": "SM.LABOR.DEMAND.V1",
+      "label": "Labor-demand shock",
+      "keywords": ["layoff", "hiring freeze", "job losses", "unemployment shock", "裁员", "招聘冻结", "失业冲击", "劳动力需求"],
+      "mapping_tier": "TRANSMISSION_PROXY",
+      "shock_factor_ids": ["F.LABOR.JOLTS_LAYOFFS", "F.LABOR.JOLTS_OPENINGS", "F.LABOR.UNEMPLOYMENT"],
+      "response_factor_ids": ["F.ACTIVITY.INDPRO", "F.LABOR.PAYROLL", "F.CPI.CORE"],
+      "model_recipe_ids": ["M.VAR_SYSTEM.V1", "M.BRIDGE_OLS.V1", "M.UNIVARIATE_AR.V1"],
+      "identification_strength": "PROXY_SENSITIVITY",
+      "translation_assumption": "Translate the event into layoffs, vacancies and unemployment axes; the result is a transmission sensitivity, not an identified treatment effect.",
+      "is_fallback": false,
+      "status": "active"
+    },
+    {
+      "scenario_mapping_id": "SM.FISCAL.SUPPLY.V1",
+      "label": "Fiscal and Treasury-supply shock",
+      "keywords": ["fiscal", "deficit", "debt issuance", "treasury supply", "财政", "赤字", "债务发行", "国债供给"],
+      "mapping_tier": "TRANSMISSION_PROXY",
+      "shock_factor_ids": ["F.FISCAL.DEBT"],
+      "response_factor_ids": ["F.RATES.UST10", "F.RATES.REAL10", "F.ACTIVITY.INDPRO"],
+      "model_recipe_ids": ["M.VAR_SYSTEM.V1"],
+      "identification_strength": "PROXY_SENSITIVITY",
+      "translation_assumption": "Translate the event into a registered federal-debt-stock innovation. This does not isolate issuance from contemporaneous fiscal and macro news.",
+      "is_fallback": false,
+      "status": "active"
+    },
+    {
+      "scenario_mapping_id": "SM.TRADE.TARIFF.V1",
+      "label": "Trade and tariff transmission envelope",
+      "keywords": ["tariff", "trade war", "import restriction", "关税", "贸易战", "进口限制"],
+      "mapping_tier": "TRANSMISSION_PROXY",
+      "shock_factor_ids": ["F.CPI.HEADLINE", "F.ACTIVITY.INDPRO"],
+      "response_factor_ids": ["F.CPI.CORE", "F.LABOR.UNEMPLOYMENT", "F.RATES.UST10", "F.MONETARY.NFCI"],
+      "model_recipe_ids": ["M.VAR_SYSTEM.V1", "M.BRIDGE_OLS.V1"],
+      "identification_strength": "PROXY_SENSITIVITY",
+      "translation_assumption": "Because an active tariff series is not yet registered, decompose the event into price-pressure and activity-demand sensitivity axes. No result is labeled a tariff causal effect.",
+      "is_fallback": false,
+      "status": "reviewed"
+    },
+    {
+      "scenario_mapping_id": "SM.GENERAL.MACRO.V1",
+      "label": "General macro sensitivity envelope",
+      "keywords": [],
+      "mapping_tier": "SENSITIVITY_ENVELOPE",
+      "shock_factor_ids": ["F.ACTIVITY.INDPRO", "F.CPI.HEADLINE", "F.LABOR.UNEMPLOYMENT", "F.MONETARY.NFCI"],
+      "response_factor_ids": ["F.ACTIVITY.INDPRO", "F.CPI.HEADLINE", "F.LABOR.UNEMPLOYMENT", "F.RATES.UST10"],
+      "model_recipe_ids": ["M.VAR_SYSTEM.V1", "M.BRIDGE_OLS.V1", "M.GROWTH_AT_RISK.V1"],
+      "identification_strength": "ASSUMPTION_SENSITIVITY",
+      "translation_assumption": "Decompose an otherwise unmapped event into activity, inflation, labor and financial-condition sensitivity axes and disclose that the event-to-axis translation is an assumption.",
+      "is_fallback": true,
+      "status": "active"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "registry_type": "aggregations",
+  "registry_version": "0.2.0",
+  "items": [
+    {"aggregation_id":"A.FORECAST_STACKING.V1","object_type":"same_target_forecasts","method":"Rolling-origin inverse-loss forecast combination with non-negative sum-to-one weights shrunk 50% toward equal weight.","constraints":["training_period_only","nonnegative","sum_to_one","equal_weight_benchmark","weight_stability_report"],"activation_gate":"at_least_two_models_with_comparable_oos_loss","status":"active"},
+    {"aggregation_id":"A.DYNAMIC_FACTOR_STATE.V1","object_type":"same_latent_state_indicators","method":"Standardized indicators aggregated by estimated PCA/state-space loadings.","constraints":["training_sample_standardization","loading_sign_convention","explained_variance_report"],"activation_gate":"at_least_three_indicators","status":"active"},
+    {"aggregation_id":"A.RANDOM_EFFECTS_META.V1","object_type":"comparable_effect_sizes","method":"Inverse-variance random-effects meta-analysis.","constraints":["same_estimand","same_horizon","standard_errors_required","heterogeneity_report"],"activation_gate":"estimand_compatibility_pass","status":"reviewed"},
+    {"aggregation_id":"A.HETEROGENEOUS_ORDINAL.V1","object_type":"heterogeneous_cross_lane_evidence","method":"Normalize model signals within registered claims, aggregate distinct claims equally within lane, then aggregate lanes equally; never raw-average incommensurate coefficients.","quality_tiers":{"HIGH":1.0,"MEDIUM":0.7,"LOW":0.35},"decision_thresholds":{"upside":0.2,"downside":-0.2},"constraints":["claim_mapping_required","normalize_within_claim","equal_registered_claims_within_lane","equal_lanes","confidence_tier_disclosed","no_probability_without_calibration","conflicts_retained"],"activation_gate":"at_least_one_successful_claim","status":"active"},
+    {"aggregation_id":"A.NO_CROSS_LANE_FIXTURE.V1","object_type":"test_fixture","method":"No cross-lane synthesis; return the fixture estimate and its limitations only.","constraints":["excluded_from_general_claims","associational_label_required"],"activation_gate":"explicit_fixture_question","status":"active"},
+    {"aggregation_id":"A.DMA_BPS.V1","object_type":"dynamic_forecast_combination","method":"Dynamic Model Averaging or Bayesian Predictive Synthesis.","constraints":["rolling_oos_superiority","stability","calibration"],"activation_gate":"must_beat_static_registered_baseline","status":"blocked"}
+  ]
+}

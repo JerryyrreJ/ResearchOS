@@ -1,0 +1,357 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CF05.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Abstract through design",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 10,
+      "page_start": 5,
+      "paraphrase": "The paper asks whether Bayesian shrinkage makes large VAR systems practical for macro forecasting and monetary-policy analysis.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF05",
+        "MR.CF05.LARGE_BVAR"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF05.02",
+      "extraction_confidence": 0.9,
+      "kind": "MODEL_SPECIFICATION",
+      "locator_label": "VAR and prior construction",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 21,
+      "page_start": 11,
+      "paraphrase": "A VAR(p) is estimated with Minnesota-style shrinkage implemented through dummy observations; overall tightness is increased with system size and may be augmented by sum-of-coefficients and initial-observation priors.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF05",
+        "MR.CF05.LARGE_BVAR"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF05.03",
+      "extraction_confidence": 0.9,
+      "kind": "RESULT",
+      "locator_label": "Forecast comparison",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 33,
+      "page_start": 22,
+      "paraphrase": "Large BVAR forecasts are compared recursively with small VAR and factor benchmarks across variables and horizons, showing that added information can help when shrinkage is calibrated.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF05",
+        "MR.CF05.LARGE_BVAR"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CF05.04",
+      "extraction_confidence": 0.9,
+      "kind": "ROBUSTNESS",
+      "locator_label": "Structural exercise and sensitivity",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 40,
+      "page_start": 30,
+      "paraphrase": "Impulse responses, forecasting loss, system size, lag length, and prior tightness are varied; structural interpretation still depends on an explicit policy-shock identification scheme.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CF05",
+        "MR.CF05.LARGE_BVAR"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "Bańbura, Giannone, and Reichlin show that a VAR can include many macro variables if shrinkage increases with system size. The prior is scaled relative to a small-model fit and may include sum-of-coefficients and dummy-initial-observation components. Forecast comparisons and a monetary-policy exercise demonstrate the value of a large information set, but hyperparameters must be chosen inside training data and stability and residual diagnostics remain mandatory.",
+  "jurisdiction_fit": "US_ADAPTABLE",
+  "method_routes": [
+    {
+      "aggregation_role": "multivariate forecast candidate; forecast weights learned only out of sample",
+      "control_variable_ids": [
+        "V.CF05.TIGHT"
+      ],
+      "dependent_variable_ids": [
+        "V.CF05.Y"
+      ],
+      "diagnostic_requirements": [
+        "companion-root stability",
+        "posterior convergence/effective sample size",
+        "residual autocorrelation and covariance conditioning",
+        "rolling log score and RMSE"
+      ],
+      "downstream_refs": [],
+      "estimand": "posterior predictive distribution of the registered macro target vector",
+      "evidence_ids": [
+        "EV.CF05.01",
+        "EV.CF05.02",
+        "EV.CF05.03",
+        "EV.CF05.04"
+      ],
+      "formula": "Y_t=c+A_1Y_{t-1}+...+A_pY_{t-p}+u_t, coefficients assigned Minnesota/dummy-observation priors",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "Bayesian predictive system; causal IRFs require a separate registered shock identification",
+      "identifying_assumptions": [
+        "stationary or appropriately transformed system",
+        "prior tightness is selected using training data only",
+        "posterior simulation and covariance estimates are numerically stable"
+      ],
+      "independent_variable_ids": [
+        "V.CF05.YLAG"
+      ],
+      "lane_ref": "US.ACTIVITY",
+      "mechanism_ref": "MECH.ACTIVITY.BROAD_STATE",
+      "method_family": "large Bayesian VAR with size-scaled Minnesota shrinkage",
+      "method_route_id": "MR.CF05.LARGE_BVAR",
+      "node_ref": "N.CANDIDATE.BVAR.LARGE_SYSTEM",
+      "research_question_id": "Q.CF05",
+      "robustness_requirements": [
+        "small/medium/large system comparison",
+        "alternative tightness and lag priors",
+        "factor-model and univariate benchmarks",
+        "variable-order and transformation sensitivity"
+      ],
+      "sample_definition": "monthly U.S. macro panel with a fixed release/vintage convention and recursive forecast origins",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CF05",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": null,
+      "evidence_ids": [
+        "EV.CF05.01"
+      ],
+      "horizon_text": "registered monthly or quarterly horizons",
+      "question_id": "Q.CF05",
+      "question_text": "How can a large Bayesian VAR exploit a broad macro information set while controlling parameter proliferation and preserving useful forecasts and impulse responses?",
+      "target_variables": [
+        "V.CF05.Y"
+      ],
+      "task_types": [
+        "FORECAST",
+        "SCENARIO"
+      ]
+    }
+  ],
+  "record_id": "REV.B00B22C32349464E.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.BVAR.LARGE_SHRINKAGE.V1",
+          "POLICY.BVAR.TRAINING_ONLY_HYPERPARAMETERS",
+          "DIAGNOSTIC.BVAR.POSTERIOR_STABILITY",
+          "ARTIFACT.BVAR.FAN_CHART"
+        ],
+        "category": "FOUNDATION_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "European Central Bank",
+        "jurisdiction_fit": "US_ADAPTABLE",
+        "page_count": 44,
+        "publication_date": "2008-11-01",
+        "report_id": "RC.B00B22C32349",
+        "review_status": "reviewed",
+        "source_catalog_id": "CF05",
+        "source_sha256": "b00b22c32349464eab3211e21e1d7e25a50eaa497d53c37fab66b9ec074779a3",
+        "source_url": "https://www.ecb.europa.eu/pub/pdf/scpwps/ecbwp966.pdf",
+        "status": "reviewed",
+        "title": "Large Bayesian VARs"
+      },
+      "change_id": "CH.CF05.REPORT",
+      "evidence_ids": [
+        "EV.CF05.01",
+        "EV.CF05.02",
+        "EV.CF05.03",
+        "EV.CF05.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CF05.LARGE_BVAR"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.B00B22C32349",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.B00B22C32349",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:13.588168Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CF05.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CF05",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CF05.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 1131379,
+    "copied_into_repository": false,
+    "institution": "European Central Bank",
+    "jurisdiction_tags": [
+      "US",
+      "bvar",
+      "shrinkage",
+      "large_system",
+      "forecasting",
+      "hyperparameters"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 44,
+    "publication_date": "2008-11-01",
+    "source_file": "LOCAL_SNAPSHOT:CF05",
+    "source_id": "SRC.B00B22C32349464E",
+    "source_sha256": "b00b22c32349464eab3211e21e1d7e25a50eaa497d53c37fab66b9ec074779a3",
+    "title": "Large Bayesian VARs"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.098157Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:58:51.912447Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CF05",
+      "at": "2026-07-15T11:22:13.609949Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF05",
+      "at": "2026-07-15T11:22:13.636014Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CF05",
+      "at": "2026-07-15T11:22:13.665431Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Vector of transformed activity, labor, price, housing, money, and interest-rate series.",
+      "evidence_ids": [
+        "EV.CF05.01",
+        "EV.CF05.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "macro variable vector",
+      "provider": "European Central Bank",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "standardized or stationary transform",
+      "variable_id": "V.CF05.Y",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Registered p lags of every variable in the Bayesian VAR.",
+      "evidence_ids": [
+        "EV.CF05.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "lagged macro system",
+      "provider": "European Central Bank",
+      "release_lag": null,
+      "role": "CONTROL",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "same as transformed variables",
+      "variable_id": "V.CF05.YLAG",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Structurally identified innovation in the policy-rate equation used only for the IRF exercise.",
+      "evidence_ids": [
+        "EV.CF05.04"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "monetary policy innovation",
+      "provider": "European Central Bank",
+      "release_lag": null,
+      "role": "TREATMENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "percentage points",
+      "variable_id": "V.CF05.POLICY",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Hyperparameter governing shrinkage toward own-lag persistence and zero cross-variable effects.",
+      "evidence_ids": [
+        "EV.CF05.02",
+        "EV.CF05.04"
+      ],
+      "frequency": "model setting",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "prior tightness",
+      "provider": "European Central Bank",
+      "release_lag": null,
+      "role": "OTHER",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "dimensionless",
+      "variable_id": "V.CF05.TIGHT",
+      "vintage_rule": null
+    }
+  ]
+}

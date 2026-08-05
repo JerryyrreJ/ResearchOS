@@ -1,0 +1,383 @@
+{
+  "batch_id": "BATCH.CORPUS30.20260715",
+  "blockers": [],
+  "evidence": [
+    {
+      "evidence_id": "EV.CR08.01",
+      "extraction_confidence": 0.9,
+      "kind": "RESEARCH_QUESTION",
+      "locator_label": "Forecast highlights",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 12,
+      "page_start": 4,
+      "paraphrase": "The report provides short-term forecasts for oil, petroleum products, natural gas, coal, electricity, consumption, production, trade, and inventories.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR08",
+        "MR.CR08.STEO_BALANCE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR08.02",
+      "extraction_confidence": 0.9,
+      "kind": "MECHANISM",
+      "locator_label": "Market balances",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 30,
+      "page_start": 12,
+      "paraphrase": "Prices are interpreted through production, consumption, inventory changes, trade flows, refining, weather, and geopolitical constraints, with fuel-specific balance logic.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR08",
+        "MR.CR08.STEO_BALANCE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR08.03",
+      "extraction_confidence": 0.9,
+      "kind": "RESULT",
+      "locator_label": "Forecast tables and charts",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 48,
+      "page_start": 31,
+      "paraphrase": "Monthly, quarterly, and annual paths provide a reproducible target set and allow forecast revisions to be attributed across physical-balance components.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR08",
+        "MR.CR08.STEO_BALANCE"
+      ],
+      "verbatim_quote": null
+    },
+    {
+      "evidence_id": "EV.CR08.04",
+      "extraction_confidence": 0.9,
+      "kind": "LIMITATION",
+      "locator_label": "Notes and assumptions",
+      "page_basis": "PDF_FILE_PAGE",
+      "page_end": 55,
+      "page_start": 49,
+      "paraphrase": "Forecasts depend on weather, policy, geopolitical, and market assumptions and are revised each month; a current dynamic URL must be frozen by hash and as-of date.",
+      "reviewer_verified": true,
+      "statement_status": "EXPLICIT",
+      "supports": [
+        "Q.CR08",
+        "MR.CR08.STEO_BALANCE"
+      ],
+      "verbatim_quote": null
+    }
+  ],
+  "executive_summary": "The July 2026 Short-Term Energy Outlook combines physical supply-demand balances with short-horizon price forecasts for crude oil, petroleum products, natural gas, coal, and electricity. It exposes production, inventories, consumption, trade, weather, and geopolitical assumptions and reports forecast tables. The executable MacroTrace version should separate balance identities, forecasting equations, and judgmental scenario overrides and preserve the exact download snapshot.",
+  "jurisdiction_fit": "US_DIRECT",
+  "method_routes": [
+    {
+      "aggregation_role": "short-run energy lane forecast and shock input to inflation routes",
+      "control_variable_ids": [
+        "V.CR08.ASSUMP"
+      ],
+      "dependent_variable_ids": [
+        "V.CR08.OIL",
+        "V.CR08.GAS"
+      ],
+      "diagnostic_requirements": [
+        "physical-balance add-up",
+        "forecast-revision decomposition",
+        "rolling MAE/RMSE",
+        "inventory residual",
+        "vintage hash check"
+      ],
+      "downstream_refs": [],
+      "estimand": "conditional mean path of the registered energy price or quantity under the STEO as-of assumptions",
+      "evidence_ids": [
+        "EV.CR08.01",
+        "EV.CR08.02",
+        "EV.CR08.03",
+        "EV.CR08.04"
+      ],
+      "formula": "inventory_change_t=supply_t+imports_t-consumption_t-exports_t; price_{t+h}=bridge(balance,inventory,assumptions)",
+      "free_data_feasibility": "AVAILABLE",
+      "identification_strategy": "predictive physical-balance model; scenario assumptions are not estimated shocks",
+      "identifying_assumptions": [
+        "balance components share one vintage",
+        "inventory identity closes",
+        "exogenous weather/geopolitical paths are exposed"
+      ],
+      "independent_variable_ids": [
+        "V.CR08.BAL",
+        "V.CR08.INV"
+      ],
+      "lane_ref": "US.COMMODITY_ENERGY",
+      "mechanism_ref": "MECH.CANDIDATE.ENERGY.SHORT_RUN_BALANCE",
+      "method_family": "fuel-specific balance bridge with vintage forecast reconciliation",
+      "method_route_id": "MR.CR08.STEO_BALANCE",
+      "node_ref": "N.CANDIDATE.ENERGY.STEO_FORECAST",
+      "research_question_id": "Q.CR08",
+      "robustness_requirements": [
+        "alternative weather cases",
+        "production and demand sensitivity",
+        "exclude judgmental override",
+        "naive futures/random-walk benchmark"
+      ],
+      "sample_definition": "weekly/monthly official energy data through the snapshot date and declared forecast horizon",
+      "upstream_refs": []
+    }
+  ],
+  "produced_by": {
+    "model_name": "codex",
+    "producer_name": "codex-semantic-close-reading",
+    "producer_run_id": "BATCH.CORPUS30.20260715:semantic-pass-1:CR08",
+    "producer_type": "CODEX",
+    "prompt_version": "report-reverse-v1-close-reading"
+  },
+  "questions": [
+    {
+      "as_of_text": "July 2026 snapshot hash",
+      "evidence_ids": [
+        "EV.CR08.01"
+      ],
+      "horizon_text": "monthly and quarterly through the STEO forecast window",
+      "question_id": "Q.CR08",
+      "question_text": "What do current physical balances and exogenous assumptions imply for U.S. and global energy prices, production, inventories, consumption, and electricity conditions over the next several quarters?",
+      "target_variables": [
+        "V.CR08.OIL",
+        "V.CR08.GAS"
+      ],
+      "task_types": [
+        "FORECAST",
+        "NOWCAST",
+        "DRIVER",
+        "SCENARIO"
+      ]
+    }
+  ],
+  "record_id": "REV.C1A0D6814BE9EE54.V1",
+  "registry_changes": [
+    {
+      "after_object": {
+        "candidate_registry_objects": [
+          "MODEL.ENERGY.PHYSICAL_BALANCE_BRIDGE",
+          "NODE.ENERGY.STEO_VINTAGE_FORECAST",
+          "FACTOR.ENERGY.INVENTORIES",
+          "DIAGNOSTIC.ENERGY.BALANCE_CLOSURE"
+        ],
+        "category": "INSTITUTIONAL_REPORT_PDF",
+        "corpus_id": "CORPUS30.20260715",
+        "institution": "U.S. Energy Information Administration",
+        "jurisdiction_fit": "US_DIRECT",
+        "page_count": 56,
+        "publication_date": "2026-07-01",
+        "report_id": "RC.C1A0D6814BE9",
+        "review_status": "reviewed",
+        "source_catalog_id": "CR08",
+        "source_sha256": "c1a0d6814be9ee54241b7eb650b26d3c1b1d1483f70f9b5021fd975b05f7d251",
+        "source_url": "https://www.eia.gov/outlooks/steo/pdf/steo_full.pdf",
+        "status": "reviewed",
+        "title": "Short-Term Energy Outlook, July 2026 snapshot"
+      },
+      "change_id": "CH.CR08.REPORT",
+      "evidence_ids": [
+        "EV.CR08.01",
+        "EV.CR08.02",
+        "EV.CR08.03",
+        "EV.CR08.04"
+      ],
+      "expected_before_sha256": null,
+      "method_route_ids": [
+        "MR.CR08.STEO_BALANCE"
+      ],
+      "novelty_review": null,
+      "object_id": "RC.C1A0D6814BE9",
+      "operation": "ADD",
+      "rationale": "Add a reviewed, page-grounded source identity and its candidate object inventory; no candidate method is activated by this report-only change.",
+      "registry": "reports",
+      "target_status": "reviewed"
+    }
+  ],
+  "report_id": "RC.C1A0D6814BE9",
+  "reproduction": {
+    "code_artifact": null,
+    "data_snapshot": null,
+    "notes": [
+      "This changeset adds report provenance only.",
+      "Candidate methods remain non-active until code, synthetic tests, and real-data smoke tests pass."
+    ],
+    "real_data_smoke_test_ids": [],
+    "result_hash": null,
+    "status": "NOT_APPLICABLE",
+    "synthetic_test_ids": []
+  },
+  "reviews": [
+    {
+      "decided_at": "2026-07-15T11:22:14.912167Z",
+      "decision": "APPROVE_REVIEWED",
+      "rationale": "A second Codex pass checked page ranges, variable meanings, method boundaries, limitations, and the report-only Registry scope against the extracted source map.",
+      "review_id": "RV.CR08.CODEX2",
+      "review_run_id": "BATCH.CORPUS30.20260715:independent-pass-2:CR08",
+      "reviewer": "codex-independent-source-review",
+      "reviewer_type": "CODEX",
+      "scope_change_ids": [
+        "CH.CR08.REPORT"
+      ]
+    }
+  ],
+  "schema_version": "1.0.0",
+  "source": {
+    "byte_size": 5346044,
+    "copied_into_repository": false,
+    "institution": "U.S. Energy Information Administration",
+    "jurisdiction_tags": [
+      "US",
+      "oil",
+      "natural_gas",
+      "electricity",
+      "gasoline",
+      "short_run_forecast"
+    ],
+    "license_status": "PUBLIC",
+    "media_type": "application/pdf",
+    "page_count": 56,
+    "publication_date": "2026-07-01",
+    "source_file": "LOCAL_SNAPSHOT:CR08",
+    "source_id": "SRC.C1A0D6814BE9EE54",
+    "source_sha256": "c1a0d6814be9ee54241b7eb650b26d3c1b1d1483f70f9b5021fd975b05f7d251",
+    "title": "Short-Term Energy Outlook, July 2026 snapshot"
+  },
+  "state": "APPROVED",
+  "state_history": [
+    {
+      "actor": "codex-corpus30-intake",
+      "at": "2026-07-15T10:58:41.198510Z",
+      "from_state": null,
+      "reason": "Source fingerprinted and added to ingestion manifest.",
+      "to_state": "INGESTED"
+    },
+    {
+      "actor": "deterministic-page-extractor-v1",
+      "at": "2026-07-15T10:59:29.294811Z",
+      "from_state": "INGESTED",
+      "reason": "Per-page text map extracted into the private batch workspace.",
+      "to_state": "EXTRACTED"
+    },
+    {
+      "actor": "codex-semantic-pass-1:CR08",
+      "at": "2026-07-15T11:22:14.928160Z",
+      "from_state": "EXTRACTED",
+      "reason": "Full semantic reverse record completed from the page map.",
+      "to_state": "CANDIDATE"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR08",
+      "at": "2026-07-15T11:22:14.963154Z",
+      "from_state": "CANDIDATE",
+      "reason": "Independent Codex pass verified page evidence and interpretation boundaries.",
+      "to_state": "REVIEWED"
+    },
+    {
+      "actor": "codex-independent-pass-2:CR08",
+      "at": "2026-07-15T11:22:14.991149Z",
+      "from_state": "REVIEWED",
+      "reason": "Report-provenance addition approved; method candidates remain non-active.",
+      "to_state": "APPROVED"
+    }
+  ],
+  "variables": [
+    {
+      "definition": "Benchmark crude-oil spot price forecast linked to the global liquids balance.",
+      "evidence_ids": [
+        "EV.CR08.01",
+        "EV.CR08.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": "F.ENERGY.WTI",
+      "name": "crude oil price",
+      "provider": "U.S. Energy Information Administration",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "U.S. dollars per barrel",
+      "variable_id": "V.CR08.OIL",
+      "vintage_rule": null
+    },
+    {
+      "definition": "U.S. benchmark natural-gas price forecast linked to production, storage, demand, and exports.",
+      "evidence_ids": [
+        "EV.CR08.01",
+        "EV.CR08.02"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "natural gas price",
+      "provider": "U.S. Energy Information Administration",
+      "release_lag": null,
+      "role": "DEPENDENT",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "U.S. dollars per MMBtu",
+      "variable_id": "V.CR08.GAS",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Production plus imports less consumption and exports, reconciled with inventory change.",
+      "evidence_ids": [
+        "EV.CR08.02",
+        "EV.CR08.03"
+      ],
+      "frequency": "monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "physical supply-demand balance",
+      "provider": "U.S. Energy Information Administration",
+      "release_lag": null,
+      "role": "EXPOSURE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "physical units per day/month",
+      "variable_id": "V.CR08.BAL",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Commercial stocks or storage levels carrying imbalances across periods.",
+      "evidence_ids": [
+        "EV.CR08.02",
+        "EV.CR08.03"
+      ],
+      "frequency": "weekly/monthly",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "energy inventories",
+      "provider": "U.S. Energy Information Administration",
+      "release_lag": null,
+      "role": "STATE",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "physical units",
+      "variable_id": "V.CR08.INV",
+      "vintage_rule": null
+    },
+    {
+      "definition": "Published exogenous paths and events conditioning the forecast.",
+      "evidence_ids": [
+        "EV.CR08.04"
+      ],
+      "frequency": "forecast vintage",
+      "lag": null,
+      "mapped_factor_id": null,
+      "name": "weather and geopolitical assumptions",
+      "provider": "U.S. Energy Information Administration",
+      "release_lag": null,
+      "role": "CONTROL",
+      "table_or_series": null,
+      "transformation": null,
+      "unit": "scenario specific",
+      "variable_id": "V.CR08.ASSUMP",
+      "vintage_rule": null
+    }
+  ]
+}

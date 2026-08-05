@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://macrotrace.local/schemas/research_job.schema.json",
+  "title": "MacroTrace v0.2 Research Job and v0.3 Depth-Extension Graph Contract",
+  "description": "Frozen public request and white-box graph contract. The client never sends a horizon or executable code.",
+  "oneOf": [
+    {"$ref": "#/$defs/research_job_create"},
+    {"$ref": "#/$defs/research_graph"}
+  ],
+  "$defs": {
+    "research_job_create": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question"],
+      "properties": {
+        "question": {"type": "string", "minLength": 3, "maxLength": 4000},
+        "as_of_date": {"type": "string", "format": "date"},
+        "display_mode": {"enum": ["STANDARD", "COMPACT", "ACADEMIC"], "default": "STANDARD"}
+      }
+    },
+    "job_status": {
+      "enum": [
+        "QUEUED", "PARSING_QUERY", "CLASSIFYING_WORKFLOW", "ROUTING_LANES",
+        "ROUTING_NODES", "SELECTING_FACTORS", "PLANNING_MODELS",
+        "SELECTING_PARAMETERS", "VALIDATING_PLAN", "EXECUTING_MODELS",
+        "AGGREGATING_LANES", "SYNTHESIZING", "COMPLETE", "PARTIAL",
+        "FAILED", "CANCELLED"
+      ]
+    },
+    "coverage": {"enum": ["FULL", "PARTIAL", "UNSUPPORTED", "OUT_OF_SCOPE"]},
+    "horizon": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max", "unit", "source"],
+      "properties": {
+        "min": {"type": "integer", "minimum": 0, "maximum": 120},
+        "max": {"type": "integer", "minimum": 0, "maximum": 240},
+        "unit": {"enum": ["DAYS", "WEEKS", "MONTHS", "QUARTERS", "YEARS"]},
+        "source": {"enum": ["USER_EXPLICIT", "POLICY_DEFAULT"]},
+        "raw_text": {"type": ["string", "null"]}
+      }
+    },
+    "graph_node_type": {
+      "enum": [
+        "QUESTION", "QUERY", "CLAIM", "LANE", "MECHANISM", "RESEARCH_NODE", "FACTOR",
+        "DATASET", "TRANSFORM", "MODEL_SPECIFICATION", "MODEL_RUN", "RESEARCH_DEPTH_GATE", "DIAGNOSTIC", "EVIDENCE",
+        "LANE_SIGNAL", "AGGREGATION", "FINAL_CLAIM", "FALSIFIER"
+      ]
+    },
+    "graph_node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["node_id", "node_type", "label", "status"],
+      "properties": {
+        "node_id": {"type": "string", "minLength": 3, "maxLength": 160},
+        "node_type": {"$ref": "#/$defs/graph_node_type"},
+        "label": {"type": "string", "minLength": 1, "maxLength": 300},
+        "status": {"enum": ["NOT_ROUTED", "PLANNED", "BLOCKED", "PENDING", "RUNNING", "SUCCESS", "WARNING", "FAILED", "SKIPPED"]},
+        "role": {"type": ["string", "null"]},
+        "lane_id": {"type": ["string", "null"]},
+        "summary": {"type": ["string", "null"], "maxLength": 2000},
+        "detail_endpoint": {"type": ["string", "null"]},
+        "metadata": {"type": "object"}
+      }
+    },
+    "graph_edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["edge_id", "source", "target", "relation"],
+      "properties": {
+        "edge_id": {"type": "string", "minLength": 3},
+        "source": {"type": "string", "minLength": 3},
+        "target": {"type": "string", "minLength": 3},
+        "relation": {"enum": ["PARSES_TO", "DECOMPOSES_TO", "ROUTES_TO", "USES", "TRANSFORMS_TO", "ESTIMATES", "DIAGNOSES", "SUPPORTS", "REFUTES", "AGGREGATES_TO", "FALSIFIED_BY"]}
+      }
+    },
+    "research_graph": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "job_id", "nodes", "edges", "updated_at"],
+      "properties": {
+        "schema_version": {"const": "0.2.0"},
+        "job_id": {"type": "string", "pattern": "^JOB_[A-Z0-9_]+$"},
+        "nodes": {"type": "array", "maxItems": 500, "items": {"$ref": "#/$defs/graph_node"}},
+        "edges": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/$defs/graph_edge"}},
+        "updated_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "academic_table": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "dependent_variable", "columns", "rows", "statistics"],
+      "properties": {
+        "title": {"type": "string"},
+        "dependent_variable": {"type": "string"},
+        "formula": {"type": "string"},
+        "columns": {"type": "array", "items": {"type": "string"}},
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["variable", "estimates"],
+            "properties": {
+              "variable": {"type": "string"},
+              "estimates": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["coefficient", "std_error", "p_value", "ci_low", "ci_high"],
+                  "properties": {
+                    "coefficient": {"type": ["number", "null"]},
+                    "std_error": {"type": ["number", "null"]},
+                    "p_value": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+                    "ci_low": {"type": ["number", "null"]},
+                    "ci_high": {"type": ["number", "null"]},
+                    "stars": {"enum": ["", "*", "**", "***"]}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "statistics": {"type": "object"},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["diagnostic_id", "name", "applicable", "status", "interpretation", "impact"],
+      "properties": {
+        "diagnostic_id": {"type": "string"},
+        "name": {"type": "string"},
+        "statistic": {"type": ["number", "string", "null"]},
+        "p_value": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "threshold": {"type": ["number", "string", "null"]},
+        "applicable": {"type": "boolean"},
+        "status": {"enum": ["PASS", "WARNING", "FAIL", "INFORMATIONAL", "NOT_APPLICABLE"]},
+        "interpretation": {"type": "string"},
+        "impact": {"type": "string"}
+      }
+    }
+  }
+}
