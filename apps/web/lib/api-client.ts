@@ -177,6 +177,109 @@ export type VersionDiff = {
   summary: string;
 };
 
+export type JobEvent = { sequence: number; event_type: string; status: string; payload: Record<string, unknown> };
+
+export type DataConnector = {
+  id: string;
+  mark: string;
+  name: string;
+  institution: string;
+  category: "market" | "macro" | "fundamentals" | "alternative";
+  coverage: string;
+  keyRequired: boolean;
+  runtime: "native" | "python-bridge" | "licensed";
+  docsUrl: string;
+  keyUrl: string;
+  keyPlaceholder: string;
+  configured: boolean;
+  enabled: boolean;
+  apiKeyMasked: string | null;
+  lastTestStatus: string | null;
+  lastTestAt: string | null;
+  secretStorage: "server-encrypted" | "not-required";
+  legalNote?: string;
+};
+
+export type ConnectorCatalog = {
+  connectors: DataConnector[];
+  secretPolicy: { browserStorage: false; encryptedAtRest: true; returnedToClient: false };
+};
+
+export type ConnectorQueryResult = {
+  ok: true;
+  connectorId: string;
+  latencyMs: number;
+  dataset: string;
+  rows: unknown;
+  metadata: Record<string, unknown>;
+};
+
+export type DataPlugin = {
+  plugin_id: string;
+  name: string;
+  description: string;
+  credential_kind: string;
+  license_policy: string;
+  supports_catalog: boolean;
+  available: boolean;
+  configured: boolean;
+  enabled: boolean;
+};
+
+export type DataPluginDataset = {
+  dataset_id: string;
+  name: string;
+  description: string;
+  parameters: string[];
+};
+
+export type DataObjectRef = {
+  contract_version: "0.1.0-frozen";
+  object_id: string;
+  version_id: string;
+  object_type: "DATASET";
+  name: string | null;
+  representation: string;
+  schema_version: string;
+  content_hash: string;
+  license_policy: string;
+  access_scope: string;
+  content_uri: string | null;
+  as_of_date: string | null;
+  data_schema: {
+    time_key?: string | null;
+    entity_keys?: string[];
+    value_fields?: string[];
+    frequency?: string | null;
+    units?: Record<string, string>;
+    field_types?: Record<string, string>;
+  } | null;
+  lineage_refs: string[];
+  metadata: Record<string, unknown>;
+};
+
+export type DataPluginIngestResult = {
+  plugin_id: string;
+  dataset_id: string;
+  batch_id: string;
+  asset_id: string;
+  version_id: string;
+  status: string;
+  resolution_status: string | null;
+  row_count: number;
+  truncated: boolean;
+  data_ref: DataObjectRef;
+};
+
+export type DatasetPreview = {
+  version_id: string;
+  content_hash: string;
+  columns: string[];
+  rows: Array<Record<string, string | null>>;
+  returned_rows: number;
+  truncated: boolean;
+};
+
 export class ResearchOSApiError extends Error {
   readonly status: number;
 
@@ -192,7 +295,12 @@ type RequestOptions = RequestInit & { searchParams?: Record<string, string | und
 function getBaseUrl() {
   const configured = process.env.NEXT_PUBLIC_RESEARCHOS_API_BASE_URL;
   if (configured) return configured.replace(/\/$/, "");
-  if (typeof window !== "undefined") return `${window.location.origin}/api/v1`;
+  if (typeof window !== "undefined") {
+    if (["localhost", "127.0.0.1"].includes(window.location.hostname)) {
+      return "http://127.0.0.1:8000/api/v1";
+    }
+    return `${window.location.origin}/api/v1`;
+  }
   return "http://127.0.0.1:8000/api/v1";
 }
 
@@ -217,7 +325,70 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   return (await response.json()) as T;
 }
 
+async function requestJobEvents(jobId: string) {
+  const response = await fetch(`${getBaseUrl()}/jobs/${encodeURIComponent(jobId)}/events`, { headers: { Accept: "text/event-stream" } });
+  if (!response.ok) throw new ResearchOSApiError(`ResearchOS job events failed (${response.status})`, response.status);
+  const text = await response.text();
+  return text.split("\n").filter(line => line.startsWith("data: ")).map(line => JSON.parse(line.slice(6)) as JobEvent);
+}
+
 export const researchosApi = {
+  listDataPlugins: () => request<DataPlugin[]>("/data-plugins"),
+
+  setDataPluginEnabled: (pluginId: string, enabled: boolean) =>
+    request<DataPlugin>(`/data-plugins/${encodeURIComponent(pluginId)}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ enabled, actor_id: "web-demo" }),
+    }),
+
+  listDataPluginDatasets: (pluginId: string, query?: string, limit = 100) =>
+    request<DataPluginDataset[]>(`/data-plugins/${encodeURIComponent(pluginId)}/datasets`, {
+      searchParams: { q: query, limit: String(limit) },
+    }),
+
+  ingestDataPluginDataset: (
+    pluginId: string,
+    payload: {
+      workspace_id: string;
+      dataset_id: string;
+      parameters?: Record<string, unknown>;
+      logical_name?: string;
+      row_limit?: number;
+    },
+  ) => request<DataPluginIngestResult>(`/data-plugins/${encodeURIComponent(pluginId)}/ingest`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ actor_id: "web-demo", parameters: {}, ...payload }),
+  }),
+
+  previewDataset: (versionId: string, limit = 50) =>
+    request<DatasetPreview>(`/asset-versions/${encodeURIComponent(versionId)}/preview`, {
+      searchParams: { limit: String(limit) },
+    }),
+
+  listConnectors: () => request<ConnectorCatalog>("/connectors"),
+
+  configureConnector: (connectorId: string, apiKey: string, enabled = true) =>
+    request<DataConnector>(`/connectors/${encodeURIComponent(connectorId)}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ apiKey, enabled }),
+    }),
+
+  clearConnector: (connectorId: string) =>
+    request<DataConnector>(`/connectors/${encodeURIComponent(connectorId)}`, { method: "DELETE" }),
+
+  testConnector: (connectorId: string) =>
+    request<ConnectorQueryResult>(`/connectors/${encodeURIComponent(connectorId)}/test`, { method: "POST" }),
+
+  queryConnector: (connectorId: string, parameters: Record<string, unknown>) =>
+    request<ConnectorQueryResult>(`/connectors/${encodeURIComponent(connectorId)}/query`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(parameters),
+    }),
+
   listWorkspaces: () => request<Workspace[]>("/workspaces"),
 
   createWorkspace: (name: string) =>
@@ -253,6 +424,10 @@ export const researchosApi = {
       body: JSON.stringify({ actor_id: "web-demo" }),
     }),
 
+  getBatch: (batchId: string) => request<Batch>(`/ingest-batches/${encodeURIComponent(batchId)}`),
+
+  listAssets: (workspaceId: string) => request<Array<Record<string, unknown>>>(`/workspaces/${encodeURIComponent(workspaceId)}/assets`),
+
   listObjects: (workspaceId: string, query?: string) =>
     request<ObjectSummary[]>(`/workspaces/${encodeURIComponent(workspaceId)}/objects`, {
       searchParams: { q: query },
@@ -260,6 +435,12 @@ export const researchosApi = {
 
   getObject: (objectId: string) =>
     request<ObjectDetail>(`/objects/${encodeURIComponent(objectId)}`),
+
+  listObjectVersions: (objectId: string) => request<ObjectReference[]>(`/objects/${encodeURIComponent(objectId)}/versions`),
+
+  getAsset: (assetId: string) => request<Record<string, unknown>>(`/assets/${encodeURIComponent(assetId)}`),
+
+  getAssetVersion: (versionId: string) => request<Record<string, unknown>>(`/asset-versions/${encodeURIComponent(versionId)}`),
 
   getGraph: (workspaceId: string) =>
     request<OntologyGraph>(
@@ -277,6 +458,8 @@ export const researchosApi = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     }),
+
+  getThesis: (thesisId: string) => request<Record<string, unknown>>(`/theses/${encodeURIComponent(thesisId)}`),
 
   compileThesis: (thesisId: string) =>
     request<CompileEnvelope>(`/theses/${encodeURIComponent(thesisId)}/compile`, { method: "POST" }),
@@ -304,6 +487,10 @@ export const researchosApi = {
   getToolGraph: (toolRunId: string) =>
     request<Record<string, unknown>>(`/tool-runs/${encodeURIComponent(toolRunId)}/graph`),
 
+  getToolRun: (toolRunId: string) => request<ToolRunEnvelope>(`/tool-runs/${encodeURIComponent(toolRunId)}`),
+
   getToolArtifacts: (toolRunId: string) =>
     request<{ items: Array<Record<string, unknown>> }>(`/tool-runs/${encodeURIComponent(toolRunId)}/artifacts`),
+
+  getJobEvents: requestJobEvents,
 };

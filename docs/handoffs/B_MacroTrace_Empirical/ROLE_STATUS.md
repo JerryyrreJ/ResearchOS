@@ -1,34 +1,60 @@
-# Role B Status
+# Integrated Product Status
 
 Updated: 2026-08-05 (Asia/Shanghai)
 
-Current state: `FIRST_VERTICAL_SLICE_COMPLETE_WAITING_FOR_D_BASE_MERGE`
-
-Detailed implementation and handoff log: `IMPLEMENTATION_LOG.md`
+Current state: `A_B_C_D_INTEGRATED_LOCAL_PRODUCT_READY_FOR_TEAM_REVIEW`
 
 ```text
-Role: B — MacroTrace Empirical Tool
-Branch: role/b-macrotrace
-Commit: docs 008bfb672e75; subtree 1ac66da8c637; fixture adapter f40c6fdcc892
-Completed: isolated workspace; immutable handoff source archive and SHA-256 manifest; latest D-base scope audit; frozen-contract verification; repository inventory; MacroTrace subtree import; fixture-only Tool Adapter; COMPLETE/PARTIAL/FAILED fixtures; CANCELLED/UNSUPPORTED/OUT_OF_SCOPE mappings; stable graph/artifact routes; 65 upstream tests and 33 adapter tests; remote branch handoff; team-readable implementation log
-In progress: first PR is fully prepared; waiting for D/shared baseline to enter integration before opening it
-Blocked: integration exists at the empty master baseline and does not contain the D/shared contracts base inherited by B; A M1 does not expose /v1/data/resolve; C has no remote branch; D baseline build/test scripts fail on Windows because they use Unix inline environment-variable syntax
-Contract impact: NONE
-Need from other roles: D/shared baseline merged into integration; A implements frozen /v1/data/resolve; C confirms fixture deserialization; D consumes B graph/artifact routes and owns or documents its Windows script issue
-Next integration test: C deserializes COMPLETE, PARTIAL, and FAILED EvidenceBundle fixtures; D consumes stable graph/artifact URLs only
+Product mainline: MacroTrace empirical research (Part B)
+Supporting layer: immutable data, documents, plugin catalog and lineage (Part A)
+Conclusion boundary: evidence-bounded claim/report semantics (Part C)
+Browser delivery: MacroTrace primary UI plus optional ResearchOS shell (Part D)
+Branch: role/b-data-plugins
+Contract impact: NONE — contracts/v1 and fixtures/contracts unchanged
 ```
 
-## Milestone evidence
+## What now works
 
-- Base: `origin/role/d-frontend@e0ec0ded1abea1239250c1831b73a84d51fbab5b`
-- Contract version: `0.1.0-frozen`; hashes unchanged
-- MacroTrace upstream target: `d96c8d91131b0eec2b34569976b894ff14381ddd`
-- D baseline: lint passed; build/test baseline blocked before compilation by Windows-incompatible environment-variable syntax
-- Contract validator: 13 frozen hashes and 8 shared fixtures passed
-- Fixture adapter: 33 tests passed; failed models and limitations remain visible; evidence type is capped; result hash excludes runtime identity
-- Upstream after adapter: 65 tests passed
-- Remote update on 2026-08-05: integration now exists at `2f1f1731eeb2`, identical to the empty master baseline; D is at `fd8a458d751f`, A is at `4821f060c7e7`, and C has no remote branch
-- PR scope guard: no PR opened yet because B inherits D through `e0ec0ded1abe`; targeting the current empty integration would mix D/shared files into the B PR
-- A dependency audit: the current A M1 implements deterministic asset ingest/versioning but has no `/v1/data/resolve`, so REAL mode remains gated
-- D consumer note: B graph and artifact routes now exist, but D's status still lists them as missing and has not confirmed consumption
-- Secrets: no credentials or API keys copied from chat into the workspace or repository
+- The local product opens directly into the mature MacroTrace question interface.
+- A research question produces a dense registered graph rather than a few fixture cards.
+- The Part A evidence space shows the entire available data universe in grey and highlights
+  the datasets/factors selected for the current question.
+- AKShare and FRED are selectable server-side plugins; their keys never enter the browser.
+- Plugin output becomes a hashed, immutable Role A AssetVersion and can be resolved by Role B
+  only through a pinned DataObjectRef.
+- The Part B graph retains lanes, mechanisms, factors, specifications, model runs,
+  diagnostics, evidence, aggregation and final claims.
+- The full MacroTrace report remains the last step after data and empirical inspection.
+- One local launcher starts the unified A+B+C API and the primary product page.
+
+## Evidence
+
+- Local official macro store: 76 real series available.
+- Registry: 10 lanes, 15 dataset families, 55 factors, 31 mechanisms, 82 model
+  specifications and 7 executable model recipes.
+- Rebuilt graph from a completed complex growth/recession plan: 375 nodes and 537 edges;
+  15 dataset-family nodes remain visible, with 8 routed and 6 grey/unrouted in that example.
+- AKShare live smoke: `macro_china_cpi` returned tabular data and obeyed the row cap.
+- FRED live smoke: `UNRATE` returned official observations using the ignored local key.
+- MacroTrace upstream suite: 65 tests passed.
+- Data-plugin API suite: 3 tests passed.
+- Unified route smoke: primary page, A API, B API, plugin API and frontend assets all returned
+  successfully.
+
+## Known limitations
+
+- A fresh debt/yield end-to-end run exceeded the bounded four-minute integration smoke while
+  selecting parameters. The exact test job and its partial nodes/events were removed after the
+  check. Existing completed runs remain available for the demo. Long-task latency and recovery
+  need a separate performance pass; this is not represented as a successful smoke.
+- The shared fixture hash test is line-ending-sensitive on the current Windows checkout: the
+  Git blobs match their recorded hashes, while CRLF worktree bytes do not. Frozen fixtures were
+  not modified to hide this baseline issue.
+- China-specific MacroTrace workflows are not yet registered. AKShare currently expands the A
+  evidence universe and Asset path; B still activates only reviewed research recipes.
+
+## Next team action
+
+Review the primary flow with an existing completed job, then decide whether the hackathon demo
+should use the completed growth/recession question or the completed fiscal-debt/yield question.
+Do not start the live run on stage unless the four-minute latency is acceptable.

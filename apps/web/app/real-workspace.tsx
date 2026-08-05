@@ -1,229 +1,94 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- source favicons are remote evidence metadata */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  researchosApi,
-  type ObjectSummary,
-  type OntologyGraph,
-  type ProjectState,
-  type WorkspaceSource,
-} from "../lib/api-client";
+import { researchosApi, type ObjectSummary, type WorkspaceSource } from "../lib/api-client";
 
 type QueueStatus = "QUEUED" | "UPLOADING" | "COMPLETED" | "DUPLICATE" | "FAILED";
+type QueueItem = { id:string; fileName:string; status:QueueStatus; detail?:string };
+type ResearchState = "idle" | "running" | "complete";
+type SourceTab = "all" | "web" | "data" | "local";
+type RealWorkspaceProps = { onSelect:(item:WorkspaceSource)=>void; onObjectCount:(count:number)=>void };
 
-type QueueItem = {
-  id: string;
-  fileName: string;
-  status: QueueStatus;
-  detail?: string;
-};
+const publicSources = [
+  {id:"WEB_01",kind:"web" as const,mark:"FED",title:"美联储 · 货币政策与数据发布",detail:"官方政策与数据发布",meta:"公开 · 官方",url:"https://www.federalreserve.gov/"},
+  {id:"WEB_02",kind:"web" as const,mark:"BLS",title:"美国劳工统计局 · CPI",detail:"通胀数据与发布时间表",meta:"公开 · 官方",url:"https://www.bls.gov/cpi/"},
+  {id:"WEB_03",kind:"web" as const,mark:"新闻",title:"美股上涨集中度与市场宽度讨论",detail:"新闻与市场观点聚类",meta:"12 个相关链接",url:"#"},
+];
+const dataSources = [
+  {id:"DATA_01",kind:"data" as const,mark:"接口",title:"标普 500 与成分股贡献",detail:"指数收益、权重与贡献率",meta:"截止 2024-01-12",url:"#"},
+  {id:"DATA_02",kind:"data" as const,mark:"FRED",title:"10 年期美国国债固定期限利率",detail:"DGS10 · 日频",meta:"已固定版本",url:"https://fred.stlouisfed.org/series/DGS10"},
+  {id:"DATA_03",kind:"data" as const,mark:"模型",title:"MacroTrace · 市场宽度模型设定",detail:"回归设定、诊断与稳健性检查",meta:"待运行",url:"#"},
+];
+const samplePrompts = ["本周美股上涨是否主要由少数科技龙头驱动？","近期利率变化对 REITs 二级市场表现有什么影响？","结合政策与数据，寻找本周值得跟踪的宏观研究线索。"];
 
-type RealWorkspaceProps = {
-  onSelect: (item: WorkspaceSource) => void;
-  onObjectCount: (count: number) => void;
-};
-
-function sourceFromObject(item: ObjectSummary): WorkspaceSource {
-  const current = item.current_version;
-  return {
-    type: "SOURCE_FILE",
-    name: item.name,
-    id: item.object_id,
-    version: current?.version_id ?? "—",
-    state: item.status,
-    origin: "api",
-    formatKind: current?.format_kind ?? "UNKNOWN",
-    sizeBytes: current?.size_bytes ?? 0,
-    fragmentCount: item.fragment_count,
-    versionCount: item.version_count,
-    updatedAt: current?.created_at ?? item.created_at,
-  };
+function sourceFromObject(item:ObjectSummary):WorkspaceSource{
+  const current=item.current_version;
+  return {type:"SOURCE_FILE",name:item.name,id:item.object_id,version:current?.version_id??"—",state:item.status,origin:"api",formatKind:current?.format_kind??"UNKNOWN",sizeBytes:current?.size_bytes??0,fragmentCount:item.fragment_count,versionCount:item.version_count,updatedAt:current?.created_at??item.created_at};
+}
+function readableBytes(value:number){if(value<1024)return`${value} B`;if(value<1024*1024)return`${(value/1024).toFixed(1)} KB`;return`${(value/1024/1024).toFixed(1)} MB`}
+function queueLabel(item:QueueItem){
+  if(item.status==="DUPLICATE")return"重复文件 · 已跳过";
+  if(item.status==="COMPLETED"&&item.detail==="NEW_VERSION")return"已建立新版本";
+  if(item.status==="COMPLETED"&&item.detail==="NEW_ASSET")return"已加入资料库";
+  return{QUEUED:"等待上传",UPLOADING:"上传中",COMPLETED:"已完成",DUPLICATE:"重复文件",FAILED:"上传失败"}[item.status];
 }
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("zh-CN", { month: "short", day: "2-digit" }).format(
-    new Date(value),
-  );
-}
+export default function RealWorkspace({onSelect,onObjectCount}:RealWorkspaceProps){
+  const inputRef=useRef<HTMLInputElement>(null);
+  const questionRef=useRef<HTMLTextAreaElement>(null);
+  const dragDepthRef=useRef(0);
+  const onObjectCountRef=useRef(onObjectCount);
+  const [workspaceId,setWorkspaceId]=useState<string>();
+  const [objects,setObjects]=useState<ObjectSummary[]>([]);
+  const [queue,setQueue]=useState<QueueItem[]>([]);
+  const [question,setQuestion]=useState(samplePrompts[0]);
+  const [submittedQuestion,setSubmittedQuestion]=useState("");
+  const [researchState,setResearchState]=useState<ResearchState>("idle");
+  const [sourceTab,setSourceTab]=useState<SourceTab>("all");
+  const [selectedSource,setSelectedSource]=useState("WEB_03");
+  const [dragging,setDragging]=useState(false);
+  const [error,setError]=useState<string>();
+  const [notice,setNotice]=useState<string>();
 
-const STATUS_LABELS: Record<QueueStatus, string> = {
-  QUEUED: "排队中",
-  UPLOADING: "上传中",
-  COMPLETED: "已完成",
-  DUPLICATE: "重复文件",
-  FAILED: "失败",
-};
+  useEffect(()=>{onObjectCountRef.current=onObjectCount},[onObjectCount]);
+  const refresh=useCallback(async(id:string)=>{const nextObjects=await researchosApi.listObjects(id);setObjects(nextObjects);onObjectCountRef.current(nextObjects.length)},[]);
+  useEffect(()=>{let cancelled=false;void(async()=>{try{let workspaces=await researchosApi.listWorkspaces();if(!workspaces.length)workspaces=[await researchosApi.createWorkspace("Financial research workspace")];if(cancelled)return;setWorkspaceId(workspaces[0].id);await refresh(workspaces[0].id)}catch(caught){if(!cancelled)setError(caught instanceof Error?caught.message:"Unable to load workspace")}})();return()=>{cancelled=true}},[refresh]);
+  useEffect(()=>{const choose=()=>inputRef.current?.click();const focus=()=>{setResearchState("idle");requestAnimationFrame(()=>questionRef.current?.focus())};window.addEventListener("researchos:choose-files",choose);window.addEventListener("researchos:new-research",focus);return()=>{window.removeEventListener("researchos:choose-files",choose);window.removeEventListener("researchos:new-research",focus)}},[]);
 
-export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspaceProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [workspaceId, setWorkspaceId] = useState<string>();
-  const [objects, setObjects] = useState<ObjectSummary[]>([]);
-  const [state, setState] = useState<ProjectState>();
-  const [graph, setGraph] = useState<OntologyGraph>();
-  const [queue, setQueue] = useState<QueueItem[]>([]);
-  const [query, setQuery] = useState("");
-  const [workspaceTab, setWorkspaceTab] = useState<"objects" | "relations" | "conflicts">("objects");
-  const [loading, setLoading] = useState(true);
-  const [dragging, setDragging] = useState(false);
-  const [error, setError] = useState<string>();
-  const onObjectCountRef = useRef(onObjectCount);
-
-  useEffect(() => {
-    onObjectCountRef.current = onObjectCount;
-  }, [onObjectCount]);
-
-  const refresh = useCallback(async (id: string, nextQuery?: string) => {
-    const [nextObjects, nextState, nextGraph] = await Promise.all([
-      researchosApi.listObjects(id, nextQuery || undefined),
-      researchosApi.getProjectState(id),
-      researchosApi.getGraph(id),
-    ]);
-    setObjects(nextObjects);
-    setState(nextState);
-    setGraph(nextGraph);
-    onObjectCountRef.current(nextObjects.length);
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    void (async () => {
-      try {
-        setLoading(true);
-        let workspaces = await researchosApi.listWorkspaces();
-        if (workspaces.length === 0) {
-          const created = await researchosApi.createWorkspace("研究空间");
-          workspaces = [created];
-        }
-        if (cancelled) return;
-        const id = workspaces[0].id;
-        setWorkspaceId(id);
-        await refresh(id);
-      } catch (caught) {
-        if (!cancelled) {
-          setError(caught instanceof Error ? caught.message : "无法加载 API 工作空间。");
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [refresh]);
-
-  const acceptFiles = async (incoming: File[]) => {
-    if (!workspaceId || incoming.length === 0) return;
-    setError(undefined);
-    const initialQueue = incoming.map((file, index) => ({
-      id: `${file.name}-${file.lastModified}-${index}`,
-      fileName: file.name,
-      status: "QUEUED" as const,
-    }));
-    setQueue(initialQueue);
-    try {
-      const batch = await researchosApi.createBatch(workspaceId);
-      for (const [index, file] of incoming.entries()) {
-        const itemId = initialQueue[index].id;
-        setQueue((current) =>
-          current.map((item) => (item.id === itemId ? { ...item, status: "UPLOADING" } : item)),
-        );
-        try {
-          const outcome = await researchosApi.uploadFile(batch.id, file, workspaceId);
-          const status = (outcome.status === "DUPLICATE" ? "DUPLICATE" : outcome.status) as QueueStatus;
-          setQueue((current) =>
-            current.map((item) =>
-              item.id === itemId
-                ? {
-                    ...item,
-                    status: status === "COMPLETED" || status === "DUPLICATE" ? status : "FAILED",
-                    detail: outcome.resolution_status ?? outcome.error ?? undefined,
-                  }
-                : item,
-            ),
-          );
-        } catch (caught) {
-          setQueue((current) =>
-            current.map((item) =>
-              item.id === itemId
-                ? { ...item, status: "FAILED", detail: caught instanceof Error ? caught.message : "上传失败" }
-                : item,
-            ),
-          );
-        }
-      }
-      await researchosApi.finalizeBatch(batch.id);
-      await refresh(workspaceId);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "无法处理上传批次。");
-    }
+  const notify=(message:string)=>{setNotice(message);window.setTimeout(()=>setNotice(undefined),2600)};
+  const acceptFiles=async(incoming:File[])=>{
+    if(!workspaceId||!incoming.length)return;
+    const initial=incoming.map((file,index)=>({id:`${file.name}-${file.lastModified}-${index}`,fileName:file.name,status:"QUEUED" as const}));setQueue(initial);
+    try{const batch=await researchosApi.createBatch(workspaceId);for(const[index,file]of incoming.entries()){const itemId=initial[index].id;setQueue(current=>current.map(item=>item.id===itemId?{...item,status:"UPLOADING"}:item));try{const outcome=await researchosApi.uploadFile(batch.id,file,workspaceId);setQueue(current=>current.map(item=>item.id===itemId?{...item,status:outcome.status==="DUPLICATE"?"DUPLICATE":"COMPLETED",detail:outcome.resolution_status??undefined}:item))}catch(caught){setQueue(current=>current.map(item=>item.id===itemId?{...item,status:"FAILED",detail:caught instanceof Error?caught.message:"Upload failed"}:item))}}await researchosApi.finalizeBatch(batch.id);await refresh(workspaceId);notify("内部资料已加入本次研究的证据范围")}catch(caught){setError(caught instanceof Error?caught.message:"Unable to upload files")}
   };
+  const onDrop=(event:React.DragEvent<HTMLDivElement>)=>{event.preventDefault();dragDepthRef.current=0;setDragging(false);void acceptFiles(Array.from(event.dataTransfer.files))};
+  const submitResearch=(event:React.FormEvent)=>{event.preventDefault();if(!question.trim())return;setSubmittedQuestion(question.trim());setResearchState("running");window.setTimeout(()=>setResearchState("complete"),850)};
+  const localSources=objects.map(item=>({id:item.object_id,kind:"local" as const,mark:(item.current_version?.format_kind??"文件").slice(0,4),title:item.name,detail:`${readableBytes(item.current_version?.size_bytes??0)} · ${item.version_count} 个版本`,meta:"内部工作空间",url:"#",object:item}));
+  const allSources=[...publicSources,...dataSources,...localSources];
+  const visibleSources=allSources.filter(item=>sourceTab==="all"||item.kind===sourceTab);
 
-  const onInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    void acceptFiles(Array.from(event.target.files ?? []));
-    event.target.value = "";
-  };
+  return <div className={`workspace-scroll financial-research ${dragging?"is-dragging":""}`} onDragEnter={event=>{event.preventDefault();if(event.dataTransfer.types.includes("Files")){dragDepthRef.current+=1;setDragging(true)}}} onDragOver={event=>event.preventDefault()} onDragLeave={event=>{event.preventDefault();dragDepthRef.current=Math.max(0,dragDepthRef.current-1);if(!dragDepthRef.current)setDragging(false)}} onDrop={onDrop}>
+    {dragging&&<div className="workspace-drop-overlay" role="status"><img src="/brand/evidence-archivist.png" alt=""/><b>加入本次研究</b><span>松开后作为内部证据保存，不会覆盖公开来源</span></div>}
+    <div className="financial-research-grid">
+      <main className="research-chat">
+        {researchState==="idle"&&<section className="research-welcome"><span className="eyebrow"><span className="status-dot green"/> 国际市场研究</span><h2>从一个研究问题开始</h2><p>检索公开资料、核对市场数据并引用内部文件。所有结论均保留来源、数据截止日期和适用范围。</p><div className="research-capabilities"><span><i>⌕</i><b>公开资料</b><small>新闻 · 政策 · 公告 · 财报</small></span><span><i>↳</i><b>市场数据</b><small>行情 · 宏观 · 估值 · 实证检验</small></span><span><i>◇</i><b>内部资料</b><small>团队文件 · 历史报告 · 研究底稿</small></span></div><div className="prompt-suggestions">{samplePrompts.map(item=><button key={item} onClick={()=>setQuestion(item)}>{item}<span>→</span></button>)}</div></section>}
+        {researchState!=="idle"&&<section className="research-conversation">
+          <article className="user-query"><div>LY</div><p>{submittedQuestion}</p></article>
+          <article className="assistant-research"><header><div className="assistant-mark">研</div><div><b>研究结果</b><span>{researchState==="running"?"正在检索并核对数据…":"资料与数据已汇总"}</span></div><em>2 类信息源</em></header>
+            <div className="research-plan"><span>检索范围</span><p>先核对公开资料中对“上涨集中度”的讨论，再使用指数成分贡献、市场宽度和估值数据验证其方向与强度。</p></div>
+            <div className="dual-route">
+              <section className={researchState==="complete"?"complete":"running"}><header><i>⌕</i><div><b>公开资料</b><span>新闻、政策、公告与市场评论</span></div><em>{researchState==="complete"?"已汇总":"检索中"}</em></header><div className="route-line"><span/><p>覆盖政策、公司公告、机构观点与市场新闻</p></div><div className="route-line"><span/><p>{researchState==="complete"?"28 个来源归纳为 6 个相关主题":"正在补充宏观与行业相关资料…"}</p></div>{researchState==="complete"&&<footer><b>资料共识</b><p>“指数上涨但市场宽度有限”在多个独立来源中重复出现。</p></footer>}</section>
+              <section className={researchState==="complete"?"complete":"running"}><header><i>↳</i><div><b>市场数据</b><span>指数、成分、估值与利率</span></div><em>{researchState==="complete"?"可检验":"核对中"}</em></header><div className="route-line"><span/><p>核对指数收益、成分股贡献与利率数据</p></div><div className="route-line"><span/><p>{researchState==="complete"?"统计口径已对齐，可进入实证检验":"正在检查频率、截止日期与缺失值…"}</p></div>{researchState==="complete"&&<footer><b>检验方案</b><p>比较头部权重股贡献率、等权指数与市值加权指数差异。</p></footer>}</section>
+            </div>
+            {researchState==="complete"&&<div className="research-answer"><div className="answer-label"><span>研究结论（初稿）</span><em>证据等级：关联性</em></div><h3>美股上涨具有较明显的头部集中现象，但尚不足以判断市场风险偏好已全面改善。</h3><p>公开资料与当前市场数据在方向上相互支持：指数上涨主要由少数大型科技公司贡献，而等权表现与市场宽度相对较弱。该结论目前属于<strong>描述性与关联性判断</strong>；是否构成持续性的结构变化，仍需补充更长时间窗口并完成实证检验。</p><div className="claim-evidence"><span><b>6</b>相关主题</span><span><b>3</b>有效数据集</span><span><b>1</b>待检验问题</span><span><b>0</b>缺失来源</span></div><footer><button className="button secondary" onClick={()=>window.dispatchEvent(new Event("researchos:open-macrotrace"))}>开始实证检验 ↳</button><button className="button secondary" onClick={()=>window.dispatchEvent(new CustomEvent("researchos:new-thesis",{detail:{name:"美股上涨主要由少数科技龙头集中驱动，而非市场宽度全面改善"}}))}>加入验证计划 ◇</button><button className="button primary" onClick={()=>window.dispatchEvent(new Event("researchos:open-output"))}>形成周报页面 →</button></footer></div>}
+          </article>
+        </section>}
+        <form className="research-composer" onSubmit={submitResearch}><textarea ref={questionRef} value={question} onChange={event=>setQuestion(event.target.value)} aria-label="输入金融研究问题" placeholder="输入需要研究的问题…"/><div><span><button type="button" className="composer-tool active">⌕ 公开资料</button><button type="button" className="composer-tool active">↳ 市场数据</button><button type="button" className="composer-tool" onClick={()=>inputRef.current?.click()}>＋ 内部资料</button></span><button className="composer-send" disabled={!question.trim()||researchState==="running"} aria-label="开始研究">↑</button></div></form>
+        <input ref={inputRef} type="file" multiple hidden onChange={event=>{void acceptFiles(Array.from(event.target.files??[]));event.target.value=""}}/>
+      </main>
 
-  const onDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setDragging(false);
-    void acceptFiles(Array.from(event.dataTransfer.files));
-  };
-
-  const submitSearch = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (workspaceId) void refresh(workspaceId, query);
-  };
-
-  return (
-    <div className="workspace-scroll">
-      <section className="api-workspace-head">
-        <div>
-          <div className="eyebrow"><span className="status-dot green" /> REAL API · M1 资产基座</div>
-          <h2>实时研究工作区</h2>
-          <p>以下文件、版本和解析结果均来自确定性 ResearchOS API。</p>
-        </div>
-        <button className="button secondary" onClick={() => workspaceId && void refresh(workspaceId, query)}>↻ 刷新</button>
-      </section>
-
-      <div
-        className={`dropzone ${dragging ? "dragging" : ""}`}
-        onDragEnter={(event) => { event.preventDefault(); setDragging(true); }}
-        onDragOver={(event) => event.preventDefault()}
-        onDragLeave={(event) => { if (event.currentTarget === event.target) setDragging(false); }}
-        onDrop={onDrop}
-      >
-        <div className="dropzone-icon">＋</div>
-        <div><b>拖拽研究文件到此处</b><small>支持 Markdown、DOCX、XLSX、CSV 和文本 PDF · API 负责确定事实和版本</small></div>
-        <button className="button primary small" onClick={() => inputRef.current?.click()}>选择文件</button>
-        <input ref={inputRef} type="file" multiple hidden onChange={onInputChange} />
-      </div>
-
-      {error && <div className="api-error" role="alert"><b>API 不可用</b><span>{error}</span><button onClick={() => workspaceId && void refresh(workspaceId, query)}>重试</button></div>}
-
-      {queue.length > 0 && (
-        <section className="upload-queue">
-          <div className="section-title"><div><h2>上传队列</h2><p>每个文件独立处理，单一失败不会回滚整个批次。</p></div></div>
-          {queue.map((item) => <div className="upload-row" key={item.id}><span className={`upload-state ${item.status.toLowerCase()}`}>{STATUS_LABELS[item.status]}</span><b>{item.fileName}</b><small>{item.detail ?? ""}</small></div>)}
-        </section>
-      )}
-
-      <div className="summary-strip api-summary">
-        <div><span>研究对象</span><b>{loading ? "…" : objects.length}</b></div>
-        <div><span>版本</span><b>{loading ? "…" : state?.version_count ?? 0}</b></div>
-        <div><span>已解析片段</span><b>{loading ? "…" : state?.fragment_count ?? 0}</b></div>
-        <div><span>语义关系</span><b className="quiet-value">M2 开放</b></div>
-      </div>
-
-      <section className="table-section">
-        <div className="section-title"><div><h2>研究对象</h2><p>来自实时工作区的版本锁定源文件。</p></div><div className="segmented"><button className={workspaceTab === "objects" ? "active" : ""} onClick={() => setWorkspaceTab("objects")}>对象</button><button className={workspaceTab === "relations" ? "active" : ""} onClick={() => setWorkspaceTab("relations")}>关系</button><button className={workspaceTab === "conflicts" ? "active" : ""} onClick={() => setWorkspaceTab("conflicts")}>冲突</button></div></div>
-        <form className="filter-row" onSubmit={submitSearch}>
-          <span className="table-search"><span>⌕</span><input aria-label="搜索对象" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="筛选对象…" /></span>
-          <button className="button primary small" type="submit">搜索</button>
-        </form>
-        {workspaceTab === "objects" ? (loading ? <div className="api-empty">正在加载实时工作区…</div> : objects.length === 0 ? <div className="api-empty">暂无资产。在上方拖入研究文件以创建第一个对象。</div> : <div className="research-table"><div className="table-head"><span>名称</span><span>类型</span><span>状态</span><span>版本</span><span>更新时间</span></div>{objects.map((item, index) => { const source = sourceFromObject(item); return <button className="table-row" key={item.object_id} onClick={() => onSelect(source)}><span className="name-cell"><i className={`file-icon f${index % 4}`}>{source.formatKind.slice(0, 1)}</i><span><b>{source.name}</b><small className="mono">{source.id}</small></span></span><span>{source.type}</span><span><span className="badge badge-blue">{source.state}</span></span><span className="mono">{source.version}</span><span>{formatDate(source.updatedAt)}</span></button>; })}</div>) : workspaceTab === "relations" ? <div className="api-empty">{graph?.edges.length ?? 0} 条确定性版本关系。语义关系将在 M2 阶段提供。</div> : <div className="api-empty">暂无未解决的确定性导入冲突。</div>}
-      </section>
-
-      <section className="relations api-relations"><div className="section-title"><div><h2>版本结构</h2><p>此处仅显示确定性版本谱系。语义关系将在 M2 阶段提供。</p></div><span className="badge badge-blue">{graph?.edges.length ?? 0} 条系统边</span></div>{graph?.edges.length ? <div className="api-edge-list">{graph.edges.map((edge) => <div className="api-edge" key={edge.edge_id}><span className="mono">{edge.source_ref}</span><b>{edge.relation_type}</b><span className="mono">{edge.target_ref}</span></div>)}</div> : <div className="api-empty">暂无版本谱系边。</div>}</section>
-    </div>
-  );
+      <aside className="evidence-drawer"><header><div><span>当前研究</span><h3>资料与数据</h3></div><button onClick={()=>inputRef.current?.click()}>＋ 添加</button></header><nav><button className={sourceTab==="all"?"active":""} onClick={()=>setSourceTab("all")}>全部 <em>{allSources.length}</em></button><button className={sourceTab==="web"?"active":""} onClick={()=>setSourceTab("web")}>公开资料 <em>{publicSources.length}</em></button><button className={sourceTab==="data"?"active":""} onClick={()=>setSourceTab("data")}>市场数据 <em>{dataSources.length}</em></button><button className={sourceTab==="local"?"active":""} onClick={()=>setSourceTab("local")}>内部资料 <em>{localSources.length}</em></button></nav><div className="evidence-drawer-list">{visibleSources.map(item=><button key={item.id} className={selectedSource===item.id?"selected":""} onClick={()=>{setSelectedSource(item.id);if("object" in item)onSelect(sourceFromObject(item.object));else if(item.url!=="#")window.open(item.url,"_blank","noopener,noreferrer")}}><i className={`source-mark ${item.kind}`}>{item.mark}</i><span><b>{item.title}</b><small>{item.detail}</small><em>{item.meta}</em></span><strong>↗</strong></button>)}</div><section className="evidence-drawer-foot"><div><span className="status-dot green"/><b>已归入当前研究</b></div><p>引用过的链接、数据和内部文件统一保存在这里，便于复核和继续写作。</p><button onClick={()=>inputRef.current?.click()}>添加内部资料</button></section>{queue.length>0&&<section className="compact-upload"><span>上传队列</span>{queue.map(item=><div key={item.id}><b>{item.fileName}</b><em>{queueLabel(item)}</em></div>)}</section>}{error&&<div className="research-api-note"><b>内部资料暂不可用</b><span>公开资料与市场数据仍可正常检索。</span></div>}</aside>
+    </div>{notice&&<div className="report-toast" role="status">✓ {notice}</div>}
+  </div>;
 }

@@ -5,7 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from apps.researchos_api.app.api.thesis import router as thesis_router
+from researchos.api.data_routes import router as data_router
 from researchos.api.routes import router
+from researchos.application.data_plugins import build_data_plugin_registry
 from researchos.config import Settings
 from researchos.domain.exceptions import (
     InvariantViolationError,
@@ -16,6 +18,7 @@ from researchos.domain.exceptions import (
 from researchos.infrastructure.blob_store import LocalContentAddressedBlobStore
 from researchos.infrastructure.db import Base, build_engine, build_session_factory
 from researchos.infrastructure.parsers import ParserRegistry
+from services.macrotrace.backend.app.main import app as macrotrace_product_app
 from services.macrotrace.backend.app.researchos_adapter.router import (
     router as macrotrace_router,
 )
@@ -27,6 +30,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     session_factory = build_session_factory(engine)
     blob_store = LocalContentAddressedBlobStore(resolved_settings.blob_root)
     parser_registry = ParserRegistry()
+    data_plugin_registry = build_data_plugin_registry(resolved_settings)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -53,7 +57,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.session_factory = session_factory
     app.state.blob_store = blob_store
     app.state.parser_registry = parser_registry
+    app.state.data_plugin_registry = data_plugin_registry
     app.include_router(router)
+    app.include_router(data_router)
     # Role C and Role B keep their frozen `/v1` contracts. Mounting them under
     # `/api` gives the browser one same-origin API surface without rewriting
     # either producer-owned router.
@@ -93,6 +99,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             status_code=422,
             content={"code": type(exc).__name__, "message": str(exc)},
         )
+
+    # MacroTrace is the product entry point.  The parent keeps the integrated
+    # A/C APIs under /api/v1 while the mature B application owns / and /v1.
+    # Register this catch-all mount last so it cannot shadow the shared APIs.
+    app.mount("/", macrotrace_product_app, name="macrotrace-product")
 
     return app
 
