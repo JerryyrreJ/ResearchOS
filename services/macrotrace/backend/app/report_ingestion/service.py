@@ -341,6 +341,7 @@ class ReportIngestionService:
             name: _read_json(self.registry_root / filename)
             for name, filename in RegistryStore.FILES.items()
         }
+        touched_registries = {operation["registry"] for operation in operations}
         for operation in operations:
             registry_name = operation["registry"]
             id_field = RegistryStore.ID_FIELDS[registry_name]
@@ -360,7 +361,11 @@ class ReportIngestionService:
         staged_hashes: dict[str, str] = {}
         for name, filename in RegistryStore.FILES.items():
             destination = stage_registry / filename
-            _write_json(destination, documents[name])
+            if name in touched_registries:
+                _write_json(destination, documents[name])
+            else:
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(self.registry_root / filename, destination)
             staged_hashes[filename] = _file_sha256(destination)
         RegistryStore(stage_registry)
 

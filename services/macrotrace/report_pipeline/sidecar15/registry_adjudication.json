@@ -1,0 +1,224 @@
+{
+  "schema_version": "1.0.0",
+  "batch_id": "BATCH.REPORT15.20260805.SIDECAR",
+  "review_run_id": "MAIN.REGISTRY.MATCH.REPORT15.20260805.V1",
+  "reviewer": "codex-main-registry-reviewer-v1",
+  "reviewed_against_commit": "8bde36d",
+  "source_registry_decisions": [
+    {"report_id": "RC.1FC594395298", "action": "ADD_REVIEWED_REPORT"},
+    {"report_id": "RC.2CD64AF6A329", "action": "ADD_REVIEWED_REPORT"},
+    {"report_id": "RC.2DC4A6369CFD", "action": "ADD_REVIEWED_REPORT"},
+    {"report_id": "RC.2E7BBC7A6643", "action": "ADD_REVIEWED_REPORT"},
+    {"report_id": "RC.51C8DCE891D6", "action": "ADD_REVIEWED_REPORT"},
+    {"report_id": "RC.5515F76ED0E1", "action": "ADD_REVIEWED_REPORT"},
+    {"report_id": "RC.A32607A91570", "action": "ADD_REVIEWED_REPORT"},
+    {"report_id": "RC.A8B571F4D9A8", "action": "ADD_REVIEWED_REPORT"},
+    {"report_id": "RC.B028A3A24798", "action": "ADD_REVIEWED_REPORT"},
+    {"report_id": "RC.47ADBF47755D", "action": "KEEP_PRIVATE_EVIDENCE_ONLY"},
+    {"report_id": "RC.7506BD8772F6", "action": "KEEP_PRIVATE_EVIDENCE_ONLY"},
+    {"report_id": "RC.7D0EFCD2CEB2", "action": "KEEP_PRIVATE_EVIDENCE_ONLY"},
+    {"report_id": "RC.8E948DCF5D4F", "action": "KEEP_PRIVATE_EVIDENCE_ONLY"},
+    {"report_id": "RC.C899F306D689", "action": "KEEP_PRIVATE_EVIDENCE_ONLY"},
+    {"report_id": "RC.E36950EB08CA", "action": "KEEP_PRIVATE_EVIDENCE_ONLY"}
+  ],
+  "method_decisions": [
+    {
+      "decision_id": "ADJ.FISCAL.STANCE_COMPOSITE.V1",
+      "report_ids": ["RC.A32607A91570"],
+      "method_route_ids": [
+        "MR.A32607A91570.MONTHLY_COMPOSITE",
+        "MR.A32607A91570.CURRENT_MONTH",
+        "MR.A32607A91570.ENTROPY_SIMPLE"
+      ],
+      "decision": "REPRODUCTION_PENDING",
+      "reuse_registry_ids": [
+        "US.FISCAL_TREASURY",
+        "MECH.FISCAL.BALANCE",
+        "N.FISCAL.BALANCE"
+      ],
+      "candidate_registry_ids": [
+        "F.FISCAL.STANCE_COMPOSITE.CANDIDATE",
+        "M.FISCAL_STANCE_COMPOSITE.CANDIDATE.V1"
+      ],
+      "reason": "The fiscal-state concept fits the existing balance mechanism and node, but Chinese budget definitions and weights must be rebuilt from Treasury, BEA and CBO data and validated out of sample before activation.",
+      "required_gates": [
+        "US definition crosswalk",
+        "release-calendar and vintage audit",
+        "equal-weight and PCA baselines",
+        "rolling turning-point validation"
+      ]
+    },
+    {
+      "decision_id": "ADJ.FISCAL.NET_CASH_INJECTION.V1",
+      "report_ids": ["RC.A32607A91570"],
+      "method_route_ids": ["MR.A32607A91570.BUDGET_IDENTITY"],
+      "decision": "REPRODUCTION_PENDING",
+      "reuse_registry_ids": [
+        "US.FISCAL_TREASURY",
+        "MECH.FISCAL.BALANCE",
+        "MECH.FISCAL.SUPPLY",
+        "N.FISCAL.BALANCE",
+        "N.MONETARY.LIQUIDITY"
+      ],
+      "candidate_registry_ids": ["F.FISCAL.NET_CASH_INJECTION.CANDIDATE"],
+      "reason": "The accounting proxy can bridge fiscal financing and liquidity, but a US version must reconcile net marketable borrowing and Treasury cash-balance changes and must not be labeled a fiscal multiplier or causal shock.",
+      "required_gates": [
+        "Treasury cash-accounting reconciliation",
+        "sign convention test",
+        "TGA and issuance vintage checks",
+        "non-causal evidence label"
+      ]
+    },
+    {
+      "decision_id": "ADJ.TRADE.EXPOSURE_DIVERSION.V1",
+      "report_ids": ["RC.2CD64AF6A329"],
+      "method_route_ids": [
+        "MR.2CD64AF6A329.INDUSTRY_EXPOSURE",
+        "MR.2CD64AF6A329.REEXPORT_SCORE"
+      ],
+      "decision": "REPRODUCTION_PENDING",
+      "reuse_registry_ids": ["US.TRADE", "MECH.TRADE.EXTERNAL_DEMAND"],
+      "candidate_registry_ids": [
+        "N.TRADE.EXTERNAL_DEMAND.CANDIDATE",
+        "F.TRADE.INDUSTRY_EXPOSURE.CANDIDATE",
+        "F.TRADE.REEXPORT_SCORE.CANDIDATE"
+      ],
+      "reason": "Trade exposure and diversion are reusable research components, but the live trade lane is blocked and has no executable node or factor pool. Product-level trade data, industry concordances and mirror-trade diagnostics are required.",
+      "required_gates": [
+        "US product-industry concordance",
+        "mirror-trade reconciliation",
+        "origin-rule sensitivity",
+        "alternative score weights"
+      ]
+    },
+    {
+      "decision_id": "ADJ.FIN.MARKET_COHESION.V1",
+      "report_ids": ["RC.5515F76ED0E1"],
+      "method_route_ids": [
+        "MR.5515F76ED0E1.IMPLIED_CORR",
+        "MR.5515F76ED0E1.CAPM_R2",
+        "MR.5515F76ED0E1.PAIR_BREADTH",
+        "MR.5515F76ED0E1.VOL_FORECAST"
+      ],
+      "decision": "REPRODUCTION_PENDING",
+      "reuse_registry_ids": ["US.FIN_STABILITY"],
+      "candidate_registry_ids": [
+        "MECH.FINANCIAL.MARKET_COHESION.CANDIDATE",
+        "N.FIN.MARKET_COHESION.CANDIDATE",
+        "F.FIN.IMPLIED_CONSTITUENT_CORR.CANDIDATE",
+        "M.IMPLIED_CORRELATION.CANDIDATE.V1"
+      ],
+      "rejected_registry_ids": ["MECH.ACTIVITY.TAIL_RISK", "N.ACTIVITY.TAIL_RISK"],
+      "reason": "The sidecar route points a financial-stability method at activity-tail objects from another lane. The identity and prediction design are useful, but they require a dedicated market-cohesion mechanism/node and a survivorship-safe US constituent history.",
+      "required_gates": [
+        "point-in-time constituent universe",
+        "identity reconciliation",
+        "direct pairwise-correlation baseline",
+        "strict rolling out-of-sample volatility test"
+      ]
+    },
+    {
+      "decision_id": "ADJ.FIN.BANK_REPRICING.V1",
+      "report_ids": ["RC.2E7BBC7A6643"],
+      "method_route_ids": [
+        "MR.2E7BBC7A6643.REPRICING_GAP",
+        "MR.2E7BBC7A6643.POLICY_WATERFALL"
+      ],
+      "decision": "REPRODUCTION_PENDING",
+      "reuse_registry_ids": ["US.FIN_STABILITY", "US.MONETARY", "MECH.FINANCIAL.CREDIT"],
+      "candidate_registry_ids": [
+        "MECH.FINANCIAL.BANK_REPRICING.CANDIDATE",
+        "N.FIN.BANK_REPRICING.CANDIDATE",
+        "F.FIN.BANK_REPRICING_GAP.CANDIDATE",
+        "M.BANK_REPRICING_WATERFALL.CANDIDATE.V1"
+      ],
+      "reason": "Asset-liability repricing and policy waterfalls are valid transmission components, but they are not the same object as the existing broad credit-spread node. US bank-call-report definitions and repricing-bucket assumptions must be reconstructed.",
+      "required_gates": [
+        "US bank balance-sheet crosswalk",
+        "component-sum reconciliation",
+        "deposit-beta sensitivity",
+        "yield-curve and prepayment scenarios"
+      ]
+    },
+    {
+      "decision_id": "ADJ.HOUSING.REIT_CASHFLOW.V1",
+      "report_ids": ["RC.2DC4A6369CFD"],
+      "method_route_ids": [
+        "MR.2DC4A6369CFD.CAP_RATE",
+        "MR.2DC4A6369CFD.IMPLIED_G",
+        "MR.2DC4A6369CFD.DISTRIBUTION_BRIDGE",
+        "MR.2DC4A6369CFD.LEVERAGE"
+      ],
+      "decision": "REPRODUCTION_PENDING",
+      "reuse_registry_ids": ["US.HOUSING_CONSUMPTION", "US.MONETARY"],
+      "candidate_registry_ids": [
+        "MECH.HOUSING.REIT_CASHFLOW.CANDIDATE",
+        "N.HOUSING.REIT_VALUATION.CANDIDATE",
+        "F.HOUSING.REIT_CAP_RATE.CANDIDATE",
+        "F.HOUSING.REIT_DISTRIBUTION_YIELD.CANDIDATE",
+        "M.REIT_CASHFLOW_BRIDGE.CANDIDATE.V1"
+      ],
+      "rejected_registry_ids": ["N.HOUSING.CYCLE"],
+      "reason": "Cap-rate and cash-distribution bridges fit macro-to-asset transmission, but the existing housing node measures construction, not REIT valuation. A separate candidate node avoids mixing permits/starts with asset cash-flow identities.",
+      "required_gates": [
+        "US REIT accounting crosswalk",
+        "NOI-to-AFFO reconciliation",
+        "r greater than g validation",
+        "rate, leverage and refinancing sensitivity"
+      ]
+    },
+    {
+      "decision_id": "ADJ.DESCRIPTIVE.DASHBOARDS.V1",
+      "report_ids": ["RC.1FC594395298", "RC.A8B571F4D9A8"],
+      "method_route_ids": [],
+      "decision": "FACTOR_CATALOG_ONLY",
+      "reuse_registry_ids": [
+        "N.ACTIVITY.NOWCAST",
+        "N.ACTIVITY.PRODUCTION",
+        "N.ACTIVITY.HOUSEHOLD_DEMAND",
+        "N.HOUSING.CYCLE"
+      ],
+      "candidate_registry_ids": [],
+      "reason": "The monthly economic mosaic and high-frequency consumption, housing, trade and production dashboards are useful for factor discovery and display, but descriptive charts alone cannot support large macro conclusions or executable recipes.",
+      "required_gates": ["variable-level source mapping", "release-lag metadata", "no standalone synthesis weight"]
+    },
+    {
+      "decision_id": "ADJ.BLOCKED.METHODS.V1",
+      "report_ids": [
+        "RC.2CD64AF6A329",
+        "RC.2E7BBC7A6643",
+        "RC.51C8DCE891D6",
+        "RC.5515F76ED0E1",
+        "RC.B028A3A24798"
+      ],
+      "method_route_ids": [
+        "MR.2CD64AF6A329.TARIFF_CALIBRATION",
+        "MR.2E7BBC7A6643.NIM_FLOOR",
+        "MR.5515F76ED0E1.HP_CYCLE",
+        "MR.5515F76ED0E1.HURST_REGIME"
+      ],
+      "decision": "BLOCKED",
+      "reuse_registry_ids": [],
+      "candidate_registry_ids": [],
+      "reason": "Rough tariff elasticity, the China-specific 0.67 percent NIM threshold, two-sided HP states, KAMA, industry alpha, fifth-degree GDP extrapolation and future-window selection fail identification, real-time or out-of-sample requirements.",
+      "required_gates": ["new identification design or strict out-of-sample reproduction"]
+    },
+    {
+      "decision_id": "ADJ.CORPORATE.VALUATION.EVIDENCE_ONLY.V1",
+      "report_ids": [
+        "RC.47ADBF47755D",
+        "RC.7506BD8772F6",
+        "RC.7D0EFCD2CEB2",
+        "RC.8E948DCF5D4F",
+        "RC.C899F306D689",
+        "RC.E36950EB08CA"
+      ],
+      "method_route_ids": [],
+      "decision": "EVIDENCE_ONLY",
+      "reuse_registry_ids": [],
+      "candidate_registry_ids": [],
+      "reason": "Corporate DCF, DDM, NAV, EV/EBITDA and rNPV are retained only as methodological evidence. Target prices, ratings and buy/sell conclusions are outside the US macro Registry.",
+      "required_gates": ["none; keep outside live macro routing"]
+    }
+  ]
+}
