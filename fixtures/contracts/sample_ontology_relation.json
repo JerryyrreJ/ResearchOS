@@ -1,0 +1,19 @@
+{
+  "contract_version": "0.1.0-frozen",
+  "relation_id": "REL_DEMO_001",
+  "source_ref": "DOC_PRODUCT_V2",
+  "target_ref": "DOC_PRODUCT_V1",
+  "relation_type": "NEW_VERSION_OF",
+  "state": "AI_PROPOSED",
+  "confidence": 0.92,
+  "evidence": [
+    "Normalized title matches.",
+    "Content overlap exceeds the configured threshold.",
+    "The source file was created later."
+  ],
+  "created_by": "ENRICHMENT_AGENT",
+  "created_at": "2026-08-04T12:00:00Z",
+  "metadata": {
+    "fixture_only": true
+  }
+}

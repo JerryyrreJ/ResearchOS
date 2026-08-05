@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://researchos.local/contracts/v1/context_pack.schema.json",
+  "title": "ContextPack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "context_pack_id",
+    "workspace_id",
+    "task",
+    "required_objects",
+    "interface_contracts",
+    "decisions",
+    "open_questions",
+    "forbidden_changes",
+    "version_map",
+    "generated_at",
+    "pack_hash"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "0.1.0-frozen"
+    },
+    "context_pack_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "workspace_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "task": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 4000
+    },
+    "assignee": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 160
+    },
+    "required_objects": {
+      "type": "array",
+      "items": {
+        "$ref": "data_object_ref.schema.json"
+      }
+    },
+    "interface_contracts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "forbidden_changes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "version_map": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "token_budget": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1000
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "pack_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

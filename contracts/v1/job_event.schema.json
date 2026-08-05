@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://researchos.local/contracts/v1/job_event.schema.json",
+  "title": "JobEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "job_id",
+    "sequence",
+    "event_type",
+    "created_at",
+    "payload"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "0.1.0-frozen"
+    },
+    "job_id": {
+      "type": "string"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "event_type": {
+      "enum": [
+        "QUEUED",
+        "NORMALIZING",
+        "ENRICHING",
+        "COMPILING",
+        "PLANNING_TOOL",
+        "RUNNING_TOOL",
+        "DIAGNOSING",
+        "RECOMPILING",
+        "COMPLETE",
+        "PARTIAL",
+        "FAILED",
+        "CANCELLED"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "payload": {
+      "type": "object"
+    }
+  }
+}

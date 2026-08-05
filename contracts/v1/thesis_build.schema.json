@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://researchos.local/contracts/v1/thesis_build.schema.json",
+  "title": "ThesisBuild",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "thesis_id",
+    "project_id",
+    "version_id",
+    "raw_claim",
+    "normalized_claim",
+    "as_of_date",
+    "language_level",
+    "definitions",
+    "required_evidence_types",
+    "falsifier_requirements",
+    "input_object_refs"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "0.1.0-frozen"
+    },
+    "thesis_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "version_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "parent_version_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "raw_claim": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 4000
+    },
+    "normalized_claim": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 4000
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "language_level": {
+      "enum": [
+        "DESCRIPTIVE",
+        "PREDICTIVE",
+        "ASSOCIATIONAL",
+        "STRUCTURAL_PROXY",
+        "CAUSAL"
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "subject": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "geography": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "end_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "horizon_text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "definitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "term",
+          "status"
+        ],
+        "properties": {
+          "term": {
+            "type": "string"
+          },
+          "definition": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "DEFINED",
+              "MISSING",
+              "AMBIGUOUS"
+            ]
+          },
+          "source_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "required_evidence_types": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "DESCRIPTIVE",
+          "PREDICTIVE",
+          "ASSOCIATIONAL",
+          "DYNAMIC_ASSOCIATION",
+          "STRUCTURAL_PROXY",
+          "CAUSAL_IDENTIFIED"
+        ]
+      }
+    },
+    "falsifier_requirements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "input_object_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "data_object_ref.schema.json"
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

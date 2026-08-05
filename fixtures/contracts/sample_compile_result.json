@@ -1,0 +1,63 @@
+{
+  "contract_version": "0.1.0-frozen",
+  "build_id": "BUILD_DEMO_002",
+  "thesis_id": "THESIS_DEMO_001",
+  "version_id": "THESIS_VER_002",
+  "parent_build_id": "BUILD_DEMO_001",
+  "build_status": "SUCCESS",
+  "conclusion_state": "SUPPORTED",
+  "original_claim": "美国财政扩张正在持续推高10年期美债收益率。",
+  "compiled_claim": "当前注册模型提供财政供给指标与10年期美债收益率的条件关联证据；现有证据不足以支持持续、独立的因果措辞。",
+  "issues": [
+    {
+      "code": "CLAIM_LANG001",
+      "severity": "ERROR",
+      "blocking": true,
+      "message": "Evidence type ASSOCIATIONAL cannot support CAUSAL wording.",
+      "related_refs": [
+        "THESIS_DEMO_001",
+        "EVIDENCE_DEMO_001"
+      ],
+      "suggested_actions": [
+        "Downgrade the claim to associational language.",
+        "Provide a registered causally identified design."
+      ],
+      "metadata": {}
+    }
+  ],
+  "validation_plan": [
+    {
+      "step_id": "STEP_DEFINE",
+      "label": "Freeze the fiscal-supply definition.",
+      "status": "COMPLETE",
+      "tool_request_id": null
+    },
+    {
+      "step_id": "STEP_EMPIRICAL",
+      "label": "Run registered MacroTrace evidence.",
+      "status": "COMPLETE",
+      "tool_request_id": "TOOL_REQ_DEMO_001"
+    }
+  ],
+  "evidence_bundle_refs": [
+    "EVIDENCE_DEMO_001"
+  ],
+  "language_policy": {
+    "requested_level": "CAUSAL",
+    "allowed_level": "ASSOCIATIONAL",
+    "reason": "The evidence bundle is associational."
+  },
+  "affected_node_ids": [
+    "THESIS_DEMO_001",
+    "EVIDENCE_DEMO_001",
+    "COMPILED_CLAIM_001"
+  ],
+  "reused_node_ids": [
+    "DATA_US_TREASURY_10Y"
+  ],
+  "created_at": "2026-08-04T12:00:00Z",
+  "result_hash": "4444444444444444444444444444444444444444444444444444444444444444",
+  "metadata": {
+    "fixture_only": true
+  }
+}
