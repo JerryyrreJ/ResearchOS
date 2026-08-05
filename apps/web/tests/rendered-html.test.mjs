@@ -87,3 +87,26 @@ test("serves a non-cached web health endpoint", async () => {
   assert.equal(response.headers.get("cache-control"), "no-store");
   assert.deepEqual(await response.json(), { status: "ok", service: "researchos-web", mode: "fixture", contract: "0.1.0-frozen" });
 });
+
+test("provides encrypted financial-data connectors with executable server routes", async () => {
+  const [page, component, client, catalog, connectorWorker, worker, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/data-connector-settings.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../lib/api-client.ts", import.meta.url), "utf8"),
+    readFile(new URL("../lib/connector-catalog.ts", import.meta.url), "utf8"),
+    readFile(new URL("../worker/connector-api.ts", import.meta.url), "utf8"),
+    readFile(new URL("../worker/index.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  for (const source of ["FRED / ALFRED", "Tushare Pro", "Alpha Vantage", "Nasdaq Data Link", "World Bank Open Data", "AKShare", "巨潮资讯", "Wind", "Bloomberg"]) assert.match(catalog, new RegExp(source));
+  for (const method of ["listConnectors", "configureConnector", "testConnector", "queryConnector", "clearConnector"]) assert.match(client, new RegExp(method));
+  assert.match(page, /DataConnectorSettings/);
+  assert.match(component, /API Key 会在服务端加密/);
+  assert.match(component, /需要桥接服务/);
+  assert.match(connectorWorker, /AES-GCM/);
+  assert.match(connectorWorker, /CONNECTOR_ENCRYPTION_KEY/);
+  assert.match(connectorWorker, /server-encrypted/);
+  assert.doesNotMatch(connectorWorker, /apiKeyMasked:\s*apiKey/);
+  assert.match(worker, /handleConnectorApi/);
+  assert.match(css, /Financial Data Layer/);
+});
