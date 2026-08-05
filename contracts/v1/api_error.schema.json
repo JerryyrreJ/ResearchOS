@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://researchos.local/contracts/v1/api_error.schema.json",
+  "title": "ApiError",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "error_code",
+    "message",
+    "retryable",
+    "related_refs"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "0.1.0-frozen"
+    },
+    "error_code": {
+      "type": "string",
+      "minLength": 3
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1
+    },
+    "retryable": {
+      "type": "boolean"
+    },
+    "related_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "details": {
+      "type": "object"
+    }
+  }
+}

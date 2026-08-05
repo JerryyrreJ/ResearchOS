@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://researchos.local/contracts/v1/data_resolve.schema.json",
+  "title": "DataResolveEnvelope",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/request"
+    },
+    {
+      "$ref": "#/$defs/response"
+    }
+  ],
+  "$defs": {
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "request_id",
+        "dataset_ref",
+        "required_schema",
+        "as_of_date"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "0.1.0-frozen"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "dataset_ref": {
+          "$ref": "data_object_ref.schema.json"
+        },
+        "required_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "fields"
+          ],
+          "properties": {
+            "time_key": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "frequency": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "as_of_date": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "request_id",
+        "status",
+        "resolved_ref",
+        "materialized_uri",
+        "content_hash",
+        "resolved_schema",
+        "lineage"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "0.1.0-frozen"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "RESOLVED",
+            "SCHEMA_MISMATCH",
+            "PERMISSION_BLOCKED",
+            "NOT_FOUND",
+            "FAILED"
+          ]
+        },
+        "resolved_ref": {
+          "$ref": "data_object_ref.schema.json"
+        },
+        "materialized_uri": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "content_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "resolved_schema": {
+          "type": "object"
+        },
+        "lineage": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "api_error.schema.json"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://researchos.local/contracts/v1/tool_request.schema.json",
+  "title": "ToolRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "request_id",
+    "tool",
+    "thesis_id",
+    "question",
+    "as_of_date",
+    "requested_evidence_type",
+    "input_object_refs",
+    "falsifier_requirements",
+    "timeout_seconds"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "0.1.0-frozen"
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "tool": {
+      "const": "MACROTRACE"
+    },
+    "thesis_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "question": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 4000
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "requested_evidence_type": {
+      "enum": [
+        "DESCRIPTIVE",
+        "PREDICTIVE",
+        "ASSOCIATIONAL",
+        "DYNAMIC_ASSOCIATION",
+        "STRUCTURAL_PROXY",
+        "CAUSAL_IDENTIFIED"
+      ]
+    },
+    "workflow_hint": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 200
+    },
+    "input_object_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "data_object_ref.schema.json"
+      }
+    },
+    "falsifier_requirements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 900
+    },
+    "display_mode": {
+      "enum": [
+        "STANDARD",
+        "COMPACT",
+        "ACADEMIC"
+      ],
+      "default": "STANDARD"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

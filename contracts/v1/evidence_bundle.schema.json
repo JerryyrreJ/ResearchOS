@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://researchos.local/contracts/v1/evidence_bundle.schema.json",
+  "title": "EvidenceBundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "bundle_id",
+    "request_id",
+    "research_job_id",
+    "status",
+    "coverage",
+    "evidence_type",
+    "engine_claim",
+    "model_runs",
+    "diagnostics",
+    "robustness",
+    "evidence_items",
+    "falsifiers",
+    "limitations",
+    "input_object_refs",
+    "registry_version",
+    "result_hash",
+    "artifacts"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "0.1.0-frozen"
+    },
+    "bundle_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "research_job_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "status": {
+      "enum": [
+        "COMPLETE",
+        "PARTIAL",
+        "FAILED",
+        "CANCELLED"
+      ]
+    },
+    "coverage": {
+      "enum": [
+        "FULL",
+        "PARTIAL",
+        "UNSUPPORTED",
+        "OUT_OF_SCOPE"
+      ]
+    },
+    "evidence_type": {
+      "enum": [
+        "DESCRIPTIVE",
+        "PREDICTIVE",
+        "ASSOCIATIONAL",
+        "DYNAMIC_ASSOCIATION",
+        "STRUCTURAL_PROXY",
+        "CAUSAL_IDENTIFIED"
+      ]
+    },
+    "engine_claim": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 4000
+    },
+    "model_runs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "model_run_id",
+          "model_recipe_id",
+          "status",
+          "evidence_type"
+        ],
+        "properties": {
+          "model_run_id": {
+            "type": "string"
+          },
+          "model_recipe_id": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "SUCCESS",
+              "WARNING",
+              "FAILED",
+              "SKIPPED"
+            ]
+          },
+          "evidence_type": {
+            "type": "string"
+          },
+          "summary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "result_hash": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "diagnostic_id",
+          "status",
+          "blocking"
+        ],
+        "properties": {
+          "diagnostic_id": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "WARNING",
+              "FAIL",
+              "INFORMATIONAL",
+              "NOT_APPLICABLE"
+            ]
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "interpretation": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "robustness": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidence_items": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "falsifiers": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "input_object_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "data_object_ref.schema.json"
+      }
+    },
+    "registry_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "result_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "artifact_id",
+          "artifact_type"
+        ],
+        "properties": {
+          "artifact_id": {
+            "type": "string"
+          },
+          "artifact_type": {
+            "type": "string"
+          },
+          "uri": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sha256": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "trace_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}
