@@ -48,6 +48,7 @@ function formatDate(value: string) {
 
 export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspaceProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const dragDepthRef = useRef(0);
   const [workspaceId, setWorkspaceId] = useState<string>();
   const [objects, setObjects] = useState<ObjectSummary[]>([]);
   const [state, setState] = useState<ProjectState>();
@@ -157,8 +158,22 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
 
   const onDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    dragDepthRef.current = 0;
     setDragging(false);
     void acceptFiles(Array.from(event.dataTransfer.files));
+  };
+
+  const onWorkspaceDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (!event.dataTransfer.types.includes("Files")) return;
+    dragDepthRef.current += 1;
+    setDragging(true);
+  };
+
+  const onWorkspaceDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    dragDepthRef.current = Math.max(0, dragDepthRef.current - 1);
+    if (dragDepthRef.current === 0) setDragging(false);
   };
 
   const submitSearch = (event: React.FormEvent) => {
@@ -167,7 +182,8 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
   };
 
   return (
-    <div className="workspace-scroll">
+    <div className={`workspace-scroll api-workspace ${dragging ? "is-dragging" : ""}`} onDragEnter={onWorkspaceDragEnter} onDragOver={(event)=>event.preventDefault()} onDragLeave={onWorkspaceDragLeave} onDrop={onDrop}>
+      {dragging && <div className="workspace-drop-overlay" role="status"><div className="drop-target-mark">↓</div><b>松开即可上传并开始处理</b><span>自动建立对象、内容哈希与不可变版本</span></div>}
       <section className="api-workspace-head">
         <div>
           <div className="eyebrow"><span className="status-dot green" /> REAL API · M1 ASSET FOUNDATION</div>
@@ -179,14 +195,11 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
 
       <div
         className={`dropzone ${dragging ? "dragging" : ""}`}
-        onDragEnter={(event) => { event.preventDefault(); setDragging(true); }}
-        onDragOver={(event) => event.preventDefault()}
-        onDragLeave={(event) => { if (event.currentTarget === event.target) setDragging(false); }}
-        onDrop={onDrop}
+        onClick={()=>inputRef.current?.click()}
       >
         <div className="dropzone-icon">＋</div>
         <div><b>Drop research files here</b><small>Markdown, DOCX, XLSX, CSV and text PDF · the API determines facts and versions</small></div>
-        <button className="button primary small" onClick={() => inputRef.current?.click()}>Choose files</button>
+        <button className="button primary small" onClick={(event) => { event.stopPropagation(); inputRef.current?.click(); }}>Choose files</button>
         <input ref={inputRef} type="file" multiple hidden onChange={onInputChange} />
       </div>
 

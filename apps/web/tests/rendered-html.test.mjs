@@ -133,3 +133,19 @@ test("connects deployed UI to same-origin durable APIs and creates real theses",
   assert.match(hosting, /"d1"\s*:\s*"DB"/);
   assert.match(hosting, /"r2"\s*:\s*"UPLOADS"/);
 });
+
+test("supports workspace-wide drag upload and a collapsible functional sidebar", async () => {
+  const [page, workspace, css] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/real-workspace.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /sidebarCollapsed/);
+  assert.match(page, /Collapse sidebar/);
+  assert.match(page, /sidebar-collapsed/);
+  assert.match(workspace, /onWorkspaceDragEnter/);
+  assert.match(workspace, /workspace-drop-overlay/);
+  assert.match(workspace, /acceptFiles\(Array\.from\(event\.dataTransfer\.files\)\)/);
+  assert.match(css, /\.app-shell\.sidebar-collapsed/);
+  assert.match(css, /\.workspace-drop-overlay/);
+});
