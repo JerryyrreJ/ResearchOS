@@ -34,4 +34,6 @@ Next integration test: C deserializes COMPLETE, PARTIAL, and FAILED EvidenceBund
 - Draft PR opened: `https://github.com/JerryyrreJ/AIY_Project/pull/2`; base `integration`, head `role/b-macrotrace`, state Draft, mergeability `CLEAN`, contract impact `NONE`
 - PR scope revalidated: 209 changed files, all within B-owned paths; zero `contracts/v1` or `fixtures/contracts` changes; secret scan passed
 - Independent C compatibility check: current `role/c-thesis@41546b4` successfully deserialized all three core B fixtures and its 15 tests passed; this is technical evidence, not a substitute for C owner confirmation
+- D technical consumption evidence: `role/d-frontend@1bcd711` calls the B graph/artifact routes from the live research flow and adds `tests/test_full_stack_api.py`; PR #2 still has no formal D review/comment
+- Integration-order warning: D Draft PR #1 currently includes merge commits for B and C as well as D changes; the integration owner must choose a non-duplicative merge order rather than merging overlapping role PRs blindly
 - Secrets: no credentials or API keys copied from chat into the workspace or repository

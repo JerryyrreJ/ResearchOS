@@ -91,3 +91,7 @@ The D frontend baseline lint passed. Its Windows build/test command uses Unix in
 Do not merge until C validates all three core EvidenceBundle fixtures and D confirms the graph/artifact boundary. After merge, Role B may begin the separately reviewed Data Resolve and REAL/Offline delivery unit.
 
 Independent pre-review evidence: `role/c-thesis@41546b4` successfully deserialized the COMPLETE, PARTIAL, and FAILED B fixtures, and all 15 C tests passed in an isolated worktree. This does not replace C owner confirmation on the PR.
+
+Independent D evidence: `role/d-frontend@1bcd711` calls the stable B graph/artifact routes from the live research flow and includes a full-stack API test covering MacroTrace tool creation, status, graph, and artifacts. This does not replace D owner confirmation on the PR.
+
+Integration-order caution: D Draft PR #1 currently includes merge commits for B and C in addition to D work. Reviewers should choose a non-duplicative merge order and retain the B-owned-path review record rather than merging overlapping role PRs blindly.

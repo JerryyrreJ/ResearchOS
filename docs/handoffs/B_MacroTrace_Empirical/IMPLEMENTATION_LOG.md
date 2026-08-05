@@ -79,6 +79,8 @@ The D build/test issue existed on the selected D baseline before B code was adde
 - `role/b-macrotrace`: Draft PR #2 is open, B-only, and cleanly mergeable.
 - `role/c-thesis`: `41546b4cb6ef`; EvidenceBundle adapter and compiler slice exist but are not integrated.
 - Independent compatibility evidence: C's adapter deserialized B COMPLETE, PARTIAL, and FAILED fixtures, and all 15 C tests passed. Formal C owner confirmation remains required.
+- D technical consumption evidence: `role/d-frontend@1bcd711` uses the stable B graph/artifact routes in `apps/web/app/live-research-flow.tsx` and `apps/web/lib/api-client.ts`, with a full-stack API test covering tool creation, status, graph, and artifacts. Formal D review/comment on PR #2 remains absent.
+- Merge-order warning: D Draft PR #1 currently carries merge commits for B and C. Reviewers must avoid duplicate or overlapping integration merges and preserve the owned-path review record for PR #2.
 
 ## Next handoff sequence
 
