@@ -177,6 +177,8 @@ export type VersionDiff = {
   summary: string;
 };
 
+export type JobEvent = { sequence: number; event_type: string; status: string; payload: Record<string, unknown> };
+
 export class ResearchOSApiError extends Error {
   readonly status: number;
 
@@ -217,6 +219,13 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   return (await response.json()) as T;
 }
 
+async function requestJobEvents(jobId: string) {
+  const response = await fetch(`${getBaseUrl()}/jobs/${encodeURIComponent(jobId)}/events`, { headers: { Accept: "text/event-stream" } });
+  if (!response.ok) throw new ResearchOSApiError(`ResearchOS job events failed (${response.status})`, response.status);
+  const text = await response.text();
+  return text.split("\n").filter(line => line.startsWith("data: ")).map(line => JSON.parse(line.slice(6)) as JobEvent);
+}
+
 export const researchosApi = {
   listWorkspaces: () => request<Workspace[]>("/workspaces"),
 
@@ -253,6 +262,10 @@ export const researchosApi = {
       body: JSON.stringify({ actor_id: "web-demo" }),
     }),
 
+  getBatch: (batchId: string) => request<Batch>(`/ingest-batches/${encodeURIComponent(batchId)}`),
+
+  listAssets: (workspaceId: string) => request<Array<Record<string, unknown>>>(`/workspaces/${encodeURIComponent(workspaceId)}/assets`),
+
   listObjects: (workspaceId: string, query?: string) =>
     request<ObjectSummary[]>(`/workspaces/${encodeURIComponent(workspaceId)}/objects`, {
       searchParams: { q: query },
@@ -260,6 +273,12 @@ export const researchosApi = {
 
   getObject: (objectId: string) =>
     request<ObjectDetail>(`/objects/${encodeURIComponent(objectId)}`),
+
+  listObjectVersions: (objectId: string) => request<ObjectReference[]>(`/objects/${encodeURIComponent(objectId)}/versions`),
+
+  getAsset: (assetId: string) => request<Record<string, unknown>>(`/assets/${encodeURIComponent(assetId)}`),
+
+  getAssetVersion: (versionId: string) => request<Record<string, unknown>>(`/asset-versions/${encodeURIComponent(versionId)}`),
 
   getGraph: (workspaceId: string) =>
     request<OntologyGraph>(
@@ -277,6 +296,8 @@ export const researchosApi = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     }),
+
+  getThesis: (thesisId: string) => request<Record<string, unknown>>(`/theses/${encodeURIComponent(thesisId)}`),
 
   compileThesis: (thesisId: string) =>
     request<CompileEnvelope>(`/theses/${encodeURIComponent(thesisId)}/compile`, { method: "POST" }),
@@ -304,6 +325,10 @@ export const researchosApi = {
   getToolGraph: (toolRunId: string) =>
     request<Record<string, unknown>>(`/tool-runs/${encodeURIComponent(toolRunId)}/graph`),
 
+  getToolRun: (toolRunId: string) => request<ToolRunEnvelope>(`/tool-runs/${encodeURIComponent(toolRunId)}`),
+
   getToolArtifacts: (toolRunId: string) =>
     request<{ items: Array<Record<string, unknown>> }>(`/tool-runs/${encodeURIComponent(toolRunId)}/artifacts`),
+
+  getJobEvents: requestJobEvents,
 };
