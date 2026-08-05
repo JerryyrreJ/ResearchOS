@@ -11,6 +11,9 @@
     {"lane_id":"US.HOUSING_CONSUMPTION","name":"Housing and household demand","mechanism":"Housing, wealth, saving and debt service affect consumption.","status":"reviewed"},
     {"lane_id":"US.TRADE","name":"Trade and external demand","mechanism":"Import costs, exports and global demand transmit to prices and output.","status":"blocked"},
     {"lane_id":"US.FIN_STABILITY","name":"Financial stability","mechanism":"Leverage and liquidity can amplify otherwise ordinary macro shocks.","status":"reviewed"},
-    {"lane_id":"US.AI_PRODUCTIVITY","name":"AI adoption, exposure and productivity","mechanism":"Adoption can substitute for or complement tasks and transmit through vacancies, employment, wages and productivity.","status":"reviewed"}
+    {"lane_id":"US.AI_PRODUCTIVITY","name":"AI adoption, exposure and productivity","mechanism":"Adoption can substitute for or complement tasks and transmit through vacancies, employment, wages and productivity.","status":"reviewed"},
+    {"lane_id":"US.EQUITY_MARKET","name":"US equity prices, volatility and risk appetite","mechanism":"Expected cash flows, discount rates, volatility and credit conditions jointly determine broad US equity returns.","status":"active"},
+    {"lane_id":"US.FUTURES_COMMODITY","name":"US futures and commodity markets","mechanism":"Physical scarcity, inventories, the forward curve, volatility and trend shape commodity-futures returns separately from macro inflation pass-through.","status":"active"},
+    {"lane_id":"US.EQUITY_SECTOR","name":"US equity sectors and rotation","mechanism":"Sector cash flows, cyclicality, rates, credit and volatility create heterogeneous return dynamics across US industries.","status":"reviewed"}
   ]
 }

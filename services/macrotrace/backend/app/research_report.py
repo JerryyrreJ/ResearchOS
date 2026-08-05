@@ -48,6 +48,35 @@ def _question_stem(question: str, limit: int = 110) -> str:
     return value if len(value) <= limit else value[: limit - 1] + "…"
 
 
+DOMAIN_LABELS = {
+    "MACRO": "宏观经济",
+    "EQUITY_INDEX": "股票指数",
+    "SINGLE_EQUITY": "个股",
+    "BOND": "债券与利率",
+    "INDUSTRY": "行业景气",
+    "COMMODITY": "商品",
+    "CROSS_ASSET": "跨资产",
+    "OTHER": "综合研究",
+}
+
+
+def _directional_headline(question: str, plan: dict[str, Any], aggregation: dict[str, Any], primary: list[str]) -> str:
+    query = plan.get("query") or {}
+    domain = str(query.get("domain") or "MACRO")
+    if domain == "MACRO" and primary:
+        return "；".join(primary[:2])
+    score = aggregation.get("primary_score")
+    if not isinstance(score, (int, float)):
+        score = aggregation.get("ordinal_score")
+    if isinstance(score, (int, float)):
+        direction = "偏上行" if score > 0.08 else "偏下行" if score < -0.08 else "接近中性"
+    else:
+        stance = str(aggregation.get("stance") or "")
+        direction = "偏上行" if "UPSIDE" in stance or "POSITIVE" in stance else "偏下行" if "DOWNSIDE" in stance or "NEGATIVE" in stance else "接近中性"
+    stem = _question_stem(question, 68)
+    return f"对“{stem}”，当前可执行证据给出的方向判断为{direction}"
+
+
 def _safe_get(registry: RegistryStore, registry_name: str, object_id: str) -> dict[str, Any]:
     try:
         return registry.get(registry_name, object_id)
@@ -163,21 +192,23 @@ def build_research_report(
     evidence_state = aggregation.get("evidence_state")
     answerability = aggregation.get("answerability")
 
+    domain = str((plan.get("query") or {}).get("domain") or "MACRO")
+    domain_label = DOMAIN_LABELS.get(domain, "综合研究")
     if primary:
-        headline = "；".join(primary[:2])
-        direct_text = f"现有可执行证据整体更支持{headline}。"
+        headline = _directional_headline(question, plan, aggregation, primary)
+        direct_text = f"现有可执行证据整体更支持：{headline}。"
         if aggregation.get("conflicts_retained"):
             direct_text += "不同证据之间仍有分歧，因此这是一项有条件的方向判断，而不是确定性预测。"
         if evidence_state == "ASSOCIATIONAL_ONLY":
             direct_text += "这一立场来自预测、时序与系统关联证据；严格因果效应及其幅度仍需独立识别。"
     elif answerability == "UNSUPPORTED":
-        headline = "现有可执行证据不足以直接回答这一问题"
+        headline = f"对“{question_text}”，当前证据倾向中性，暂不支持强方向押注"
         direct_text = (
-            "本轮没有获得足够、可验证的数据结果来形成方向判断，"
-            "因此不应把基线宏观状态当作该问题的答案。"
+            "中性是本轮的明确立场：现有可执行数据与模型没有形成足以支持上行或下行的稳定合力。"
+            "这不等于问题没有答案，而是当前最符合证据的答案是不做强方向押注。"
         )
     else:
-        headline = "当前证据给出有条件但不强烈的方向判断"
+        headline = f"对“{question_text}”，当前证据倾向中性"
         direct_text = "现有分析没有形成足够强的一致方向，但可执行证据已被保留为条件性判断。"
 
     successful = [item for item in results if item.get("status") in {"SUCCESS", "WARNING"}]
@@ -271,7 +302,13 @@ def build_research_report(
     source_node_ids = [str(item.get("node_id")) for item in successful]
     return {
         "schema_version": "0.3.0",
-        "title": "MacroTrace Research Report",
+        "title": f"{domain_label}实证研究报告",
+        "research_context": {
+            "domain": domain,
+            "domain_label": domain_label,
+            "jurisdiction": (plan.get("query") or {}).get("jurisdiction", "US"),
+            "answer_style": "对象优先、方向优先、证据约束",
+        },
         "question": question,
         "direct_answer": {
             "headline": headline,

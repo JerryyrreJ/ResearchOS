@@ -13,11 +13,23 @@ def _read(name: str) -> str:
 def test_reader_facing_report_sections_follow_required_order() -> None:
     html = _read("index.html")
 
-    assert "DIRECT ANSWER / RESEARCH REPORT" in html
+    assert "直接结论 / 研究报告" in html
     assert "REGISTERED SYNTHESIS" not in html
     ordered_ids = ["reportAbstract", "mechanismList", "empiricalList", "reportConclusion"]
     positions = [html.index(f'id="{section_id}"') for section_id in ordered_ids]
     assert positions == sorted(positions)
+
+
+def test_daily_brief_is_the_first_product_stage_and_can_route_to_research() -> None:
+    html = _read("index.html")
+    javascript = _read("app.js")
+
+    assert html.index('id="dailyBrief"') < html.index('id="researchForm"')
+    assert "01 每日日报" in html
+    assert "02 研究工作台" in html
+    assert "selectionResearchButton" in html
+    assert "compileSelectedExcerpt" in javascript
+    assert '$("#selectionResearchButton").addEventListener' in javascript
 
 
 def test_frontend_prefers_structured_report_and_links_evidence_nodes() -> None:

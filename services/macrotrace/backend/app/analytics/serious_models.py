@@ -743,6 +743,216 @@ def run_growth_at_risk(
     }
 
 
+def _daily_transform(factor_id: str, series: pd.Series) -> pd.Series:
+    """Build a business-day information set without inventing long gaps."""
+    daily = series.sort_index().resample("B").last().ffill(limit=5)
+    if factor_id.startswith("F.RATES") or factor_id in {
+        "F.MONETARY.NFCI",
+        "F.MONETARY.CURVE_10Y2Y",
+        "F.FIN.CREDIT_SPREAD",
+    }:
+        return daily.diff()
+    return np.log(daily.where(daily > 0)).diff() * 100
+
+
+def _daily_market_linear(
+    store: MacroStore,
+    registry: RegistryStore,
+    as_of: date,
+    node_id: str,
+    factor_ids: list[str],
+    parameters: dict[str, Any],
+    *,
+    bridge: bool,
+) -> dict[str, Any]:
+    if not factor_ids:
+        raise RuntimeError("A registered daily market target is required")
+    target_id = factor_ids[0]
+    transformed = {
+        factor_id: _daily_transform(factor_id, raw)
+        for factor_id in factor_ids
+        if not (raw := _series(store, registry, factor_id, as_of)).empty
+    }
+    if target_id not in transformed:
+        raise RuntimeError("The registered market target has no eligible point-in-time data")
+    if bridge and len(transformed) < 2:
+        raise RuntimeError("Daily market bridge requires at least one available driver")
+    frame = pd.concat(transformed, axis=1).dropna()
+    horizon = int(parameters["forecast_horizon_days"])
+    lags = int(parameters["lags"])
+    window = int(parameters["estimation_window_years"]) * 252
+    minimum = 252 if bridge else 180
+    if len(frame) < minimum + horizon + lags + 30:
+        raise RuntimeError("Registered daily market forecast has insufficient history")
+
+    outcome = frame[target_id].shift(-horizon).rename("target_forward")
+    regressors = pd.DataFrame(index=frame.index)
+    regressors[f"{target_id}.lag0"] = frame[target_id]
+    for lag in range(1, lags + 1):
+        regressors[f"{target_id}.lag{lag}"] = frame[target_id].shift(lag)
+    if bridge:
+        for factor_id in factor_ids[1:]:
+            if factor_id in frame:
+                regressors[factor_id] = frame[factor_id]
+    full = pd.concat([outcome, regressors], axis=1).dropna()
+    regression = full.tail(window)
+    if len(regression) < minimum:
+        raise RuntimeError("Registered daily market regression is too short")
+    x = sm.add_constant(regression.drop(columns="target_forward"), has_constant="add")
+    hac_lags = max(1, min(21, horizon))
+    fit = sm.OLS(regression["target_forward"], x).fit(cov_type="HAC", cov_kwds={"maxlags": hac_lags})
+    latest_x = sm.add_constant(regressors.dropna().tail(1), has_constant="add").reindex(columns=x.columns, fill_value=1.0)
+    point_forecast = float(fit.predict(latest_x).iloc[0])
+
+    holdout = min(60, max(30, len(full) // 8))
+    predictions: list[float] = []
+    actuals: list[float] = []
+    baselines: list[float] = []
+    origins: list[pd.Timestamp] = []
+    start = len(full) - holdout
+    for position in range(start, len(full)):
+        train_end = position - horizon
+        if train_end < minimum:
+            continue
+        train = full.iloc[max(0, train_end - window):train_end]
+        if len(train) < minimum:
+            continue
+        train_x = sm.add_constant(train.drop(columns="target_forward"), has_constant="add")
+        train_fit = sm.OLS(train["target_forward"], train_x).fit()
+        origin_row = full.iloc[[position]]
+        origin_x = sm.add_constant(origin_row.drop(columns="target_forward"), has_constant="add").reindex(columns=train_x.columns, fill_value=1.0)
+        predictions.append(float(train_fit.predict(origin_x).iloc[0]))
+        actuals.append(float(origin_row["target_forward"].iloc[0]))
+        baselines.append(float(train["target_forward"].mean()))
+        origins.append(full.index[position])
+    if len(predictions) < 20:
+        raise RuntimeError("Daily rolling-origin backtest has insufficient valid origins")
+    predicted = np.asarray(predictions)
+    actual = np.asarray(actuals)
+    baseline = np.asarray(baselines)
+    rmse = float(np.sqrt(np.mean((actual - predicted) ** 2)))
+    baseline_rmse = float(np.sqrt(np.mean((actual - baseline) ** 2)))
+    residuals = pd.Series(fit.resid)
+    lb = acorr_ljungbox(residuals, lags=[min(21, max(5, len(residuals) // 20))], return_df=True).iloc[-1]
+    bp_stat, bp_p, _, _ = het_breuschpagan(residuals, fit.model.exog)
+    warning_count = int(float(lb["lb_pvalue"]) < 0.05) + int(float(bp_p) < 0.05) + int(rmse > baseline_rmse)
+    recipe_id = "M.DAILY_MARKET_BRIDGE.V1" if bridge else "M.DAILY_MARKET_AR.V1"
+    method = "Daily market bridge forecast with HAC inference" if bridge else "Daily market autoregressive benchmark"
+    coefficients = [
+        _coefficient(name, name, float(fit.params[name]), float(fit.bse[name]), float(fit.pvalues[name]))
+        for name in fit.params.index
+    ]
+    diagnostics = [
+        _diagnostic(f"{recipe_id}.OOS", "Rolling-origin RMSE ratio", rmse / baseline_rmse if baseline_rmse else None, None, "PASS" if rmse < baseline_rmse else "WARNING", "Uses strictly earlier business-day observations at every forecast origin.", "Failure to beat the historical-mean benchmark caps confidence."),
+        _diagnostic(f"{recipe_id}.LB", "Ljung-Box residual autocorrelation", float(lb["lb_stat"]), float(lb["lb_pvalue"]), "PASS" if float(lb["lb_pvalue"]) >= 0.05 else "WARNING", "Tests remaining serial dependence in daily residuals.", "Residual dependence may make intervals too narrow."),
+        _diagnostic(f"{recipe_id}.BP", "Breusch-Pagan heteroskedasticity", float(bp_stat), float(bp_p), "PASS" if float(bp_p) >= 0.05 else "WARNING", "HAC covariance remains active regardless of this diagnostic.", "Volatility clustering weakens conventional Gaussian inference."),
+    ]
+    return {
+        "status": "SUCCESS",
+        "node_id": node_id,
+        "model_recipe_id": recipe_id,
+        "method": method,
+        "evidence_type": "PREDICTIVE_ASSOCIATION" if bridge else "PREDICTIVE_BENCHMARK",
+        "title": f"{method}: {target_id}",
+        "summary": f"The registered {horizon}-business-day log-return forecast for {target_id} is {point_forecast:.3f}%; rolling-origin RMSE is {rmse:.3f} versus {baseline_rmse:.3f} for the benchmark.",
+        "direction": "UP" if point_forecast > 0 else "DOWN",
+        "signal": float(np.tanh(point_forecast / max(frame[target_id].std(), 1e-6))),
+        "confidence": _confidence_from_oos(rmse, baseline_rmse, warning_count),
+        "specification": {"formula": f"r_{{t+{horizon}}} = alpha + phi(L)r_t" + (" + beta'X_t + epsilon_t" if bridge else " + epsilon_t"), "estimand": f"Conditional {horizon}-business-day log return of {target_id}", "dependent_variable": target_id, "independent_variables": list(regressors.columns), "controls": [], "causal_interpretation_allowed": False},
+        "variables": _factor_metadata(registry, list(transformed)),
+        "sample": {"start": regression.index[0].date().isoformat(), "end": regression.index[-1].date().isoformat(), "observations": len(regression), "frequency": "business-day", "window_years": parameters["estimation_window_years"]},
+        "table": {"table_id": f"T.{node_id}.{recipe_id}", "title": method, "dependent_variable": target_id, "columns": ["(1)"], "coefficients": {"(1)": coefficients}, "statistics": {"Observations": [len(regression)], "R-squared": [_finite(fit.rsquared)], "Adjusted R-squared": [_finite(fit.rsquared_adj)], "HAC max lag": [hac_lags], "Forecast horizon (business days)": [horizon], "Model version": [recipe_id]}, "notes": ["HAC standard errors.", "Predictive specification; no causal interpretation."]},
+        "diagnostics": diagnostics,
+        "robustness": {"oos_design": "rolling origin with horizon embargo", "oos_origins": len(predictions), "rmse": _finite(rmse), "baseline_rmse": _finite(baseline_rmse), "rmse_ratio": _finite(rmse / baseline_rmse if baseline_rmse else None)},
+        "charts": [{"chart_id": f"CH.{node_id}.DAILY_OOS", "kind": "actual_vs_forecast", "title": "日频滚动样本外预测", "series": [{"series_id": "forecast", "label": "预测", "points": [{"date": stamp.date().isoformat(), "value": _finite(value)} for stamp, value in zip(origins, predictions, strict=True)]}, {"series_id": "actual", "label": "实际", "points": [{"date": stamp.date().isoformat(), "value": _finite(value)} for stamp, value in zip(origins, actuals, strict=True)]}]}],
+        "aggregation_input": {"target": target_id, "horizon": horizon, "point_forecast": _finite(point_forecast), "oos_loss": _finite(rmse**2), "baseline_oos_loss": _finite(baseline_rmse**2)},
+    }
+
+
+def run_daily_market_ar(store: MacroStore, registry: RegistryStore, as_of: date, node_id: str, factor_ids: list[str], parameters: dict[str, Any]) -> dict[str, Any]:
+    return _daily_market_linear(store, registry, as_of, node_id, factor_ids, parameters, bridge=False)
+
+
+def run_daily_market_bridge(store: MacroStore, registry: RegistryStore, as_of: date, node_id: str, factor_ids: list[str], parameters: dict[str, Any]) -> dict[str, Any]:
+    return _daily_market_linear(store, registry, as_of, node_id, factor_ids, parameters, bridge=True)
+
+
+def run_daily_market_var(
+    store: MacroStore,
+    registry: RegistryStore,
+    as_of: date,
+    node_id: str,
+    factor_ids: list[str],
+    parameters: dict[str, Any],
+) -> dict[str, Any]:
+    unique_ids = list(dict.fromkeys(factor_ids))[:5]
+    columns = {
+        factor_id: _daily_transform(factor_id, raw)
+        for factor_id in unique_ids
+        if not (raw := _series(store, registry, factor_id, as_of)).empty
+    }
+    if len(columns) < 2:
+        raise RuntimeError("Daily market VAR requires at least two available series")
+    window = int(parameters["estimation_window_years"]) * 252
+    frame = pd.concat(columns, axis=1).dropna().tail(window)
+    lags = int(parameters["lags"])
+    horizon = int(parameters["forecast_horizon_days"])
+    if len(frame) < max(400, lags * len(frame.columns) * 12):
+        raise RuntimeError("Daily market VAR effective sample is too short")
+    model = VAR(frame).fit(lags, trend="c")
+    stable = bool(model.is_stable(verbose=False))
+    forecast_array, lower, upper = model.forecast_interval(frame.to_numpy()[-lags:], steps=horizon, alpha=0.05)
+    forecast_index = pd.bdate_range(frame.index[-1] + pd.offsets.BDay(1), periods=horizon)
+    forecast = pd.DataFrame(forecast_array, index=forecast_index, columns=frame.columns)
+    target_id = frame.columns[0]
+    holdout = min(40, max(25, len(frame) // 20))
+    train = frame.iloc[:-holdout]
+    test = frame.iloc[-holdout:]
+    history = train.copy()
+    oos: list[float] = []
+    for stamp in test.index:
+        fitted = VAR(history).fit(lags, trend="c")
+        oos.append(float(fitted.forecast(history.to_numpy()[-lags:], steps=1)[0][0]))
+        history = pd.concat([history, test.loc[[stamp]]])
+    actual = test[target_id].to_numpy()
+    rmse = float(np.sqrt(np.mean((actual - np.asarray(oos)) ** 2)))
+    baseline_rmse = float(np.sqrt(np.mean((actual - train[target_id].tail(60).mean()) ** 2)))
+    portmanteau = model.test_whiteness(nlags=max(lags + 1, min(21, lags + 10)), adjusted=True)
+    warning_count = int(not stable) + int(portmanteau.pvalue < 0.05) + int(rmse > baseline_rmse)
+    equation = target_id
+    coefficients = [
+        _coefficient(name, name, float(model.params.loc[name, equation]), float(model.stderr.loc[name, equation]), float(model.pvalues.loc[name, equation]))
+        for name in model.params.index
+    ]
+    irf = model.irf(min(21, horizon)).irfs
+    shock_column = min(1, len(frame.columns) - 1)
+    diagnostics = [
+        _diagnostic("DAILY_VAR.STABILITY", "Companion-matrix stability", max(abs(model.roots)) if len(model.roots) else None, None, "PASS" if stable else "FAIL", "Checks stability of the registered daily VAR.", "Unstable systems cannot support directional synthesis."),
+        _diagnostic("DAILY_VAR.WHITENESS", "Residual Portmanteau whiteness", float(portmanteau.test_statistic), float(portmanteau.pvalue), "PASS" if portmanteau.pvalue >= 0.05 else "WARNING", "Tests joint residual serial correlation.", "Residual dependence suggests omitted daily dynamics."),
+        _diagnostic("DAILY_VAR.OOS", "Rolling one-day RMSE ratio", rmse / baseline_rmse if baseline_rmse else None, None, "PASS" if rmse < baseline_rmse else "WARNING", "Refits the system using only prior business-day observations.", "Failure to beat the baseline lowers confidence."),
+    ]
+    return {
+        "status": "SUCCESS" if stable else "FAILED",
+        "node_id": node_id,
+        "model_recipe_id": "M.DAILY_MARKET_VAR.V1",
+        "method": "Registered daily market VAR",
+        "evidence_type": "PREDICTIVE_STRUCTURAL_PROXY",
+        "title": f"日频市场 VAR：{target_id}",
+        "summary": f"The registered daily VAR projects a {forecast[target_id].iloc[-1]:.3f}% transformed move in {target_id} at {horizon} business day(s).",
+        "direction": "UP" if forecast[target_id].iloc[-1] > 0 else "DOWN",
+        "signal": float(np.tanh(forecast[target_id].mean() / max(frame[target_id].std(), 1e-6))),
+        "confidence": _confidence_from_oos(rmse, baseline_rmse, warning_count),
+        "specification": {"formula": f"R_t = c + A_1R_{{t-1}} + ... + A_{lags}R_{{t-{lags}}} + u_t", "estimand": f"Joint daily return system and {horizon}-business-day forecast", "dependent_variable": target_id, "independent_variables": list(frame.columns), "controls": [f"{lags} registered daily lag(s)"], "causal_interpretation_allowed": False},
+        "variables": _factor_metadata(registry, list(frame.columns)),
+        "sample": {"start": frame.index[0].date().isoformat(), "end": frame.index[-1].date().isoformat(), "observations": int(model.nobs), "frequency": "business-day", "window_years": parameters["estimation_window_years"]},
+        "table": {"table_id": f"T.{node_id}.DAILY_VAR", "title": f"Daily VAR equation: {target_id}", "dependent_variable": target_id, "columns": [equation], "coefficients": {equation: coefficients}, "statistics": {"Observations": [int(model.nobs)], "System variables": [len(frame.columns)], "Lags": [lags], "AIC": [_finite(model.aic)], "BIC": [_finite(model.bic)], "Stable": ["Yes" if stable else "No"], "Model version": ["M.DAILY_MARKET_VAR.V1"]}, "notes": ["Ordering-based impulse responses are structural proxies, not identified shocks."]},
+        "diagnostics": diagnostics,
+        "robustness": {"model_oos_rmse": _finite(rmse), "baseline_oos_rmse": _finite(baseline_rmse), "rmse_ratio": _finite(rmse / baseline_rmse if baseline_rmse else None), "identification": parameters["identification"]},
+        "charts": [{"chart_id": f"CH.{node_id}.DAILY_VAR_FORECAST", "kind": "forecast_fan", "title": f"{target_id} 日频预测扇形图", "series": [{"series_id": "lower95", "label": "95% 下界", "points": [{"date": stamp.date().isoformat(), "value": _finite(lower[index, 0])} for index, stamp in enumerate(forecast_index)]}, {"series_id": "forecast", "label": "点预测", "points": [{"date": stamp.date().isoformat(), "value": _finite(value)} for stamp, value in forecast[target_id].items()]}, {"series_id": "upper95", "label": "95% 上界", "points": [{"date": stamp.date().isoformat(), "value": _finite(upper[index, 0])} for index, stamp in enumerate(forecast_index)]}]}, {"chart_id": f"CH.{node_id}.DAILY_VAR_IRF", "kind": "irf", "title": f"{target_id} 对 {frame.columns[shock_column]} 的响应", "series": [{"series_id": "irf", "label": "脉冲响应", "points": [{"date": str(step), "value": _finite(irf[step, 0, shock_column])} for step in range(irf.shape[0])]}]}],
+        "aggregation_input": {"target": target_id, "horizon": horizon, "point_forecast": _finite(forecast[target_id].iloc[-1]), "oos_loss": _finite(rmse**2), "baseline_oos_loss": _finite(baseline_rmse**2)},
+    }
+
+
 def run_panel_fixture(
     store: MacroStore,
     registry: RegistryStore,
@@ -800,5 +1010,8 @@ MODEL_RUNNERS = {
     "M.VAR_SYSTEM.V1": run_var,
     "M.LOCAL_PROJECTION.V1": run_local_projection,
     "M.GROWTH_AT_RISK.V1": run_growth_at_risk,
+    "M.DAILY_MARKET_AR.V1": run_daily_market_ar,
+    "M.DAILY_MARKET_BRIDGE.V1": run_daily_market_bridge,
+    "M.DAILY_MARKET_VAR.V1": run_daily_market_var,
     "M.PANEL_FE_FIXTURE.V1": run_panel_fixture,
 }
