@@ -73,6 +73,7 @@ Write-Host '正在更新本地数据库结构…'
 & $venvPython -m alembic upgrade head
 
 $env:NEXT_PUBLIC_RESEARCHOS_API_BASE_URL = 'http://127.0.0.1:8000/api/v1'
+$env:NEXT_PUBLIC_MACROTRACE_UI_URL = 'http://127.0.0.1:8000'
 $env:WRANGLER_LOG_PATH = '.wrangler/wrangler.log'
 
 try {
@@ -95,7 +96,7 @@ try {
     if ($launchWorkspace) {
         Write-Host '  统一金融研究工作台：http://127.0.0.1:3000'
     }
-    Write-Host '  MacroTrace 引擎控制台：http://127.0.0.1:8000'
+    Write-Host '  B 原始 MacroTrace 工作台：http://127.0.0.1:8000（也已嵌入统一工作台）'
     Write-Host '  API：http://127.0.0.1:8000/docs'
     Write-Host '  产品主线：数据证据层 → 实证研究图 → 研究报告'
     if (-not $NoBrowser) {

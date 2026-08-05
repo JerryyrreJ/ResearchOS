@@ -5,12 +5,11 @@ import {
   researchosApi,
   type CompileEnvelope,
   type CompileResult,
-  type ToolRunEnvelope,
   type VersionDiff,
 } from "../lib/api-client";
 import type { Locale } from "./i18n";
 
-type LiveView = "thesis" | "validation" | "macrotrace" | "recompile" | "versions";
+type LiveView = "thesis" | "validation" | "recompile" | "versions";
 type Phase = "idle" | "creating" | "compiling" | "running" | "verifying" | "complete" | "failed";
 
 export function buildThesisPayload(thesisId: string, rawClaim: string, languageLevel = "CAUSAL") {
@@ -51,13 +50,9 @@ export default function LiveResearchFlow({ view, locale, thesisId = "THESIS_DEMO
   const zh = locale !== "en";
   const [phase, setPhase] = useState<Phase>("idle");
   const [compiled, setCompiled] = useState<CompileEnvelope>();
-  const [run, setRun] = useState<ToolRunEnvelope>();
   const [verified, setVerified] = useState<CompileResult>();
   const [versions, setVersions] = useState<CompileResult[]>([]);
   const [diff, setDiff] = useState<VersionDiff>();
-  const [artifactCount, setArtifactCount] = useState(0);
-  const [graphNodeCount, setGraphNodeCount] = useState(0);
-  const [jobEventCount, setJobEventCount] = useState(0);
   const [error, setError] = useState<string>();
   const thesisPayload = buildThesisPayload(thesisId, claim, languageLevel);
 
@@ -70,22 +65,19 @@ export default function LiveResearchFlow({ view, locale, thesisId = "THESIS_DEMO
       setPhase("compiling");
       const first = await researchosApi.compileThesis(thesisId);
       setCompiled(first);
-      if (first.job_id) setJobEventCount((await researchosApi.getJobEvents(first.job_id)).length);
+      if (first.job_id) await researchosApi.getJobEvents(first.job_id);
       setPhase("running");
       const toolRun = await researchosApi.runMacroTrace(first.tool_request);
-      setRun(await researchosApi.getToolRun(toolRun.tool_run_id));
-      const [graph, artifacts] = await Promise.all([
+      const resolvedToolRun = await researchosApi.getToolRun(toolRun.tool_run_id);
+      await Promise.all([
         researchosApi.getToolGraph(toolRun.tool_run_id),
         researchosApi.getToolArtifacts(toolRun.tool_run_id),
       ]);
-      setGraphNodeCount(Array.isArray(graph.nodes) ? graph.nodes.length : 0);
-      setArtifactCount(artifacts.items.length);
       setPhase("verifying");
-      const verification = await researchosApi.verifyThesis(thesisId, toolRun.evidence_bundle);
+      const verification = await researchosApi.verifyThesis(thesisId, resolvedToolRun.evidence_bundle);
       setVerified(verification.compile_result);
       if (verification.job_id) {
-        const verifyEvents = await researchosApi.getJobEvents(verification.job_id);
-        setJobEventCount(current => current + verifyEvents.length);
+        await researchosApi.getJobEvents(verification.job_id);
       }
       const nextVersions = await researchosApi.listThesisVersions(thesisId);
       setVersions(nextVersions);
@@ -106,7 +98,6 @@ export default function LiveResearchFlow({ view, locale, thesisId = "THESIS_DEMO
   let body;
   if (view === "thesis") body = <><section className="live-thesis"><span className="eyebrow">论题 · 请求等级 {languageLevel}</span><h1>{claim}</h1><p>{verified?.compiled_claim ?? compiled?.compile_result.compiled_claim ?? (zh ? "尚未编译。运行验证后，证据会约束这里的语言。" : "Not compiled yet. Evidence will constrain this language after validation.")}</p></section><section className="live-issue-list">{(verified ?? compiled?.compile_result)?.issues.map(issue => <div key={issue.code}><span className={`badge badge-${issue.blocking ? "red" : "amber"}`}>{issue.code}</span><b>{issue.message}</b><small>{issue.suggested_actions[0]}</small></div>) ?? <div className="api-empty">{zh ? "等待真实编译结果。" : "Waiting for a live compile result."}</div>}</section></>;
   if (view === "validation") body = <section className="live-protocol">{(verified ?? compiled?.compile_result)?.validation_plan.map((step, index) => <div key={step.step_id}><i>{String(index + 1).padStart(2, "0")}</i><span><b>{step.label}</b><small className="mono">{step.step_id}</small></span><em className={`badge badge-${statusTone(step.status)}`}>{step.status}</em></div>) ?? <div className="api-empty">{zh ? "运行后载入后端生成的验证计划。" : "Run the flow to load the backend validation plan."}</div>}</section>;
-  if (view === "macrotrace") body = run ? <><section className="result-primary"><div><span className="eyebrow">引擎证据 · {run.mode}</span><h2>{run.evidence_bundle.engine_claim ?? "暂无引擎结论"}</h2><p className="mono">{run.tool_run_id}</p></div><div className="evidence-grade"><span>证据类型</span><b>{run.evidence_bundle.evidence_type}</b><small>覆盖范围</small><strong>{run.evidence_bundle.coverage}</strong></div></section><div className="technical-grid"><section><div className="section-kicker"><span>模型运行</span><span className={`badge badge-${statusTone(run.status)}`}>{run.status}</span></div>{run.evidence_bundle.model_runs.map(model => <div className="metric-line" key={model.model_run_id}><span>{model.model_recipe_id}</span><b>{model.status}</b></div>)}</section><section><div className="section-kicker"><span>诊断结果</span><span className="badge badge-blue">{graphNodeCount} 个节点 · {artifactCount} 个产物 · {jobEventCount} 条事件</span></div>{run.evidence_bundle.diagnostics.map(item => <div className="diag-line" key={item.diagnostic_id}><span>{item.interpretation}</span><b>{item.status}</b></div>)}</section></div><section className="limitations"><div className="limit-icon">!</div><div><h3>证据边界</h3><ul>{run.evidence_bundle.limitations.map(item => <li key={item}>{item}</li>)}</ul></div></section></> : <div className="api-empty">{zh ? "尚无 MacroTrace 运行。" : "No MacroTrace run yet."}</div>;
   if (view === "recompile") body = <section className="semantic-diff"><div><span>修改前</span><p>{compiled?.compile_result.original_claim ?? thesisPayload.raw_claim}</p></div><i>→</i><div className="after"><span>修改后 · {verified?.language_policy.allowed_level ?? "待验证"}</span><p>{verified?.compiled_claim ?? (zh ? "等待证据包…" : "Waiting for EvidenceBundle…")}</p></div></section>;
   if (view === "versions") body = <><section className="version-header"><div><span className="eyebrow">实时版本差异</span><h2>{versions[0]?.build_id ?? "—"} <span>→</span> {versions.at(-1)?.build_id ?? "—"}</h2><p>{diff?.summary ?? (zh ? "运行后生成不可变编译版本差异。" : "Run to generate the immutable build diff.")}</p></div></section><div className="diff-groups"><section className="diff-group changed"><div><span>已变更</span><b>{diff?.changed_objects.length ?? 0}</b></div>{diff?.changed_objects.map(item => <button key={item.field}><i>△</i><span><b>{item.field}</b><small>由论题编译器重新计算</small></span><em>→</em></button>)}</section><section className="diff-group reused"><div><span>已复用</span><b>{diff?.reused_refs.length ?? 0}</b></div>{diff?.reused_refs.map(item => <button key={item}><i>✓</i><span><b>{item}</b><small>固定引用未发生变化</small></span></button>)}</section></div></>;
 

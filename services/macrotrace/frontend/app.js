@@ -1,6 +1,33 @@
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const API_BASE_URL = String(window.MACROTRACE_CONFIG?.apiBaseUrl || "").replace(/\/$/, "");
+const INTEGRATION_PARAMS = new URLSearchParams(window.location.search);
+
+function configuredParentOrigin() {
+  const raw = INTEGRATION_PARAMS.get("parent_origin");
+  if (!raw) return null;
+  try {
+    const origin = new URL(raw).origin;
+    return origin === "null" ? null : origin;
+  } catch {
+    return null;
+  }
+}
+
+const PARENT_ORIGIN = configuredParentOrigin();
+
+function notifyResearchOS(type, payload = {}) {
+  if (window.parent === window || !PARENT_ORIGIN) return;
+  window.parent.postMessage({ type, payload }, PARENT_ORIGIN);
+}
+
+function setQuestionFromResearchOS(question) {
+  const normalized = String(question || "").trim();
+  if (!normalized) return;
+  state.lastQuestion = normalized;
+  $("#questionInput").value = normalized;
+  $("#charCount").textContent = `${normalized.length} / 4000`;
+}
 
 function apiUrl(path) {
   if (/^https?:\/\//i.test(path)) return path;
@@ -38,6 +65,7 @@ const state = {
   nodeDetail: null,
   activeTab: "overview",
   lastQuestion: "",
+  reportedTerminalJobId: null,
   drawerReturnFocus: null,
   historyReturnFocus: null,
   settingsCatalog: null,
@@ -119,6 +147,7 @@ function renderHistory() {
 
 async function boot() {
   document.body.dataset.workspaceMode = "empty";
+  document.body.classList.toggle("embedded", INTEGRATION_PARAMS.get("embed") === "1");
   renderHistory();
   try {
     const [health, dataStatus, examples] = await Promise.all([api("/v1/health"), api("/v1/data/status"), api("/v1/examples")]);
@@ -143,11 +172,20 @@ async function boot() {
     $("#healthText").textContent = "OFFLINE";
     $("#dataFreshness").textContent = error.message;
   }
-  const saved = new URLSearchParams(window.location.search).get("job") || localStorage.getItem("macrotrace.currentJob");
+  // A new question coming from ResearchOS opens a fresh B workbench rather than
+  // silently resuming whichever run this browser last viewed.
+  const saved = INTEGRATION_PARAMS.get("job") || (INTEGRATION_PARAMS.get("question") ? null : localStorage.getItem("macrotrace.currentJob"));
   if (saved) {
     try { await loadJob(saved, true); }
     catch { localStorage.removeItem("macrotrace.currentJob"); }
+  } else {
+    setQuestionFromResearchOS(INTEGRATION_PARAMS.get("question"));
   }
+  notifyResearchOS("researchos:macrotrace-ready", {
+    question: $("#questionInput").value.trim(),
+    thesisId: INTEGRATION_PARAMS.get("thesis_id") || undefined,
+    workspaceId: INTEGRATION_PARAMS.get("workspace_id") || undefined,
+  });
 }
 
 async function loadDataEvidenceCatalog() {
@@ -189,6 +227,7 @@ async function submitResearch(event) {
   closeEventSource();
   state.graph = null;
   state.result = null;
+  state.reportedTerminalJobId = null;
   state.expandedNodes = new Set();
   state.graphInitialized = false;
   state.dataZoom = .78;
@@ -269,6 +308,14 @@ async function refreshJob(jobId) {
   renderGraph();
   if (TERMINAL.has(job.status)) {
     closeEventSource();
+    if (state.reportedTerminalJobId !== job.job_id) {
+      state.reportedTerminalJobId = job.job_id;
+      notifyResearchOS("researchos:macrotrace-run-complete", {
+        jobId: job.job_id,
+        status: job.status,
+        question: job.question,
+      });
+    }
     if (job.status === "CANCELLED") {
       showError("研究任务已取消", "任务保留了取消前的图谱与审计事件。你可以修改问题后重新执行。");
       return;
@@ -1339,6 +1386,10 @@ $("#exampleQuestions").addEventListener("click", (event) => {
   $("#questionInput").focus();
 });
 $("#retryButton").addEventListener("click", submitResearch);
+window.addEventListener("message", (event) => {
+  if (event.source !== window.parent || !PARENT_ORIGIN || event.origin !== PARENT_ORIGIN) return;
+  if (event.data?.type === "researchos:macrotrace-context") setQuestionFromResearchOS(event.data.payload?.question);
+});
 $("#cancelButton").addEventListener("click", cancelCurrentJob);
 $("#detailToggle").addEventListener("click", () => {
   state.showDetail = !state.showDetail;

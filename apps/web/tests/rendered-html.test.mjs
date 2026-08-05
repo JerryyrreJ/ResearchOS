@@ -60,6 +60,23 @@ test("preserves the merged durable API and version-lineage capabilities", async 
   assert.match(worker, /env\.UPLOADS\.put/);
 });
 
+test("uses B's original MacroTrace workbench instead of a replacement fixture view", async () => {
+  const [page, workbench, macrotrace] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/macrotrace-workbench.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../../../services/macrotrace/frontend/app.js", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /MacroTraceWorkbench/);
+  assert.match(page, /showingOriginalMacroTrace/);
+  assert.match(workbench, /NEXT_PUBLIC_MACROTRACE_UI_URL/);
+  assert.match(workbench, /http:\/\/127\.0\.0\.1:8000/);
+  assert.match(workbench, /researchos:macrotrace-run-complete/);
+  assert.match(workbench, /event\.origin !== expectedOrigin/);
+  assert.match(macrotrace, /researchos:macrotrace-ready/);
+  assert.match(macrotrace, /researchos:macrotrace-run-complete/);
+  assert.match(macrotrace, /question/);
+});
+
 test("retains traceable upload, deduplication, and version metadata", async () => {
   const [workspace, client] = await Promise.all([
     readFile(new URL("../app/real-workspace.tsx", import.meta.url), "utf8"),

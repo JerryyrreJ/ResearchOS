@@ -53,10 +53,14 @@ Open http://127.0.0.1:3000. The default product supports:
 1. drag files into the ResearchOS workspace and inspect immutable version history;
 2. select a registered FRED or AKShare dataset and persist it as a versioned Asset;
 3. generate a report data sheet from exact dataset versions and SHA-256 references;
-4. compile a thesis and send its registered validation plan to MacroTrace.
+4. open B's original MacroTrace workbench inside the D shell, with the current research
+   question prefilled; run the registered empirical workflow, diagnostics and research graph there.
 
-The MacroTrace engine console remains available at http://127.0.0.1:8000. To start only the
-backend and that console:
+The `MacroTrace` navigation item is intentionally B's original interface, not a visual rewrite:
+the D shell embeds the workbench served at `NEXT_PUBLIC_MACROTRACE_UI_URL` (default
+`http://127.0.0.1:8000`). It passes the research question into B and receives terminal run
+status back through a same-origin-checked browser message. The original B console remains
+available directly at http://127.0.0.1:8000. To start only the backend and that console:
 
 ```powershell
 .\start.ps1 -BackendOnly
@@ -75,7 +79,11 @@ npm run dev
 Open http://localhost:3000. The workspace exposes file intake, immutable versions, backend
 data plugins, report production, Thesis compilation and the frozen Tool Adapter.
 
-The browser client defaults to `http://127.0.0.1:8000/api/v1`. To point it at another backend, set `NEXT_PUBLIC_RESEARCHOS_API_BASE_URL` before starting the web app. The backend accepts the documented local development ports by default; override them with `RESEARCHOS_CORS_ORIGINS`.
+The browser client defaults to `http://127.0.0.1:8000/api/v1`; the original MacroTrace frame
+defaults to `http://127.0.0.1:8000`. To point either surface elsewhere, set
+`NEXT_PUBLIC_RESEARCHOS_API_BASE_URL` or `NEXT_PUBLIC_MACROTRACE_UI_URL` before starting the web app.
+The backend accepts the documented local development ports by default; override them with
+`RESEARCHOS_CORS_ORIGINS`.
 
 ## Data plugins
 
