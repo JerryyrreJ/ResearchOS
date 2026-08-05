@@ -274,11 +274,13 @@ def test_active_method_is_blocked_without_reproduction(tmp_path: Path) -> None:
 def test_changeset_is_non_mutating_then_requires_exact_codex_approval(tmp_path: Path) -> None:
     service, batch_dir, record_path = _prepare_reviewed_report_batch(tmp_path)
     report_id = service.load_record(record_path).report_id
+    untouched_nodes = (service.registry_root / "nodes.json").read_bytes()
     assert report_id not in RegistryStore(service.registry_root).ids("reports")
 
     changeset_dir = service.build_changeset(batch_dir)
     assert report_id not in RegistryStore(service.registry_root).ids("reports")
     assert report_id in RegistryStore(changeset_dir / "registry").ids("reports")
+    assert (changeset_dir / "registry" / "nodes.json").read_bytes() == untouched_nodes
     changeset_manifest = json.loads((changeset_dir / "manifest.json").read_text(encoding="utf-8"))
     assert changeset_manifest["registry_validation"] == "PASS"
     assert service.load_record(record_path).state == PipelineState.CHANGESET_READY
@@ -299,6 +301,7 @@ def test_changeset_is_non_mutating_then_requires_exact_codex_approval(tmp_path: 
     receipt = service.apply_changeset(changeset_dir, approval_path)
     assert receipt.exists()
     assert report_id in RegistryStore(service.registry_root).ids("reports")
+    assert (service.registry_root / "nodes.json").read_bytes() == untouched_nodes
     assert service.load_record(record_path).state == PipelineState.APPLIED
 
 
