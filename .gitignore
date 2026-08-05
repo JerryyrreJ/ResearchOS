@@ -36,6 +36,7 @@ __pycache__/
 /work/
 /.vercel/
 /var/
+/tmp/
 
 # Environment and debug files
 .env*
