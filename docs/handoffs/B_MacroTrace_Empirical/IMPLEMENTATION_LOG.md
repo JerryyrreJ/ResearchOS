@@ -5,17 +5,17 @@ Last updated: 2026-08-05 (Asia/Shanghai)
 ## Current state
 
 ```text
-State: FIRST_VERTICAL_SLICE_COMPLETE_WAITING_FOR_D_BASE_MERGE
+State: PR1_DRAFT_OPEN_AWAITING_C_D_CONFIRMATION
 Role: B — MacroTrace Empirical Tool
 Branch: role/b-macrotrace
 Remote repository: JerryyrreJ/AIY_Project
 Implementation commit: f40c6fdcc892f4a7ae921c22c6105ab3b87ac5c8
 Latest status commit before this report: 201fc0932b57728672d3a81e15a9120c4692a8fe
 Contract impact: NONE
-PR: READY BUT NOT OPENED — integration exists at the empty master baseline and does not yet contain B's D/shared base
+PR: Draft #2 OPEN — https://github.com/JerryyrreJ/AIY_Project/pull/2
 ```
 
-Role B's first vertical slice is implemented, validated, and pushed. The team has now created `integration`, but it still points to the original empty `master` commit. Because Role B was explicitly based on the reviewed D/shared baseline, opening the B PR now would include D frontend and shared bootstrap files in the B diff. Role B therefore remains PR-ready but correctly does not open a contaminated PR. REAL execution, Data Resolve, the three-run US golden route, and Offline Replay also remain gated by the first fixture PR merge and C/D consumer confirmation.
+Role B's first vertical slice is implemented, validated, pushed, and now open as Draft PR #2 against `integration`. Integration contains the D/shared baseline inherited by B, and the PR diff was revalidated as B-only with no frozen contract changes. The PR is cleanly mergeable. REAL execution, Data Resolve, the three-run US golden route, and Offline Replay remain gated by PR #2 merge, formal C/D consumer confirmation, and A's frozen `/v1/data/resolve` delivery.
 
 ## What is complete
 
@@ -73,21 +73,22 @@ The D build/test issue existed on the selected D baseline before B code was adde
 
 ## Remote dependency audit — 2026-08-05
 
-- `integration`: `2f1f1731eeb2`, identical to the original empty `master` baseline.
-- `role/d-frontend`: `fd8a458d751f`, six commits ahead of integration; fixture UI, themes, extension center, delivery states, and shared bootstrap are present but not merged.
-- `role/a-ontology`: `4821f060c7e7`, one commit ahead of integration; deterministic asset ingest and immutable versioning are present, but `/v1/data/resolve` is not implemented.
-- `role/b-macrotrace`: first fixture slice remains pushed and validated.
-- Role C: no remote branch and no consumer confirmation.
-- Pull requests: none at the time of this audit.
+- `integration`: `4804606bbbbab7b5644f612ddbb310914e138967`; A foundation and the D/shared baseline inherited by B are integrated.
+- `role/d-frontend`: continues through Draft PR #1; its later delivery changes are cleanly mergeable, but D has not yet confirmed B graph/artifact consumption.
+- `role/a-ontology`: M1 deterministic asset foundation is integrated; `/v1/data/resolve` is still absent.
+- `role/b-macrotrace`: Draft PR #2 is open, B-only, and cleanly mergeable.
+- `role/c-thesis`: `41546b4cb6ef`; EvidenceBundle adapter and compiler slice exist but are not integrated.
+- Independent compatibility evidence: C's adapter deserialized B COMPLETE, PARTIAL, and FAILED fixtures, and all 15 C tests passed. Formal C owner confirmation remains required.
+- D technical consumption evidence: `role/d-frontend@1bcd711` uses the stable B graph/artifact routes in `apps/web/app/live-research-flow.tsx` and `apps/web/lib/api-client.ts`, with a full-stack API test covering tool creation, status, graph, and artifacts. Formal D review/comment on PR #2 remains absent.
+- Merge-order warning: D Draft PR #1 currently carries merge commits for B and C. Reviewers must avoid duplicate or overlapping integration merges and preserve the owned-path review record for PR #2.
 
 ## Next handoff sequence
 
-1. D/shared baseline is merged into `integration`.
-2. Role B verifies that the PR diff contains only B-owned paths and opens a Draft PR targeting `integration` with title:
-   `feat(macrotrace): import stable upstream and expose fixture tool adapter`
-3. C validates all three core EvidenceBundle fixtures.
-4. D validates graph and artifact links through the stable adapter boundary.
-5. After merge and consumer confirmation, B begins the second delivery unit:
+1. C formally validates all three core EvidenceBundle fixtures on PR #2.
+2. D validates graph and artifact links through the stable adapter boundary.
+3. Reviewers merge PR #2 after the consumer gates pass.
+4. A delivers frozen `/v1/data/resolve` success/error fixtures and exact-version/hash behavior.
+5. After merge and all dependency confirmation, B begins the second delivery unit:
    Data Resolve → REAL execution → canonical EvidenceBundle mapping → three-run US golden route → OFFLINE_REPLAY.
 
 ## Important boundary note
