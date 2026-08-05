@@ -355,6 +355,79 @@
         "title": "FragmentView",
         "type": "object"
       },
+      "GraphEdgeView": {
+        "properties": {
+          "created_by": {
+            "const": "SYSTEM",
+            "default": "SYSTEM",
+            "title": "Created By",
+            "type": "string"
+          },
+          "edge_id": {
+            "title": "Edge Id",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "title": "Metadata",
+            "type": "object"
+          },
+          "relation_type": {
+            "const": "NEW_VERSION_OF",
+            "title": "Relation Type",
+            "type": "string"
+          },
+          "source_ref": {
+            "title": "Source Ref",
+            "type": "string"
+          },
+          "state": {
+            "const": "SYSTEM_DERIVED",
+            "default": "SYSTEM_DERIVED",
+            "title": "State",
+            "type": "string"
+          },
+          "target_ref": {
+            "title": "Target Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "edge_id",
+          "source_ref",
+          "target_ref",
+          "relation_type"
+        ],
+        "title": "GraphEdgeView",
+        "type": "object"
+      },
+      "GraphNodeView": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "title": "Metadata",
+            "type": "object"
+          },
+          "node_id": {
+            "title": "Node Id",
+            "type": "string"
+          },
+          "ref": {
+            "$ref": "#/components/schemas/ObjectReferenceView"
+          }
+        },
+        "required": [
+          "node_id",
+          "ref",
+          "label"
+        ],
+        "title": "GraphNodeView",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -603,6 +676,230 @@
         "title": "IngestOutcomeView",
         "type": "object"
       },
+      "ObjectDetailProjectionView": {
+        "properties": {
+          "summary": {
+            "$ref": "#/components/schemas/ObjectSummaryView"
+          },
+          "versions": {
+            "items": {
+              "$ref": "#/components/schemas/ObjectReferenceView"
+            },
+            "title": "Versions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "summary",
+          "versions"
+        ],
+        "title": "ObjectDetailProjectionView",
+        "type": "object"
+      },
+      "ObjectReferenceView": {
+        "description": "Version-pinned object reference exposed by the M1 query projection.",
+        "properties": {
+          "access_scope": {
+            "title": "Access Scope",
+            "type": "string"
+          },
+          "content_hash": {
+            "title": "Content Hash",
+            "type": "string"
+          },
+          "contract_version": {
+            "const": "0.1.0-m1",
+            "default": "0.1.0-m1",
+            "title": "Contract Version",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "format_kind": {
+            "title": "Format Kind",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "title": "Metadata",
+            "type": "object"
+          },
+          "mime_type": {
+            "title": "Mime Type",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "object_id": {
+            "title": "Object Id",
+            "type": "string"
+          },
+          "object_type": {
+            "const": "SOURCE_FILE",
+            "default": "SOURCE_FILE",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "representation": {
+            "title": "Representation",
+            "type": "string"
+          },
+          "schema_version": {
+            "default": "m1.asset.v1",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "source_filename": {
+            "title": "Source Filename",
+            "type": "string"
+          },
+          "version_id": {
+            "title": "Version Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_id",
+          "version_id",
+          "name",
+          "representation",
+          "content_hash",
+          "access_scope",
+          "source_filename",
+          "mime_type",
+          "format_kind",
+          "size_bytes",
+          "created_at"
+        ],
+        "title": "ObjectReferenceView",
+        "type": "object"
+      },
+      "ObjectSummaryView": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "title": "Created By",
+            "type": "string"
+          },
+          "current_version": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ObjectReferenceView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "current_version_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Version Id"
+          },
+          "fragment_count": {
+            "title": "Fragment Count",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "object_id": {
+            "title": "Object Id",
+            "type": "string"
+          },
+          "representation_count": {
+            "title": "Representation Count",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "version_count": {
+            "title": "Version Count",
+            "type": "integer"
+          },
+          "workspace_id": {
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_id",
+          "workspace_id",
+          "name",
+          "current_version_id",
+          "status",
+          "created_by",
+          "created_at",
+          "version_count",
+          "representation_count",
+          "fragment_count"
+        ],
+        "title": "ObjectSummaryView",
+        "type": "object"
+      },
+      "OntologyGraphView": {
+        "properties": {
+          "contract_version": {
+            "const": "0.1.0-m1",
+            "default": "0.1.0-m1",
+            "title": "Contract Version",
+            "type": "string"
+          },
+          "edges": {
+            "items": {
+              "$ref": "#/components/schemas/GraphEdgeView"
+            },
+            "title": "Edges",
+            "type": "array"
+          },
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/GraphNodeView"
+            },
+            "title": "Nodes",
+            "type": "array"
+          },
+          "workspace_id": {
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "generated_at",
+          "nodes",
+          "edges"
+        ],
+        "title": "OntologyGraphView",
+        "type": "object"
+      },
       "ParseRunView": {
         "properties": {
           "completed_at": {
@@ -684,6 +981,55 @@
           "completed_at"
         ],
         "title": "ParseRunView",
+        "type": "object"
+      },
+      "ProjectStateView": {
+        "properties": {
+          "asset_count": {
+            "title": "Asset Count",
+            "type": "integer"
+          },
+          "fragment_count": {
+            "title": "Fragment Count",
+            "type": "integer"
+          },
+          "ingest_item_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Ingest Item Counts",
+            "type": "object"
+          },
+          "parse_run_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Parse Run Counts",
+            "type": "object"
+          },
+          "representation_count": {
+            "title": "Representation Count",
+            "type": "integer"
+          },
+          "version_count": {
+            "title": "Version Count",
+            "type": "integer"
+          },
+          "workspace_id": {
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "asset_count",
+          "version_count",
+          "representation_count",
+          "fragment_count",
+          "parse_run_counts",
+          "ingest_item_counts"
+        ],
+        "title": "ProjectStateView",
         "type": "object"
       },
       "RepresentationView": {
@@ -1290,6 +1636,88 @@
         "summary": "Upload Ingest Item"
       }
     },
+    "/api/v1/objects/{object_id}": {
+      "get": {
+        "operationId": "get_object_api_v1_objects__object_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "object_id",
+            "required": true,
+            "schema": {
+              "title": "Object Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDetailProjectionView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Object"
+      }
+    },
+    "/api/v1/objects/{object_id}/versions": {
+      "get": {
+        "operationId": "list_object_versions_api_v1_objects__object_id__versions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "object_id",
+            "required": true,
+            "schema": {
+              "title": "Object Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ObjectReferenceView"
+                  },
+                  "title": "Response List Object Versions Api V1 Objects  Object Id  Versions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Object Versions"
+      }
+    },
     "/api/v1/workspaces": {
       "get": {
         "operationId": "list_workspaces_api_v1_workspaces_get",
@@ -1438,6 +1866,144 @@
           }
         },
         "summary": "Create Ingest Batch"
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/objects": {
+      "get": {
+        "description": "Return version-aware object summaries for the browser workspace.",
+        "operationId": "list_objects_api_v1_workspaces__workspace_id__objects_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ObjectSummaryView"
+                  },
+                  "title": "Response List Objects Api V1 Workspaces  Workspace Id  Objects Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Objects"
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/ontology/graph": {
+      "get": {
+        "operationId": "get_ontology_graph_api_v1_workspaces__workspace_id__ontology_graph_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OntologyGraphView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Ontology Graph"
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/project-state": {
+      "get": {
+        "operationId": "get_project_state_api_v1_workspaces__workspace_id__project_state_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectStateView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Project State"
       }
     }
   }

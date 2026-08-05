@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -147,6 +147,80 @@ class ParseRunView(BaseModel):
 
 class AssetDetailView(AssetSummaryView):
     versions: list[VersionView]
+
+
+class ObjectReferenceView(BaseModel):
+    """Version-pinned object reference exposed by the M1 query projection."""
+
+    contract_version: Literal["0.1.0-m1"] = "0.1.0-m1"
+    object_id: str
+    version_id: str
+    object_type: Literal["SOURCE_FILE"] = "SOURCE_FILE"
+    name: str
+    representation: str
+    schema_version: str = "m1.asset.v1"
+    content_hash: str
+    access_scope: str
+    source_filename: str
+    mime_type: str
+    format_kind: str
+    size_bytes: int
+    created_at: datetime
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class ObjectSummaryView(BaseModel):
+    object_id: str
+    workspace_id: str
+    name: str
+    current_version_id: str | None
+    status: str
+    created_by: str
+    created_at: datetime
+    version_count: int
+    representation_count: int
+    fragment_count: int
+    current_version: ObjectReferenceView | None = None
+
+
+class ObjectDetailProjectionView(BaseModel):
+    summary: ObjectSummaryView
+    versions: list[ObjectReferenceView]
+
+
+class GraphNodeView(BaseModel):
+    node_id: str
+    ref: ObjectReferenceView
+    label: str
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class GraphEdgeView(BaseModel):
+    edge_id: str
+    source_ref: str
+    target_ref: str
+    relation_type: Literal["NEW_VERSION_OF"]
+    state: Literal["SYSTEM_DERIVED"] = "SYSTEM_DERIVED"
+    created_by: Literal["SYSTEM"] = "SYSTEM"
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class OntologyGraphView(BaseModel):
+    contract_version: Literal["0.1.0-m1"] = "0.1.0-m1"
+    workspace_id: str
+    generated_at: datetime
+    nodes: list[GraphNodeView]
+    edges: list[GraphEdgeView]
+
+
+class ProjectStateView(BaseModel):
+    workspace_id: str
+    asset_count: int
+    version_count: int
+    representation_count: int
+    fragment_count: int
+    parse_run_counts: dict[str, int]
+    ingest_item_counts: dict[str, int]
 
 
 class VersionDetailView(VersionView):
