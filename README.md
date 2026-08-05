@@ -42,6 +42,10 @@ npm run dev
 
 Open http://localhost:3000. The workspace upload, asset and version surfaces use the real API. Thesis Build, MacroTrace and Recompile remain explicitly labeled Fixture or Offline Replay surfaces until their producer APIs are available.
 
+The browser client defaults to `http://127.0.0.1:8000/api/v1`. To point it at another backend, set `NEXT_PUBLIC_RESEARCHOS_API_BASE_URL` before starting the web app. The backend accepts local browser requests from `localhost:3000` and `127.0.0.1:3000` by default; override this with `RESEARCHOS_CORS_ORIGINS`.
+
+The integration work is on the `integration-ad-real-assets` branch. It intentionally remains separate from the existing `integration` branch so it can be reviewed and merged without rewriting either role branch.
+
 ```bash
 cd apps/web
 npm run build
