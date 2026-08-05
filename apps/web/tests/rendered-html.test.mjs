@@ -28,7 +28,7 @@ test("preserves frozen evidence semantics in the UI", async () => {
   const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
   assert.match(page, /ASSOCIATIONAL/);
   assert.match(page, /cannot support causal wording/i);
-  assert.match(page, /contains no real empirical conclusion/i);
+  assert.match(page, /contains no real empirical\s+conclusion/i);
   assert.match(page, /EVIDENCE_DEMO_001/);
   assert.match(page, /THESIS_VER_002/);
   assert.match(page, /FIXTURE MODE/);
@@ -36,12 +36,23 @@ test("preserves frozen evidence semantics in the UI", async () => {
 });
 
 test("ships Simplified Chinese, Traditional Chinese, and English UI catalogs", async () => {
-  const catalog = await readFile(new URL("../app/i18n.ts", import.meta.url), "utf8");
+  const [catalog, page, workspace, css] = await Promise.all([
+    readFile(new URL("../app/i18n.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/real-workspace.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
   assert.match(catalog, /"zh-CN"/);
   assert.match(catalog, /"zh-TW"/);
   assert.match(catalog, /\ben:\s*\{/);
   assert.match(catalog, /進入你的研究空間/);
   assert.match(catalog, /Enter your research workspace/);
+  assert.match(page, /<RealWorkspace\s+locale=\{locale\}/);
+  assert.match(workspace, /Relationship network/);
+  assert.match(workspace, /關係網路/);
+  assert.match(css, /--font-ui/);
+  assert.match(css, /PingFang SC/);
+  assert.match(css, /PingFang TC/);
 });
 
 test("defines phone, tablet, and desktop adaptive behavior", async () => {
@@ -122,7 +133,7 @@ test("connects deployed UI to same-origin durable APIs and creates real theses",
   ]);
   assert.match(client, /window\.location\.origin.*\/api\/v1/);
   assert.match(page, /newThesisOpen/);
-  assert.match(page, /createThesis\(buildThesisPayload/);
+  assert.match(page, /createThesis\(\s*buildThesisPayload/);
   assert.match(page, /thesisId=\{activeThesis/);
   assert.match(flow, /buildThesisPayload/);
   for (const route of ["/workspaces", "/theses", "/tool-runs/macrotrace", "/verify", "thesis-versions"]) assert.match(worker, new RegExp(route.replaceAll("/", "\\/")));
@@ -168,7 +179,7 @@ test("makes the shared knowledge library the primary product workflow", async ()
   assert.doesNotMatch(workspace, /把团队文件放到同一个地方|共享资料库/);
   assert.match(workspace, /categoryFor/);
   assert.match(workspace, /基础分析/);
-  assert.match(workspace, /版本关联/);
+  assert.match(workspace, /versions: \["版本", "版本", "Versions"\]/);
   assert.match(workspace, /关系网络/);
   assert.match(workspace, /查看完整版本链/);
   assert.match(workspace, /同一知识库/);
