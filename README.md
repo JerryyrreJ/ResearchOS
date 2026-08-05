@@ -167,6 +167,12 @@ EvidenceBundle 返回 Thesis Compiler
 - Light、Dark、System 与 High Contrast 主题；
 - Fixture、Offline Replay 与 Real API 模式标识。
 
+### 日报与研究报告
+
+- US 市场日报：自动汇总指数、利率、汇率与资产表现；
+- 周报/月报模板：国际市场周报、海外月报、REITs 月报；
+- 所有数据底稿基于已固定版本，来源可追溯。
+
 ## Demo 路径
 
 1. 进入「金融研究助手」，输入一个金融研究问题；
