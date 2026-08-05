@@ -72,3 +72,23 @@ test("provides token-driven themes, accessibility preferences, and an honest ext
   assert.match(css, /data-reduced-motion="true"/);
   assert.match(favicon, /#183F37/i);
 });
+
+test("exposes honest delivery modes and visible asynchronous failure states", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  for (const label of ["FIXTURE MODE", "OFFLINE REPLAY", "REAL API", "Run queued", "Partial evidence available", "Model run failed", "Run cancelled", "Permission blocked", "Model timeout", "Unsupported backend state"]) {
+    assert.match(page, new RegExp(label, "i"));
+  }
+  assert.match(page, /last successful result is marked stale and is not reused/i);
+  assert.match(page, /Waiting for A \/ B \/ C/);
+  assert.match(page, /QRCodeSVG/);
+});
+
+test("serves a non-cached web health endpoint", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("health-test", `${process.pid}-${Date.now()}`);
+  const { default: worker } = await import(workerUrl.href);
+  const response = await worker.fetch(new Request("http://localhost/health"), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.deepEqual(await response.json(), { status: "ok", service: "researchos-web", mode: "fixture", contract: "0.1.0-frozen" });
+});

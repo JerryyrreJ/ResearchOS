@@ -13,12 +13,27 @@ npm run dev
 
 Open `http://localhost:3000`. The interface is explicitly labeled **FIXTURE MODE** until A/B/C APIs replace the frozen samples.
 
+The Settings → Demo & status panel provides deterministic delivery QA:
+
+- switch between `FIXTURE MODE` and clearly labeled `OFFLINE REPLAY`;
+- exercise queued, running, partial, failed, cancelled, permission, timeout, and unknown states;
+- reset the golden project before each demonstration;
+- scan the production QR code for the mobile entry.
+
+`REAL API` remains visibly unavailable until the A/B/C producer handshakes are complete. The UI does not simulate a successful backend integration.
+
 ## Validate
 
 ```bash
 npm run build
 npm test
 npm run lint
+```
+
+Web health probe:
+
+```bash
+curl http://localhost:3000/health
 ```
 
 ## Product boundaries
