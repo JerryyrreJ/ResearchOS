@@ -130,10 +130,64 @@
         </div>
       </article>
 
+      <section id="dataEvidencePanel" class="data-evidence-panel" aria-labelledby="dataEvidenceTitle">
+        <header class="data-evidence-head">
+          <div>
+            <span>01 / PART A · EVIDENCE SPACE</span>
+            <h2 id="dataEvidenceTitle">本次实证调用了哪些数据？</h2>
+            <p>灰色节点是系统可用的数据与文档；蓝绿色节点是本次问题真正路由并读取的证据。点击节点可查看来源、序列、频率与版本。</p>
+          </div>
+          <div class="data-evidence-stats">
+            <span><b id="dataUniverseCount">—</b> 可用节点</span>
+            <span><b id="dataRoutedCount">—</b> 本次调用</span>
+            <span><b id="dataFactorCount">—</b> 关联因子</span>
+          </div>
+        </header>
+        <div class="data-evidence-toolbar">
+          <div id="dataPluginBadges" class="data-plugin-badges"><span>正在读取 A 的数据插件与资产目录…</span></div>
+          <div class="data-zoom-controls"><button id="dataZoomOut" type="button">−</button><button id="dataZoomReset" type="button">100%</button><button id="dataZoomIn" type="button">＋</button></div>
+        </div>
+        <div id="dataEvidenceViewport" class="data-evidence-viewport">
+          <div id="dataEvidenceCanvas" class="data-evidence-canvas">
+            <svg id="dataEvidenceEdges" class="data-evidence-edges" aria-hidden="true"></svg>
+            <div id="dataEvidenceNodes" class="data-evidence-nodes"></div>
+          </div>
+        </div>
+        <footer class="data-evidence-foot"><span><i class="used"></i>本次使用</span><span><i></i>可用但未路由</span><span><i class="document"></i>A 中已版本化的文档 / 数据</span><b>滚轮缩放 · 拖拽移动 · 点击查看 lineage</b></footer>
+      </section>
+
+      <section class="graph-panel" aria-labelledby="graphTitle">
+        <header class="graph-header">
+          <div>
+            <span>02 / PART B · EMPIRICAL COMPILER</span>
+            <h2 id="graphTitle">Research Graph</h2>
+            <p id="graphStats">Waiting for compiled nodes.</p>
+          </div>
+          <div class="graph-actions">
+            <label>Lane<select id="laneFilter"><option value="ALL">All lanes</option></select></label>
+            <label>Status<select id="statusFilter"><option value="ALL">All status</option><option value="PLANNED">Planned</option><option value="SUCCESS">Success</option><option value="WARNING">Warning</option><option value="FAILED">Failed</option><option value="RUNNING">Running</option><option value="BLOCKED">Blocked</option><option value="NOT_ROUTED">Not routed</option></select></label>
+            <label>Evidence<select id="evidenceFilter"><option value="ALL">All evidence</option><option value="PREDICTIVE">Predictive</option><option value="TAIL_RISK_PREDICTIVE">Tail risk</option><option value="DYNAMIC_ASSOCIATION">Dynamic association</option><option value="ASSOCIATIONAL_FIXTURE">Fixture</option></select></label>
+            <button id="detailToggle" class="toggle-button" type="button" aria-pressed="false"><i></i>Show data layer</button>
+          </div>
+        </header>
+        <div class="graph-toolbar">
+          <div class="legend">
+            <span><i class="core"></i>Routed</span><span><i class="support"></i>Supporting</span><span><i class="warn"></i>Blocked / warning</span><span><i class="fail"></i>Failed</span><span>Grey = registered, not routed</span>
+          </div>
+          <div class="zoom-controls"><button id="zoomOut" type="button" aria-label="Zoom out">−</button><button id="zoomReset" type="button">100%</button><button id="zoomIn" type="button" aria-label="Zoom in">＋</button></div>
+        </div>
+        <div id="graphViewport" class="graph-viewport">
+          <div id="graphCanvas" class="graph-canvas">
+            <svg id="graphEdges" class="graph-edges" aria-hidden="true"></svg>
+            <div id="graphNodes" class="graph-nodes"></div>
+          </div>
+        </div>
+      </section>
+
       <article id="researchReport" class="research-report hidden" aria-labelledby="reportTitle">
         <header class="report-head">
           <div>
-            <span>MACROTRACE RESEARCH NOTE</span>
+            <span>03 / MACROTRACE RESEARCH NOTE</span>
             <h2 id="reportTitle">完整研究报告</h2>
           </div>
           <p id="reportQuestion"></p>
@@ -178,34 +232,6 @@
           </div>
         </section>
       </article>
-
-      <section class="graph-panel" aria-labelledby="graphTitle">
-        <header class="graph-header">
-          <div>
-            <span>RESEARCH LINEAGE / LIVE DAG</span>
-            <h2 id="graphTitle">Research Graph</h2>
-            <p id="graphStats">Waiting for compiled nodes.</p>
-          </div>
-          <div class="graph-actions">
-            <label>Lane<select id="laneFilter"><option value="ALL">All lanes</option></select></label>
-            <label>Status<select id="statusFilter"><option value="ALL">All status</option><option value="PLANNED">Planned</option><option value="SUCCESS">Success</option><option value="WARNING">Warning</option><option value="FAILED">Failed</option><option value="RUNNING">Running</option><option value="BLOCKED">Blocked</option><option value="NOT_ROUTED">Not routed</option></select></label>
-            <label>Evidence<select id="evidenceFilter"><option value="ALL">All evidence</option><option value="PREDICTIVE">Predictive</option><option value="TAIL_RISK_PREDICTIVE">Tail risk</option><option value="DYNAMIC_ASSOCIATION">Dynamic association</option><option value="ASSOCIATIONAL_FIXTURE">Fixture</option></select></label>
-            <button id="detailToggle" class="toggle-button" type="button" aria-pressed="false"><i></i>Show data layer</button>
-          </div>
-        </header>
-        <div class="graph-toolbar">
-          <div class="legend">
-            <span><i class="core"></i>Routed</span><span><i class="support"></i>Supporting</span><span><i class="warn"></i>Blocked / warning</span><span><i class="fail"></i>Failed</span><span>Grey = registered, not routed</span>
-          </div>
-          <div class="zoom-controls"><button id="zoomOut" type="button" aria-label="Zoom out">−</button><button id="zoomReset" type="button">100%</button><button id="zoomIn" type="button" aria-label="Zoom in">＋</button></div>
-        </div>
-        <div id="graphViewport" class="graph-viewport">
-          <div id="graphCanvas" class="graph-canvas">
-            <svg id="graphEdges" class="graph-edges" aria-hidden="true"></svg>
-            <div id="graphNodes" class="graph-nodes"></div>
-          </div>
-        </div>
-      </section>
     </section>
   </main>
 

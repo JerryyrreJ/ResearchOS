@@ -71,6 +71,13 @@ class Settings:
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     load_dotenv(PROJECT_ROOT / ".env.local")
+    # The integrated ResearchOS launcher keeps shared credentials in one
+    # ignored environment file.  Follow that local pointer without ever
+    # copying or logging the secret values.
+    load_dotenv(Path.cwd() / ".env.local")
+    shared_env = os.getenv("RESEARCHOS_ENV_FILE", "").strip()
+    if shared_env:
+        load_dotenv(Path(shared_env).expanduser())
     data_dir = PROJECT_ROOT / "data"
     raw_dir = data_dir / "raw"
     data_dir.mkdir(parents=True, exist_ok=True)

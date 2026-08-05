@@ -42,6 +42,14 @@ const state = {
   historyReturnFocus: null,
   settingsCatalog: null,
   settingsStatus: null,
+  assetGraph: null,
+  dataPlugins: [],
+  pluginCatalog: { akshare: [], fred: [] },
+  dataZoom: .78,
+  dataPanX: 18,
+  dataPanY: 18,
+  dataLayout: null,
+  dataInitialized: false,
   selectedProvider: "deepseek",
   settingsReturnFocus: null,
 };
@@ -127,6 +135,9 @@ async function boot() {
       $("#providerSetupLabel").textContent = "API 配置中心暂不可用";
       console.warn("Local provider settings unavailable:", error.message);
     });
+    await loadDataEvidenceCatalog().catch((error) => {
+      console.warn("ResearchOS data layer unavailable:", error.message);
+    });
   } catch (error) {
     $("#healthPulse").classList.add("fail");
     $("#healthText").textContent = "OFFLINE";
@@ -137,6 +148,25 @@ async function boot() {
     try { await loadJob(saved, true); }
     catch { localStorage.removeItem("macrotrace.currentJob"); }
   }
+}
+
+async function loadDataEvidenceCatalog() {
+  const safe = async (path, fallback) => {
+    try { return await api(path); }
+    catch { return fallback; }
+  };
+  const [plugins, workspaces, akshare, fred] = await Promise.all([
+    safe("/api/v1/data-plugins", []),
+    safe("/api/v1/workspaces", []),
+    safe("/api/v1/data-plugins/akshare/datasets?q=macro&limit=48", []),
+    safe("/api/v1/data-plugins/fred/datasets?limit=100", []),
+  ]);
+  state.dataPlugins = plugins;
+  state.pluginCatalog = { akshare, fred };
+  state.assetGraph = workspaces.length
+    ? await safe(`/api/v1/workspaces/${encodeURIComponent(workspaces[0].id)}/ontology/graph`, null)
+    : null;
+  renderDataEvidenceLayer();
 }
 
 function renderExamples() {
@@ -161,6 +191,10 @@ async function submitResearch(event) {
   state.result = null;
   state.expandedNodes = new Set();
   state.graphInitialized = false;
+  state.dataZoom = .78;
+  state.dataPanX = 18;
+  state.dataPanY = 18;
+  state.dataInitialized = false;
   $("#runButton").disabled = true;
   setWorkspaceMode("running");
   $("#conclusionCard").classList.add("hidden");
@@ -421,6 +455,135 @@ function normalizeTextList(value) {
   return items.map((item) => item.trim()).filter(Boolean);
 }
 
+function dataNodeStatus(node) {
+  return !node || node.status === "NOT_ROUTED" ? "available" : node.status === "BLOCKED" ? "blocked" : "used";
+}
+
+function renderDataEvidenceLayer() {
+  const container = $("#dataEvidenceNodes");
+  if (!container) return;
+  const graphNodes = state.graph?.nodes || [];
+  const graphEdges = state.graph?.edges || [];
+  const datasets = graphNodes.filter((node) => node.node_type === "DATASET")
+    .sort((a, b) => dataNodeStatus(b).localeCompare(dataNodeStatus(a)) || a.label.localeCompare(b.label));
+  const factors = graphNodes.filter((node) => node.node_type === "FACTOR")
+    .sort((a, b) => dataNodeStatus(b).localeCompare(dataNodeStatus(a)) || a.label.localeCompare(b.label));
+  const selectedSeries = new Set(datasets
+    .filter((node) => dataNodeStatus(node) === "used")
+    .flatMap((node) => node.metadata?.series_ids || []));
+  const fredCatalog = (state.pluginCatalog.fred || []).map((item) => ({
+    node_id: `CATALOG::FRED::${item.dataset_id}`,
+    label: item.dataset_id,
+    detail: item.description,
+    node_type: "FRED SERIES",
+    status: selectedSeries.has(item.dataset_id) ? "used" : "available",
+  }));
+  const akshareCatalog = (state.pluginCatalog.akshare || []).map((item) => ({
+    node_id: `CATALOG::AKSHARE::${item.dataset_id}`,
+    label: item.dataset_id.replace(/^macro_/, ""),
+    detail: item.description,
+    node_type: "AKSHARE",
+    status: "available",
+  }));
+  const assets = (state.assetGraph?.nodes || []).map((item) => ({
+    node_id: `ASSET::${item.node_id}`,
+    label: item.label,
+    detail: `${item.ref?.representation || "ASSET"} · ${String(item.ref?.content_hash || "").slice(0, 10)}`,
+    node_type: item.ref?.representation || "ASSET",
+    status: "asset",
+  }));
+
+  const visibleDatasets = datasets.map((item) => ({ ...item, detail: item.summary, status: dataNodeStatus(item) }));
+  const visibleFactors = factors.map((item) => ({ ...item, detail: item.metadata?.series_id || item.summary, status: dataNodeStatus(item) }));
+  const all = [...akshareCatalog, ...fredCatalog, ...visibleDatasets, ...assets, ...visibleFactors];
+  const positions = new Map();
+  const placeGrid = (items, startX, columns, rowGap, startY = 86, columnGap = 108) => {
+    items.forEach((item, index) => positions.set(item.node_id, {
+      x: startX + (index % columns) * columnGap,
+      y: startY + Math.floor(index / columns) * rowGap,
+      width: 78,
+      height: 78,
+    }));
+    return Math.ceil(items.length / columns);
+  };
+  const leftRows = placeGrid(akshareCatalog, 72, 5, 108);
+  const sourceRows = placeGrid([...fredCatalog, ...visibleDatasets, ...assets], 650, 4, 108);
+  const factorRows = placeGrid(visibleFactors, 1160, 6, 108, 86, 112);
+  const width = 1900;
+  const height = Math.max(720, Math.max(leftRows, sourceRows, factorRows) * 108 + 150);
+  state.dataLayout = { positions, width, height };
+  const canvas = $("#dataEvidenceCanvas");
+  const edgeSvg = $("#dataEvidenceEdges");
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  edgeSvg.setAttribute("width", width);
+  edgeSvg.setAttribute("height", height);
+  edgeSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
+  const edgeRows = [];
+  graphEdges.forEach((edge) => {
+    if (positions.has(edge.source) && positions.has(edge.target)) edgeRows.push(edge);
+  });
+  datasets.forEach((dataset) => {
+    (dataset.metadata?.series_ids || []).forEach((seriesId) => {
+      const source = `CATALOG::FRED::${seriesId}`;
+      if (positions.has(source)) edgeRows.push({ source, target: dataset.node_id, relation: "CATALOGS" });
+    });
+  });
+  (state.assetGraph?.edges || []).forEach((edge) => {
+    const source = `ASSET::${edge.source_ref}`;
+    const target = `ASSET::${edge.target_ref}`;
+    if (positions.has(source) && positions.has(target)) edgeRows.push({ source, target, relation: edge.relation_type });
+  });
+  edgeSvg.innerHTML = edgeRows.map((edge) => {
+    const source = positions.get(edge.source);
+    const target = positions.get(edge.target);
+    const used = [edge.source, edge.target].some((id) => all.find((item) => item.node_id === id)?.status === "used");
+    return `<path class="data-evidence-edge ${used ? "used" : ""}" d="M${source.x + 39},${source.y + 39} C${source.x + 150},${source.y + 39} ${target.x - 70},${target.y + 39} ${target.x + 39},${target.y + 39}"></path>`;
+  }).join("");
+  container.innerHTML = [
+    `<span class="data-cluster-label" style="left:72px">AKSHARE MACRO CATALOG</span>`,
+    `<span class="data-cluster-label" style="left:650px">OFFICIAL DATA + VERSIONED ASSETS</span>`,
+    `<span class="data-cluster-label" style="left:1160px">ROUTED EMPIRICAL FACTORS</span>`,
+    ...all.map((item) => {
+      const point = positions.get(item.node_id);
+      return `<button class="data-evidence-node" type="button" data-node-id="${escapeHtml(item.node_id)}" data-status="${escapeHtml(item.status)}" data-type="${escapeHtml(item.node_type)}" title="${escapeHtml(item.detail || item.label)}" style="left:${point.x}px;top:${point.y}px"><i></i><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.node_type)}</small></button>`;
+    }),
+  ].join("");
+  const routedDatasets = datasets.filter((node) => dataNodeStatus(node) === "used").length;
+  const routedFactors = factors.filter((node) => dataNodeStatus(node) === "used").length;
+  $("#dataUniverseCount").textContent = String(all.length);
+  $("#dataRoutedCount").textContent = String(routedDatasets);
+  $("#dataFactorCount").textContent = String(routedFactors);
+  $("#dataPluginBadges").innerHTML = state.dataPlugins.length
+    ? state.dataPlugins.map((plugin) => `<button type="button" data-plugin-toggle="${escapeHtml(plugin.plugin_id)}" data-enabled="${String(plugin.enabled)}" data-state="${plugin.enabled ? "on" : "off"}" ${plugin.configured ? "" : "disabled"} title="${plugin.configured ? "点击切换数据插件" : "需要先在本机配置该来源"}"><b>${escapeHtml(plugin.name)}</b>${plugin.enabled ? "已启用 ✓" : plugin.configured ? "点击启用" : "待配置"}</button>`).join("")
+    : `<span><b>Registry</b>${datasets.length} 组官方数据 · ${assets.length} 个 A 资产</span>`;
+  if (!state.dataInitialized && all.length) {
+    requestAnimationFrame(resetDataView);
+    state.dataInitialized = true;
+  } else {
+    applyDataTransform();
+  }
+}
+
+function applyDataTransform() {
+  $("#dataEvidenceCanvas").style.transform = `translate(${state.dataPanX}px, ${state.dataPanY}px) scale(${state.dataZoom})`;
+  $("#dataZoomReset").textContent = `${Math.round(state.dataZoom * 100)}%`;
+}
+
+function adjustDataZoom(delta) {
+  state.dataZoom = Math.max(.35, Math.min(1.5, state.dataZoom + delta));
+  applyDataTransform();
+}
+
+function resetDataView() {
+  const viewport = $("#dataEvidenceViewport");
+  state.dataZoom = Math.max(.42, Math.min(.9, (viewport.clientWidth - 34) / 1900));
+  state.dataPanX = 16;
+  state.dataPanY = 16;
+  applyDataTransform();
+}
+
 function visibleGraphNodes() {
   if (!state.graph?.nodes) return [];
   const lane = $("#laneFilter").value;
@@ -483,6 +646,7 @@ function computeLayout(nodes) {
 
 function renderGraph() {
   if (!state.graph) return;
+  renderDataEvidenceLayer();
   updateLaneFilter();
   const nodes = visibleGraphNodes();
   const visibleIds = new Set(nodes.map((node) => node.node_id));
@@ -1182,6 +1346,41 @@ $("#detailToggle").addEventListener("click", () => {
   $("#detailToggle").lastChild.textContent = state.showDetail ? " Hide data layer" : " Show data layer";
   renderGraph();
 });
+["#dataZoomIn", "#dataZoomOut", "#dataZoomReset"].forEach((selector) => {
+  const button = $(selector);
+  if (!button) return;
+  button.addEventListener("click", () => {
+    if (selector === "#dataZoomIn") adjustDataZoom(.1);
+    else if (selector === "#dataZoomOut") adjustDataZoom(-.1);
+    else resetDataView();
+  });
+});
+$("#dataEvidenceNodes").addEventListener("click", (event) => {
+  const node = event.target.closest("[data-node-id]");
+  if (!node) return;
+  const nodeId = node.dataset.nodeId;
+  if ((state.graph?.nodes || []).some((item) => item.node_id === nodeId)) {
+    openNode(nodeId).catch((error) => toast(error.message));
+  } else {
+    toast(node.title || "该节点来自 Part A 的可用数据空间");
+  }
+});
+$("#dataPluginBadges").addEventListener("click", async (event) => {
+  const button = event.target.closest("button[data-plugin-toggle]");
+  if (!button || button.disabled) return;
+  button.disabled = true;
+  try {
+    await api(`/api/v1/data-plugins/${encodeURIComponent(button.dataset.pluginToggle)}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ enabled: button.dataset.enabled !== "true", actor_id: "local-product-user" }),
+    });
+    await loadDataEvidenceCatalog();
+  } catch (error) {
+    toast(error.message);
+    button.disabled = false;
+  }
+});
 ["#laneFilter", "#statusFilter", "#evidenceFilter"].forEach((selector) => $(selector).addEventListener("change", renderGraph));
 $("#zoomIn").addEventListener("click", () => adjustZoom(.1));
 $("#zoomOut").addEventListener("click", () => adjustZoom(-.1));
@@ -1196,6 +1395,27 @@ $("#graphNodes").addEventListener("mouseover", (event) => {
   $$(".graph-edge").forEach((edge) => edge.classList.toggle("active", edge.dataset.source === node.dataset.nodeId || edge.dataset.target === node.dataset.nodeId));
 });
 $("#graphNodes").addEventListener("mouseout", () => $$(".graph-edge").forEach((edge) => edge.classList.remove("active")));
+let dataDrag = null;
+$("#dataEvidenceViewport").addEventListener("pointerdown", (event) => {
+  if (event.target.closest(".data-evidence-node")) return;
+  dataDrag = { x: event.clientX, y: event.clientY, panX: state.dataPanX, panY: state.dataPanY };
+  $("#dataEvidenceViewport").setPointerCapture?.(event.pointerId);
+  $("#dataEvidenceViewport").classList.add("dragging");
+});
+$("#dataEvidenceViewport").addEventListener("pointermove", (event) => {
+  if (!dataDrag) return;
+  state.dataPanX = dataDrag.panX + event.clientX - dataDrag.x;
+  state.dataPanY = dataDrag.panY + event.clientY - dataDrag.y;
+  applyDataTransform();
+});
+const endDataDrag = () => { dataDrag = null; $("#dataEvidenceViewport").classList.remove("dragging"); };
+$("#dataEvidenceViewport").addEventListener("pointerup", endDataDrag);
+$("#dataEvidenceViewport").addEventListener("pointercancel", endDataDrag);
+$("#dataEvidenceViewport").addEventListener("wheel", (event) => {
+  if (!event.ctrlKey && Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+  event.preventDefault();
+  adjustDataZoom(event.deltaY > 0 ? -.06 : .06);
+}, { passive: false });
 $("#researchReport").addEventListener("click", (event) => {
   const button = event.target.closest("[data-report-node]");
   if (!button) return;

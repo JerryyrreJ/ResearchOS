@@ -77,6 +77,20 @@ class GraphBuilder:
         )
         self.add_edge(query_id, depth_id, "DIAGNOSES")
 
+        # Build the complete data universe before routing.  This lets the UI
+        # render Part A as a persistent grey evidence layer and then light up
+        # only the datasets actually selected by the empirical compiler.
+        for dataset in self.registry.all("datasets"):
+            dataset_status = "BLOCKED" if dataset.get("status") == "blocked" else "NOT_ROUTED"
+            self.add_node(
+                f"DATASET::{dataset['dataset_id']}",
+                "DATASET",
+                dataset["source"],
+                status=dataset_status,
+                summary=dataset["dataset_id"],
+                metadata={**dataset, "routed": False},
+            )
+
         routed_lanes = {lane.lane_id: lane for lane in plan.lanes}
         mechanism_counts: dict[str, int] = {}
         selected_mechanism_counts: dict[str, int] = {}
@@ -170,6 +184,9 @@ class GraphBuilder:
                 dataset = self.registry.get("datasets", item["dataset_id"])
                 dataset_status = "BLOCKED" if dataset.get("status") == "blocked" else "PLANNED"
                 self.add_node(dataset_id, "DATASET", dataset["source"], status=dataset_status, summary=item["dataset_id"], metadata=dataset)
+            elif self.nodes[dataset_id]["status"] != "BLOCKED":
+                self.set_status(dataset_id, "PLANNED", item["dataset_id"])
+                self.nodes[dataset_id]["metadata"]["routed"] = True
             self.add_edge(dataset_id, factor_node_id, "USES")
             transform_id = f"TRANSFORM::{factor.node_id}::{factor.factor_id}"
             self.add_node(transform_id, "TRANSFORM", "Registered stationary transform", status=factor_status, lane_id=item["lane_id"], metadata={"factor_id": factor.factor_id, "allowed_transforms": item["transform_pool"], "selection_policy": "Model recipe chooses only from this allow-list."})
@@ -185,6 +202,9 @@ class GraphBuilder:
                 continue
             factor_node_id = f"FACTOR::UNIVERSE::{item['factor_id']}"
             self.add_node(factor_node_id, "FACTOR", item["definition"], status="NOT_ROUTED", lane_id=item["lane_id"], role="NOT_ROUTED", summary="Registered factor not selected for this question.", metadata=item)
+            dataset_id = f"DATASET::{item['dataset_id']}"
+            if dataset_id in self.nodes:
+                self.add_edge(dataset_id, factor_node_id, "USES")
             mechanism_id = mechanism_by_factor.get(item["factor_id"])
             self.add_edge(f"MECHANISM::{mechanism_id}" if mechanism_id else f"LANE::{item['lane_id']}", factor_node_id, "USES")
 
