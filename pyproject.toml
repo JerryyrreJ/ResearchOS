@@ -11,6 +11,7 @@ requires-python = ">=3.12"
 dependencies = [
   "alembic>=1.14,<2",
   "fastapi>=0.115,<1",
+  "jsonschema>=4.23,<5",
   "openpyxl>=3.1,<4",
   "psycopg[binary]>=3.2,<4",
   "pydantic>=2.10,<3",
@@ -30,11 +31,11 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/researchos"]
+packages = ["src/researchos", "apps"]
 
 [tool.pytest.ini_options]
 addopts = "-q"
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 testpaths = ["tests"]
 
 [tool.ruff]
