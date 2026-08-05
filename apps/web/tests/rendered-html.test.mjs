@@ -89,6 +89,19 @@ test("exposes honest delivery modes and visible asynchronous failure states", as
   assert.match(page, /QRCodeSVG/);
 });
 
+test("wires visible controls to navigation, feedback, export, and live workspace states", async () => {
+  const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  const workspace = await readFile(new URL("../app/real-workspace.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  for (const behavior of ["handleShellClick", "runPrimaryFlow", "downloadDiff", "Workspace link copied", "policyNotice", "inspectorVisible"]) {
+    assert.match(page, new RegExp(behavior));
+  }
+  assert.doesNotMatch(workspace, /<button disabled>Relations/);
+  assert.match(workspace, /setWorkspaceTab\("relations"\)/);
+  assert.match(workspace, /setWorkspaceTab\("conflicts"\)/);
+  assert.match(css, /action-toast/);
+});
+
 test("serves a non-cached web health endpoint", async () => {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("health-test", `${process.pid}-${Date.now()}`);
