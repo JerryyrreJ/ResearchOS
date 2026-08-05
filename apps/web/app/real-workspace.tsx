@@ -233,9 +233,7 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
       {dragging && <div className="workspace-drop-overlay" role="status"><img src="/brand/evidence-archivist.png" alt=""/><b>交给证据档案员</b><span>松开后自动保存、分类并建立不可变版本</span></div>}
       <section className="api-workspace-head">
         <div>
-          <div className="eyebrow"><span className="status-dot green" /> SHARED · TEAM KNOWLEDGE</div>
-          <h2>把团队文件放到同一个地方</h2>
-          <p>上传后自动保存、识别类型并建立版本。所有成员看到的是同一份资料库。</p>
+          <div className="eyebrow"><span className="status-dot green" /> TEAM SPACE · 已同步</div>
         </div>
         <div className="knowledge-presence"><span>TW</span><span>YR</span><span>+3</span><button className="button secondary" onClick={() => workspaceId && void refresh(workspaceId, query)}>↻ 同步</button></div>
       </section>
@@ -245,7 +243,7 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
         onClick={()=>inputRef.current?.click()}
       >
         <div className="dropzone-icon">↓</div>
-        <div><b>拖入任何团队文件</b><small>松开后立即保存并分类 · 支持 Markdown、Word、Excel、CSV、PDF 与文本</small></div>
+        <div><b>拖入文件</b><small>自动保存、分类和版本管理 · 支持 Markdown、Word、Excel、CSV、PDF 与文本</small></div>
         <button className="button primary small" onClick={(event) => { event.stopPropagation(); inputRef.current?.click(); }}>选择文件</button>
         <input ref={inputRef} type="file" multiple hidden onChange={onInputChange} />
       </div>
@@ -260,7 +258,7 @@ export default function RealWorkspace({ onSelect, onObjectCount }: RealWorkspace
       )}
 
       <section className="knowledge-library">
-        <div className="library-toolbar"><div><span className="eyebrow">TEAM LIBRARY</span><h2>共享资料库</h2></div><form className="library-search" onSubmit={submitSearch}><span>⌕</span><input aria-label="Search knowledge base" value={query} onChange={event=>setQuery(event.target.value)} placeholder="搜索文件、类型或版本…"/><button>搜索</button></form></div>
+        <div className="library-toolbar"><div><span className="eyebrow">LIBRARY</span><h2>文件</h2></div><form className="library-search" onSubmit={submitSearch}><span>⌕</span><input aria-label="Search knowledge base" value={query} onChange={event=>setQuery(event.target.value)} placeholder="搜索文件、类型或版本…"/><button>搜索</button></form></div>
         <div className="category-row">{categories.map(item=><button key={item.id} className={category===item.id?"active":""} onClick={()=>setCategory(item.id)}>{item.label}<em>{item.id==="ALL"?objects.length:objects.filter(object=>categoryFor(object)===item.id).length}</em></button>)}</div>
         <div className={`library-layout ${selectedObject ? "has-analysis" : ""}`}>
           <div className="file-collection">{loading ? <div className="knowledge-empty">正在同步团队资料库…</div> : visibleObjects.length===0 ? <button className="knowledge-empty actionable" onClick={()=>inputRef.current?.click()}><img src="/brand/evidence-archivist.png" alt="证据档案员"/><b>档案员正在等待第一份资料</b><span>拖入文件，或点击这里开始建立共享知识库</span></button> : visibleObjects.map(item=>{const source=sourceFromObject(item);const itemCategory=categoryFor(item);return <button className={`knowledge-file ${selectedObjectId===item.object_id?"selected":""}`} key={item.object_id} onClick={()=>setSelectedObjectId(item.object_id)}><i className={`knowledge-file-icon kind-${itemCategory.toLowerCase()}`}>{source.formatKind.slice(0,2)}</i><span><b>{item.name}</b><small>{itemCategory} · {readableBytes(source.sizeBytes)} · {item.version_count} 个版本</small></span><em>{formatDate(source.updatedAt)}</em></button>})}</div>

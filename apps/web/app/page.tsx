@@ -67,7 +67,7 @@ function Topbar({ title, subtitle, onCommand, onInspector, onSettings, onPrimary
         <button className="inspector-trigger" onClick={onInspector} aria-label={tx(locale,"Inspector")}>⌘</button>
         <button className="avatar" onClick={onSettings} aria-label="Settings and extensions">TW</button>
       </div>
-      <div className="page-heading"><div><h1>{workspace ? (locale === "en" ? "Team knowledge base" : "团队知识库") : tx(locale,title)}</h1><p>{workspace ? (locale === "en" ? "Collect, organize, and understand your team's shared files." : "收集、整理并理解团队共享的所有文件。") : tx(locale,subtitle)}</p></div><div className="heading-actions"><button className="button secondary">{tx(locale,"Share")}</button><button className="button primary" onClick={onPrimary}>{workspace ? (locale === "en" ? "Add files" : "添加文件") : tx(locale,"Compile thesis")} <span>{workspace ? "+" : "⌘↵"}</span></button></div></div>
+      <div className="page-heading"><div><h1>{workspace ? (locale === "en" ? "Library" : "知识库") : tx(locale,title)}</h1><p>{workspace ? (locale === "en" ? "Team files, shared and organized." : "团队文件，共享有序。") : tx(locale,subtitle)}</p></div><div className="heading-actions"><button className="button secondary">{tx(locale,"Share")}</button><button className="button primary" onClick={onPrimary}>{workspace ? (locale === "en" ? "Add files" : "添加文件") : tx(locale,"Compile thesis")} <span>{workspace ? "+" : "⌘↵"}</span></button></div></div>
     </header>
   );
 }

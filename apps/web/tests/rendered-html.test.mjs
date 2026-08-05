@@ -157,9 +157,11 @@ test("makes the shared knowledge library the primary product workflow", async ()
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
   assert.match(page, /useState<View>\("workspace"\)/);
-  assert.match(page, /团队知识库/);
+  assert.match(page, /知识库/);
+  assert.match(page, /团队文件，共享有序/);
   assert.match(page, /researchos:choose-files/);
-  assert.match(workspace, /共享资料库/);
+  assert.match(workspace, /拖入文件/);
+  assert.doesNotMatch(workspace, /把团队文件放到同一个地方|共享资料库/);
   assert.match(workspace, /categoryFor/);
   assert.match(workspace, /基础分析/);
   assert.match(workspace, /researchos:new-thesis/);
